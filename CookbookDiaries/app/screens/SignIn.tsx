@@ -2,7 +2,7 @@ import React, { useState } from "react"
 import { useNavigation } from 'expo-router';
 import { Text, View, Image, StyleSheet, Button, TextInput, TouchableOpacity, ActivityIndicator, KeyboardAvoidingView} from "react-native";
 import { FIREBASE_AUTH } from '../../FirebaseConfig';
-import { signInWithEmailAndPassword } from "firebase/auth";
+import { signInWithEmailAndPassword, sendPasswordResetEmail } from "firebase/auth";
 
 const Logo = require('@/assets/images/SimplifiedLogo.png'); // Adjust the path as needed
 
@@ -54,7 +54,7 @@ export default function SignIn() {
       
       <Button 
         title= "Forgot Password"
-        onPress={() => alert('Button Pressed!')} //send forget password email
+        onPress={() => navigation.navigate('screens/ForgetPassword')} //send forget password email
         color="#a9a9a9" 
       />  
       <View style = {styles.row}>

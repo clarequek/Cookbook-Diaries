@@ -2,7 +2,7 @@ import React, { useState } from "react"
 import { useNavigation } from 'expo-router';
 import { Text, View, Image, StyleSheet, Button, TextInput, TouchableOpacity, ActivityIndicator } from "react-native";
 import { FIREBASE_AUTH, FIREBASE_DB } from '../../FirebaseConfig';
-import { createUserWithEmailAndPassword } from "firebase/auth";
+import { createUserWithEmailAndPassword, sendEmailVerification } from "firebase/auth";
 import { getFirestore, collection, query, doc, where, getDocs, setDoc } from 'firebase/firestore';
 
 const Logo = require('@/assets/images/SimplifiedLogo.png'); // Adjust the path as needed
@@ -59,6 +59,9 @@ export default function SignUp() {
       }
 
       const response = await createUserWithEmailAndPassword(auth, email, password);
+
+      // Send email verification
+      await sendEmailVerification(response.user);
       console.log(response);
 
       //Store additional user information in Firestore
@@ -68,10 +71,7 @@ export default function SignUp() {
         name: name,
       });
 
-      // Store username to ensure uniqueness
-      //await setDoc(doc(db, "usernames", username), { uid: response.user.uid });
-
-      alert('User registered successfully!');
+      alert('User registered successfully! Please check your email inbox for a verification link to complete your account setup.');
       navigation.navigate('screens/SignIn'); // Navigate to SignIn after successful registration
     
     } catch (error) {
