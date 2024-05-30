@@ -1,6 +1,8 @@
 import { View, Text, Image, TouchableOpacity } from 'react-native'; 
 import React, { useRef } from 'react';
+import Gif from 'react-native-gif';
 import { StatusBar } from "expo-status-bar"; 
+import LogoImage from '../../assets/images/Logo.png';
 
 {/* height and widthPercentageToDP converts a percentage value into 
 corresponding pizel value based on device screen height, ensures UI component scales
@@ -34,8 +36,8 @@ export default function WelcomeScreen() {
       <View>
         <LottieView autoPlay ref = {animation}
           style = {{
-            width: 300, 
-            height: 500, 
+            width: 500, 
+            height: 200, 
           }}
           source={require("../../assets/lottie/food-logo.json")}
           />
@@ -43,14 +45,7 @@ export default function WelcomeScreen() {
 
       {/* Title and Subtitle */}
       <View className = "flex items-center space-y-2">
-        <Text 
-        className = "text-[#ff8271] font-extrabold tracking-widest"
-        style = {{
-          fontSize: hp(4.5),
-        }}>
-          Cookbook Diaries
-        </Text> 
-
+        <Image source={LogoImage} style={{ width: 300, height: 150 }} />
         <Text 
         className = "text-[#ff8271] tracking-widest font-medium"
         style = {{
