@@ -1,10 +1,9 @@
-import { useNavigation } from 'expo-router';
+import { useNavigation } from '@react-navigation/native';
 import React from 'react'
 import { Text, View, Image, StyleSheet, Button, TouchableOpacity} from 'react-native';
+import Logo from '../../assets/images/Logo.png';
 
-const Logo = require('@/assets/images/Logo.png'); // Adjust the path as needed
-
-export default function Welcome() {
+export default function SignInSignUp() {
   const navigation = useNavigation();
 
   return (
@@ -12,13 +11,13 @@ export default function Welcome() {
       <Image source ={Logo} style={styles.logo} />
       <TouchableOpacity 
         style = {styles.buttonContainer}
-        onPress = {() => navigation.navigate('screens/SignIn')}
+        onPress = {() => navigation.navigate('SignIn')}
       >
         <Text style = {styles.buttonText}> Sign In </Text>
       </TouchableOpacity>
       <TouchableOpacity 
         style = {styles.buttonContainer}
-        onPress = {() => navigation.navigate('screens/SignUp')}
+        onPress = {() => navigation.navigate('SignUp')}
       >
         <Text style = {styles.buttonText}> Sign Up </Text>
       </TouchableOpacity>
@@ -29,15 +28,16 @@ export default function Welcome() {
 const styles = StyleSheet.create({
   container: {
     flex: 1, //Takes up the full screen; flex has different values
-    //justifyContent: 'center',
+    justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#fff5e6'
   },
 
   logo: {
     width: '100%',
-    height: 300,
+    height: 350,
     resizeMode: 'contain', 
+    marginBottom: 20,
   },
 
   buttonContainer: {

@@ -1,11 +1,10 @@
 import React, { useState } from "react"
-import { useNavigation } from 'expo-router';
+import { useNavigation } from '@react-navigation/native';
 import { Text, View, Image, StyleSheet, Button, TextInput, TouchableOpacity, ActivityIndicator } from "react-native";
 import { FIREBASE_AUTH, FIREBASE_DB } from '../../FirebaseConfig';
 import { createUserWithEmailAndPassword, sendEmailVerification } from "firebase/auth";
 import { getFirestore, collection, query, doc, where, getDocs, setDoc } from 'firebase/firestore';
-
-const Logo = require('@/assets/images/SimplifiedLogo.png'); // Adjust the path as needed
+import Logo from '../../assets/images/SimplifiedLogo.png'; // Adjust the path as needed
 
 export default function SignUp() {
 
@@ -106,7 +105,7 @@ export default function SignUp() {
         <>
           <TouchableOpacity
             style={styles.buttonContainer}
-            onPress={() => signUp()} //Temporary action: Should send a verification email + check if all fields are filled
+            onPress={() => signUp()} 
           >
             <Text style={styles.buttonText}> Sign Up </Text>
           </TouchableOpacity>
@@ -114,7 +113,7 @@ export default function SignUp() {
             <Text style={styles.desc}> Have an account? </Text>
             <Button
               title="Sign in."
-              onPress={() => navigation.navigate('screens/SignIn')} // Correct navigation path
+              onPress={() => navigation.navigate('SignIn')} // Correct navigation path
               color='#ff8271'
             />
           </View>
@@ -138,7 +137,7 @@ const styles = StyleSheet.create({
     width: '70%',
     height: 150,
     //resizeMode: 'contain',
-    marginBottom : 0,
+    marginBottom : 15,
   },
 
   headerText: {

@@ -1,10 +1,9 @@
 import React, { useState } from "react"
-import { useNavigation } from 'expo-router';
+import { useNavigation } from '@react-navigation/native';
 import { Text, View, Image, StyleSheet, Button, TextInput, TouchableOpacity, ActivityIndicator, KeyboardAvoidingView} from "react-native";
 import { FIREBASE_AUTH } from '../../FirebaseConfig';
 import { signInWithEmailAndPassword, sendPasswordResetEmail } from "firebase/auth";
-
-const Logo = require('@/assets/images/SimplifiedLogo.png'); // Adjust the path as needed
+import Logo from '../../assets/images/SimplifiedLogo.png'; // Adjust the path as needed
 
 export default function SignIn() {
 
@@ -19,8 +18,8 @@ export default function SignIn() {
     try {
       const response = await signInWithEmailAndPassword(auth, email, password);
       console.log(response);
-      navigation.navigate('screens/Home')
-    } catch (error: any) {
+      navigation.navigate('Home')
+    } catch (error) {
       console.log(error);
       alert('Invalid email address or password.')
     } finally {
@@ -54,14 +53,14 @@ export default function SignIn() {
       
       <Button 
         title= "Forgot Password"
-        onPress={() => navigation.navigate('screens/ForgetPassword')} //send forget password email
+        onPress={() => navigation.navigate('ForgetPassword')} //send forget password email
         color="#a9a9a9" 
       />  
       <View style = {styles.row}>
         <Text style = {styles.desc}> No account? </Text>
         <Button
           title = "Create one."
-          onPress={() => navigation.navigate('screens/SignUp')}
+          onPress={() => navigation.navigate('SignUp')}
           color = '#ff8271'
         />
       </View>
@@ -84,15 +83,17 @@ const styles = StyleSheet.create({
   },
 
   logo: {
-    width: '80%',
-    height: 200,
-    resizeMode: 'contain', 
+    width: '70%',
+    height: 150,
+    //resizeMode: 'contain',
+    marginBottom : 15, 
   },
 
   headerText: {
     fontSize: 24,
     fontWeight: 'bold',
     color: '#000000',
+    marginBottom: 20,
   },
 
   form: {
