@@ -7,8 +7,15 @@ export default function SignInSignUp() {
   const navigation = useNavigation();
 
   return (
-    <View style = {styles.container}>
-      <Image source ={Logo} style={styles.logo} />
+    <View className = "flex-1 justify-center items-center bg-[#fff5e6]">
+      <Image 
+      source ={Logo} 
+      style={{
+        width: '100%',
+        height: 350,
+        resizeMode: 'contain', 
+        marginBottom: 20,
+      }} />
       <TouchableOpacity 
         style = {styles.buttonContainer}
         onPress = {() => navigation.navigate('SignIn')}
@@ -26,20 +33,6 @@ export default function SignInSignUp() {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1, //Takes up the full screen; flex has different values
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#fff5e6'
-  },
-
-  logo: {
-    width: '100%',
-    height: 350,
-    resizeMode: 'contain', 
-    marginBottom: 20,
-  },
-
   buttonContainer: {
     backgroundColor: '#ff8271', // Button background color
     borderRadius: 30, // Border radius to make it rounded
