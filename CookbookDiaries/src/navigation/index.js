@@ -34,3 +34,7 @@ export default function AppNavigation() {
 
 //initialRouteName = whenever app is created, taken to whatever screen you initialise it as
 //headerShown: false removes the header at the Screen
+//We will need a bottom tab navigator to navigate to the respective locations
+//Home
+//Community
+//Profile

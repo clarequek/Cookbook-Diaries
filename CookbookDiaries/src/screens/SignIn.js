@@ -2,7 +2,7 @@ import React, { useState } from "react"
 import { useNavigation } from '@react-navigation/native';
 import { Text, View, Image, StyleSheet, Button, TextInput, TouchableOpacity, ActivityIndicator, KeyboardAvoidingView} from "react-native";
 import { FIREBASE_AUTH } from '../../FirebaseConfig';
-import { signInWithEmailAndPassword, sendPasswordResetEmail } from "firebase/auth";
+import { signInWithEmailAndPassword } from "firebase/auth";
 import Logo from '../../assets/images/SimplifiedLogo.png'; // Adjust the path as needed
 
 export default function SignIn() {
@@ -67,12 +67,6 @@ export default function SignIn() {
     </View>
   )
 }
-
-//username
-//password
-//forgot password button
-//no account? create one.
-
 
 const styles = StyleSheet.create({
   container: {

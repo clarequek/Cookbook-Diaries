@@ -1,6 +1,6 @@
 import React, { useState } from "react"
 import { useNavigation } from '@react-navigation/native';
-import { Text, View, Image, StyleSheet, Button, TextInput, TouchableOpacity, ActivityIndicator } from "react-native";
+import { Text, View, Image, StyleSheet, Button, TextInput, TouchableOpacity, ActivityIndicator, Ionicons } from "react-native";
 import { FIREBASE_AUTH, FIREBASE_DB } from '../../FirebaseConfig';
 import { createUserWithEmailAndPassword, sendEmailVerification } from "firebase/auth";
 import { getFirestore, collection, query, doc, where, getDocs, setDoc } from 'firebase/firestore';
@@ -86,6 +86,7 @@ export default function SignUp() {
     <View style={styles.container}>
       <Image source={Logo} style={styles.logo} />
       <View style={styles.form}>
+        <TouchableOpacity style={styles.avatar}></TouchableOpacity>
         <Text style={styles.label}> Username </Text>
         <TextInput value={username} style={styles.input} placeholder="" autoCapitalize='none' onChangeText={(text) => setUsername(text)} />
         <Text style={styles.label}> Name </Text>
@@ -203,16 +204,15 @@ const styles = StyleSheet.create({
   row: {
     flexDirection: 'row',
   },
+
+  avatar: {
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    backgroundColor: "#E1E2E6",
+    justifyContent: "center",
+    alignItems: 'center',
+    marginBottom: 50,
+  },
 });
 
-//FIREBASE ORIGINAL RULES
-
-//rules_version = '2';
-
-//service cloud.firestore {
-  //match /databases/{database}/documents {
-    //match /{document=**} {
-      //allow read, write: if false;
-    //}
-  //}
-//}

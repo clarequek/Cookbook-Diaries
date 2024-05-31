@@ -10,6 +10,8 @@ import Categories from '../components/categories';
 import axios from "axios";
 import { get } from "react-native/Libraries/TurboModule/TurboModuleRegistry"; 
 import Recipes from '../components/recipes';
+import { FIREBASE_DATABASE } from '../../FirebaseConfig'; 
+import { getDatabase, ref, get as getFireBase } from "firebase/database";
 
 
 {/* import heroicons if you wanna make icons on a home screen */}
@@ -18,8 +20,10 @@ export default function HomeScreen() {
   const [activeCategory, setActiveCategory] = useState("Beef")
   const [categories, setCategories] = useState([])
   const [meals, setMeals] = useState([])
+  const [userName, setUserName] = useState('');
 
   useEffect(() => {
+    fetchUserName();
     getCategories();
     getRecipes();
   }, []); 
@@ -29,6 +33,22 @@ export default function HomeScreen() {
     setActiveCategory(category);
     setMeals([]);
   }; 
+
+  const fetchUserName = async () => {
+    const db = getDatabase(FIREBASE_DATABASE);
+    const userRef = ref(db, 'users/USER_ID/name'); // Adjust the path according to your database structure
+
+    try {
+      const snapshot = await getFireBase(userRef);
+      if (snapshot.exists()) {
+        setUserName(snapshot.val());
+      } else {
+        console.log('No data available');
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   const getCategories= async () => { 
     try{
@@ -90,7 +110,7 @@ export default function HomeScreen() {
                 fontSize: hp(3),
               }}
               className = "font-bold text-neutral-800"> 
-                Hi, Clarelia
+                Hi, {userName} {/* Display user name */}
               </Text>
             </View>
 
