@@ -32,11 +32,14 @@ export default function WelcomeScreen() {
       <StatusBar style = "light" />
 
       {/*Lottie Logo */}
-      <View>
+      <View
+        style = {{ 
+          height : 200,
+        }}>
         <LottieView autoPlay ref = {animation}
           style = {{
-            width: 500, 
-            height: 200, 
+            width: 300, 
+            height: 300, 
           }}
           source={require("../../assets/lottie/food-logo.json")}
           />
@@ -50,7 +53,7 @@ export default function WelcomeScreen() {
         style = {{
           fontSize: hp(1.75),
         }}> 
-          Explore some delicious Food
+          Cook some good food today!
         </Text>
       </View>
 
