@@ -1,6 +1,5 @@
 import { View, Text, Image, TouchableOpacity } from 'react-native'; 
 import React, { useRef } from 'react';
-import Gif from 'react-native-gif';
 import { StatusBar } from "expo-status-bar"; 
 import LogoImage from '../../assets/images/Logo.png';
 
