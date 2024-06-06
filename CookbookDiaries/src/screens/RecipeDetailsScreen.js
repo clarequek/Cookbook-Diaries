@@ -1,5 +1,5 @@
 
-import { View, Text, ScrollView, Image } from 'react-native'
+import { View, Text, ScrollView, Image, TouchableOpacity } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { StatusBar } from 'expo-status-bar'
 import { heightPercentageToDP as hp } from 'react-native-responsive-screen'
@@ -7,6 +7,8 @@ import { widthPercentageToDP as wp } from 'react-native-responsive-screen'
 import { useNavigation } from '@react-navigation/native'
 import { CachedImage } from '../utilities/index'
 import axios from 'axios'
+import { ChevronLeftIcon } from 'react-native-heroicons/outline'
+import { HeartIcon } from "react-native-heroicons/solid"
 
 
 export default function RecipeDetailsScreen(props) {
@@ -64,6 +66,31 @@ export default function RecipeDetailsScreen(props) {
                 }}
             />
         </View>
+
+        {/* Back Button and Favorite Icon */}
+
+        <View className="w-full absolute flex-row justify-between items-center pt-10">
+            <View className="p-2 rounded-full bg-white ml-5">
+            <TouchableOpacity onPress={() => navigation.goBack()}>
+                <ChevronLeftIcon
+                size={hp(3.5)}
+                color={"#f64e32"}
+                strokeWidth={4.5}
+                />
+            </TouchableOpacity>
+            </View>
+
+            <View className="p-2 rounded-full bg-white mr-5">
+            <TouchableOpacity onPress={() => setIsFavourite(!isFavourite)}>
+                <HeartIcon
+                size={hp(3.5)}
+                color={isFavourite ? "#f64e32" : "gray"}
+                strokeWidth={4.5}
+                />
+            </TouchableOpacity>
+            </View>
+        </View>
+
         
             <Text>
                 RecipeDetailsScreen
