@@ -8,7 +8,7 @@ import { useNavigation } from '@react-navigation/native'
 
 
 export default function RecipeDetailsScreen(props) {
-    let item = props.route.params
+    let item = props.route.paramsn
     const navigation = useNavigation
     const [meals, setMeal] = useState(null)
     const [loading, setLoading] = useState(true)
