@@ -1,16 +1,28 @@
-import React, { useState } from "react"
+import React, { useState, useRef } from "react";
 import { useNavigation } from '@react-navigation/native';
-import { Text, View, Image, StyleSheet, Button, TextInput, TouchableOpacity, ActivityIndicator, KeyboardAvoidingView} from "react-native";
+import { Text, View, Image, StyleSheet, TouchableOpacity, TextInput, ActivityIndicator } from "react-native";
 import { FIREBASE_AUTH } from '../../FirebaseConfig';
 import { signInWithEmailAndPassword } from "firebase/auth";
 import Logo from '../../assets/images/SimplifiedLogo.png'; // Adjust the path as needed
+import { fonts } from "../utilities/fonts";
+import { colors } from "../utilities/colors";
+import Ionicons from 'react-native-vector-icons/Ionicons';
+
+import { 
+  widthPercentageToDP as wp, 
+  heightPercentageToDP as hp, 
+} from "react-native-responsive-screen"; 
+import LottieView from "lottie-react-native"; 
+import Animated from 'react-native-reanimated';
 
 export default function SignIn() {
 
   const navigation = useNavigation();
+  const animation = useRef(null); 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
+  const [secureEntry, setSecureEntry] = useState(true);
   const auth = FIREBASE_AUTH;
 
   const signIn = async () => {
@@ -18,121 +30,195 @@ export default function SignIn() {
     try {
       const response = await signInWithEmailAndPassword(auth, email, password);
       console.log(response);
-      navigation.navigate('Home')
+      navigation.navigate('Home');
     } catch (error) {
       console.log(error);
-      alert('Invalid email address or password.')
+      alert('Invalid email address or password.');
     } finally {
-      setLoading(false); //what does setLoading mean?
+      setLoading(false); // Stops the loading indicator
     }
   };
 
   return (
-    <View style = {styles.container}>
-      <Image source ={Logo} style={styles.logo} />
-      <Text style = {styles.headerText}> Sign In.</Text>
-      <View style = {styles.form}>
-        <Text style = {styles.label}> Email Address </Text> 
-        <TextInput value = {email} style={styles.input} placeholder= "email" autoCapitalize='none' onChangeText = {(text) => setEmail(text)}/>
-        <Text style = {styles.label}> Password </Text> 
-        <TextInput value = {password} style={styles.input} placeholder= "password" autoCapitalize='none' onChangeText = {(text) => setPassword(text)} secureTextEntry={true}/>
+    <View style={styles.container}>
+      {/* Back arrow button */}
+      <TouchableOpacity style={styles.backButtonWrapper} onPress={() => navigation.goBack()}>
+        <View style={styles.iconContainer}>
+          <Ionicons name={"arrow-back-outline"} color='#000000' size={25} />
+        </View>
+      </TouchableOpacity>
+      <View style={styles.textContainer}>
+        
+        {/* Lottie Logo */}
+      <View
+        style = {{ 
+          height : 200,
+        }}>
+        <LottieView autoPlay ref = {animation}
+          style = {{
+            width: 200, 
+            height: 200, 
+          }}
+          source={require("../../assets/lottie/food-logo.json")}
+          />
       </View>
-      {loading ? (
-        <ActivityIndicator size ="large" />
-      ) : (
-        <>
-          <TouchableOpacity 
-          style = {styles.buttonContainer}
-          onPress = {() => signIn()} 
-          >
-          <Text style = {styles.buttonText}> Login </Text> 
+
+        <Text style={styles.headerText}>Welcome Back.</Text>
+      </View>
+
+      {/* Form */}
+      <View style={styles.form}>
+        {/* Email */}
+        <View style={styles.inputContainer}>
+          <Ionicons name={"mail-outline"} size={30} color='#808080' />
+          <TextInput 
+            value={email} 
+            style={styles.input} 
+            placeholder="Enter your email" 
+            autoCapitalize='none' 
+            onChangeText={(text) => setEmail(text)} 
+          />
+        </View>
+
+        {/* Password */}
+        <View style={styles.inputContainer}>
+          <Ionicons name={"lock-closed-outline"} size={30} color='#808080' />
+          <TextInput 
+            value={password} 
+            style={styles.input} 
+            placeholder="Enter your password" 
+            autoCapitalize='none' 
+            onChangeText={(text) => setPassword(text)} 
+            secureTextEntry={secureEntry}
+          />
+          <TouchableOpacity onPress={() => setSecureEntry(prev => !prev)}>
+            <Ionicons name={secureEntry ? "eye-off-outline" : "eye-outline"} size={30} color='#808080' />
           </TouchableOpacity>
-        </>
-      )
-      }
+        </View>
+      </View>
+      {/* Login button*/}
+      {loading ? (
+        <ActivityIndicator size="large" />
+      ) : (
+        <TouchableOpacity 
+          style={styles.buttonContainer}
+          onPress={signIn}
+        >
+          <Text style={styles.buttonText}>Login</Text> 
+        </TouchableOpacity>
+      )}
       
-      <Button 
-        title= "Forgot Password"
-        onPress={() => navigation.navigate('ForgetPassword')} //send forget password email
-        color="#a9a9a9" 
-      />  
-      <View style = {styles.row}>
-        <Text style = {styles.desc}> No account? </Text>
-        <Button
-          title = "Create one."
-          onPress={() => navigation.navigate('SignUp')}
-          color = '#ff8271'
-        />
+      {/* Forget Password button */}
+      <TouchableOpacity 
+        style={styles.forgotButton}
+        onPress={() => navigation.navigate('ForgetPassword')}
+      >
+        <Text style={[styles.forgotButtonText, { fontFamily: "Poppins-Light" }]}>Forgot Password</Text>
+      </TouchableOpacity>  
+      
+      {/* Sign up button */}
+      <View style={styles.row}>
+        <Text style={styles.desc}>No account? </Text>
+        <TouchableOpacity onPress={() => navigation.navigate('SignUp')}>
+          <Text style={styles.createAccountText}>Create one.</Text>
+        </TouchableOpacity>
       </View>
     </View>
-  )
+  );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1, //flex: 1 Takes up the full screen; flex has different values
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#fff5e6',
+    flex: 1,
+    backgroundColor: colors.cream,
+    padding: 20,
   },
-
+  backButtonWrapper: {
+    marginTop: 30,
+  },
+  iconContainer: {
+    height: 40,
+    width: 40,
+    backgroundColor: colors.lightgrey,
+    borderRadius: 20,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  textContainer: {
+    marginVertical: 20,
+    alignItems: 'center',
+  },
   logo: {
     width: '70%',
     height: 150,
-    //resizeMode: 'contain',
-    marginBottom : 15, 
+    marginBottom: 15,
   },
-
   headerText: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: '#000000',
-    marginBottom: 20,
+    color: colors.black,
+    fontFamily: fonts.Bold,
   },
-
   form: {
-    width: '80%',
+    marginTop: 20,
+    alignItems: "center",
+    justifyContent: "center",
   },
-
-  label: {
-    fontSize: 16,
-    color: 'a9a9a9',
-  },
-
   input: {
-    borderWidth: 1,
-    borderColor: '#000000',
-    padding: 10,
-    marginBottom: 15,
-    borderRadius: 5,
+    flex: 1,
+    paddingHorizontal: 20,
+    fontFamily: fonts.Light,
   },
-
-  row: { //find a better label for this
+  row: {
     flexDirection: 'row',
+    justifyContent: "center",
+    alignItems: "center",
   },
-
   desc: {
-    fontSize: 18,
-    color: 'a9a9a9',
+    fontSize: 16,
+    color: colors.darkgrey,
     marginTop: 8,
+    fontFamily: fonts.Light,
   },
-
   buttonContainer: {
-    backgroundColor: '#ff8271', // Button background color
-    borderRadius: 20, // Border radius to make it rounded
+    backgroundColor: colors.pink,
+    borderRadius: 20,
     paddingVertical: 10,
     paddingHorizontal: 20,
     height: 40,
     width: '40%',
-    resizeMode: 'contain',
     marginTop: 15,
-
+    alignItems: "center",
+    justifyContent: "center",
+    alignSelf: 'center', // Center the button horizontally
   },
-
   buttonText: { 
     fontSize: 17,
     fontWeight: 'bold',
-    color: '#ffffff',
+    color: colors.white,
     textAlign: 'center',
+  },
+  inputContainer: {
+    borderWidth: 1,
+    padding: 10,
+    borderRadius: 100,
+    flexDirection: "row",
+    borderColor: colors.darkgrey,
+    alignItems: "center",
+    marginBottom: 20,
+  },
+  forgotButton: {
+    marginTop: 20,
+    alignSelf: 'center',
+  },
+  forgotButtonText: {
+    color: colors.darkgrey,
+    fontSize: 16,
+  },
+  createAccountText: {
+    fontSize: 16,
+    color: colors.pink,
+    marginTop: 8,
+    fontFamily: fonts.Light,
   },
 });

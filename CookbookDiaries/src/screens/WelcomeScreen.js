@@ -2,6 +2,8 @@ import { View, Text, Image, TouchableOpacity } from 'react-native';
 import React, { useRef } from 'react';
 import { StatusBar } from "expo-status-bar"; 
 import LogoImage from '../../assets/images/Logo.png';
+import { fonts } from '../utilities/fonts';
+import { colors } from '../utilities/colors';
 
 {/* height and widthPercentageToDP converts a percentage value into 
 corresponding pizel value based on device screen height, ensures UI component scales
@@ -52,6 +54,7 @@ export default function WelcomeScreen() {
         className = "text-[#ff8271] tracking-widest font-medium"
         style = {{
           fontSize: hp(1.75),
+          fontFamily: fonts.Light,
         }}> 
           Cook some good food today!
         </Text>
@@ -61,7 +64,7 @@ export default function WelcomeScreen() {
       <View> 
         <TouchableOpacity
         style = {{
-          backgroundColor: "#ff8271",
+          backgroundColor: colors.pink,
           paddingHorizontal: hp(5), 
           paddingVertical: hp(1.5),
           borderRadius: hp(1.5),
@@ -70,9 +73,10 @@ export default function WelcomeScreen() {
         >
           <Text
             style = {{
-              color: "#fff",
+              color: colors.white,
               fontSize: hp(2), 
               fontWeight: "medium",
+              fontFamily: fonts.Bold,
             }}>
             Let's get started!
           </Text>

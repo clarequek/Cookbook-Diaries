@@ -26,8 +26,17 @@
     },
     "extra": {
       "eas": {
-        "projectId": "3de8f6d2-4bde-43e1-84f6-63d6019a8f06"
+        "projectId": "63171d73-4d4f-4e01-91c9-6baf7c997503"
       }
-    }
+    },
+    "owner": "clarequek",
+    "plugins": [
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "The app accesses your photos to let you share them with your friends."
+        }
+      ]
+    ]
   }
 }
