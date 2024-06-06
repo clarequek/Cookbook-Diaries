@@ -17,7 +17,7 @@ export default function RecipeDetailsScreen(props) {
     useEffect(() => { 
         getMealData(item.idMeal);
     })
-
+//hehe
     const getMealData = async (id) => { 
         try { 
             const response = await axios.get(`https://www.themealdb.com/api/json/v1/1/lookup.php?i=${id}`)
