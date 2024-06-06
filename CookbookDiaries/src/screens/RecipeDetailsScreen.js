@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react'
 import { StatusBar } from 'expo-status-bar'
 import { heightPercentageToDP as hp } from 'react-native-responsive-screen'
 import { widthPercentageToDP as wp } from 'react-native-responsive-screen'
-import { CachedImage } from '../../utilities/index'
+import { CachedImage } from '../utilities/index'
 import { useNavigation } from '@react-navigation/native'
 
 

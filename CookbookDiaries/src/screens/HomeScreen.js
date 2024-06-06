@@ -1,4 +1,4 @@
-import { View, Text, ScrollView, SafeAreaView, Image, TextInput } from 'react-native'
+import { View, Text, ScrollView, SafeAreaView, Image, TextInput, Button } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { 
   MagnifyingGlassIcon, 
@@ -10,8 +10,10 @@ import Categories from '../components/categories';
 import axios from "axios";
 import { get } from "react-native/Libraries/TurboModule/TurboModuleRegistry"; 
 import Recipes from '../components/recipes';
-import { FIREBASE_DATABASE } from '../../FirebaseConfig'; 
+import { FIREBASE_DB, FIREBASE_AUTH } from '../../FirebaseConfig';
 import { getDatabase, ref, get as getFireBase } from "firebase/database";
+import { useNavigation } from '@react-navigation/native';
+import { doc, getDoc } from 'firebase/firestore';
 
 
 {/* import heroicons if you wanna make icons on a home screen */}
@@ -21,9 +23,14 @@ export default function HomeScreen() {
   const [categories, setCategories] = useState([])
   const [meals, setMeals] = useState([])
   const [userName, setUserName] = useState('');
+  const [profileImageUrl, setProfileImageUrl] = useState('');
+  const navigation = useNavigation();
+  const [userData, setUserData] = useState(null);
+  const db = FIREBASE_DB;
+  const auth = FIREBASE_AUTH;
 
   useEffect(() => {
-    fetchUserName();
+    fetchUserData();
     getCategories();
     getRecipes();
   }, []); 
@@ -34,19 +41,21 @@ export default function HomeScreen() {
     setMeals([]);
   }; 
 
-  const fetchUserName = async () => {
-    const db = getDatabase(FIREBASE_DATABASE);
-    const userRef = ref(db, 'users/USER_ID/name'); // Adjust the path according to your database structure
+  const fetchUserData = async () => {
+    const db = firebase.firestore();
+    const userDocRef = db.collection("users").doc("USER_ID"); // Adjust "USER_ID" according to your database structure
 
     try {
-      const snapshot = await getFireBase(userRef);
-      if (snapshot.exists()) {
-        setUserName(snapshot.val());
+      const userDocSnap = await userDocRef.get();
+      if (userDocSnap.exists) {
+        const userData = userDocSnap.data();
+        setUserName(userData.name || ''); // Assuming 'username' is a field in your user data
+        setProfileImageUrl(userData.profileImage || ''); // Assuming 'profileImage' is a field in your user data
       } else {
-        console.log('No data available');
+        console.log('No such document!');
       }
     } catch (error) {
-      console.error(error);
+      console.error("Error fetching user data:", error);
     }
   };
 
@@ -92,15 +101,18 @@ export default function HomeScreen() {
           <View className = "mx-4 flex-row justify-between items-center"> 
             <AdjustmentsHorizontalIcon size = {hp(4)} color = {"gray"}/>
             <Image
-              source = {require("../../assets/images/avatar.png")}
+              source={profileImageUrl ? { uri: profileImageUrl } : require("../../assets/images/DefaultAvatar.png")}
               style = {{
                 width: hp(5),
                 height: hp(5), 
                 resizeMode: "cover",
               }}
               className = "rounded-full"
-              />
+            />
           </View>
+
+          {/* Temporary profile page navigator */}
+          <Button title="Go to Profile" onPress={() => navigation.navigate('Profile')} />
 
           {/* Headlines */}
           <View className = "mx-4 space-y-1 mb-2"> 
