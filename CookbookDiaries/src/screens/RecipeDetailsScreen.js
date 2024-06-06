@@ -5,15 +5,20 @@ import { StatusBar } from 'expo-status-bar'
 import { heightPercentageToDP as hp } from 'react-native-responsive-screen'
 import { widthPercentageToDP as wp } from 'react-native-responsive-screen'
 import { useNavigation } from '@react-navigation/native'
+import { CachedImage } from '../utilities/index'
+import axios from 'axios'
 
 
 export default function RecipeDetailsScreen(props) {
-    let item = props.route.paramsn
+    let item = props.route.params
     const navigation = useNavigation
     const [meals, setMeal] = useState(null)
     const [loading, setLoading] = useState(true)
     const [isFavourite, setIsFavourite] = useState(false)
 
+    useEffect(() => { 
+        getMealData(item.idMeal)
+    }); 
 
     const getMealData = async (id) => { 
         try { 
@@ -50,6 +55,14 @@ export default function RecipeDetailsScreen(props) {
 
         {/* Recipe Image */}
         <View className = "flex-row, justify-center"> 
+            <CachedImage 
+                uri = {item.strMealThumb}
+                sharedTransitionTag = {item.strMeal}
+                style = {{ 
+                    width: wp(100),
+                    height: hp(45)
+                }}
+            />
         </View>
         
             <Text>
