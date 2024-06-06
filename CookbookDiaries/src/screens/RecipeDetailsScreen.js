@@ -1,9 +1,9 @@
+
 import { View, Text, ScrollView, Image } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { StatusBar } from 'expo-status-bar'
 import { heightPercentageToDP as hp } from 'react-native-responsive-screen'
 import { widthPercentageToDP as wp } from 'react-native-responsive-screen'
-import { CachedImage } from '../utilities/index'
 import { useNavigation } from '@react-navigation/native'
 
 
@@ -14,10 +14,7 @@ export default function RecipeDetailsScreen(props) {
     const [loading, setLoading] = useState(true)
     const [isFavourite, setIsFavourite] = useState(false)
 
-    useEffect(() => { 
-        getMealData(item.idMeal);
-    })
-//hehe
+
     const getMealData = async (id) => { 
         try { 
             const response = await axios.get(`https://www.themealdb.com/api/json/v1/1/lookup.php?i=${id}`)
@@ -53,16 +50,12 @@ export default function RecipeDetailsScreen(props) {
 
         {/* Recipe Image */}
         <View className = "flex-row, justify-center"> 
-            <CachedImage 
-                uri = {item.strMealThumb}
-                sharedTransitiontag = {item.strMeal}
-                style = {{
-                    width: wp(100), 
-                    height: hp(45),
-                }}/>
         </View>
         
-            <Text>RecipeDetailsScreen</Text>
-        </ScrollView>
+            <Text>
+                RecipeDetailsScreen
+            </Text>
+            
+         </ScrollView>
     )
 }
