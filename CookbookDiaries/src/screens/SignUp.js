@@ -9,7 +9,6 @@ import LottieView from "lottie-react-native";
 import { fonts } from "../utilities/fonts";
 import { colors } from "../utilities/colors";
 import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
-import * as ImagePicker from 'expo-image-picker';
 
 //Test on actual phone to see whether profile picture upload works
 //On simulator currently not working
@@ -26,19 +25,6 @@ export default function SignUp() {
   const [loading, setLoading] = useState(false);
   const auth = FIREBASE_AUTH;
   const db = FIREBASE_DB;
-
-  const pickImage = async () => {
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: true,
-      aspect: [1, 1],
-      quality: 1,
-    });
-
-    if (!result.canceled) {
-      setProfileImage(result.uri);
-    }
-  };
 
   const checkUsernameExists = async (username) => {
     const usersRef = collection(db, 'users');
@@ -135,7 +121,7 @@ export default function SignUp() {
         <Text style={styles.headerText}>Sign up to get started.</Text>
 
         {/* Profile Picture Upload */}
-        <TouchableOpacity style={styles.avatar} onPress={pickImage}>
+        <TouchableOpacity style={styles.avatar}>
           {profileImage ? (
             <Image source={{ uri: profileImage }} style={styles.profileImage} />
           ) : (
