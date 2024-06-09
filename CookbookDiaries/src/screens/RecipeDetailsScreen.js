@@ -6,10 +6,10 @@ import { heightPercentageToDP as hp } from 'react-native-responsive-screen'
 import { widthPercentageToDP as wp } from 'react-native-responsive-screen'
 import { useNavigation } from '@react-navigation/native'
 import { CachedImage } from '../utilities/index'
-import axios from 'axios'
 import { ChevronLeftIcon } from 'react-native-heroicons/outline'
 import { HeartIcon } from "react-native-heroicons/solid"
 import Loading from '../components/loading'
+import axios from 'axios'
 
 
 export default function RecipeDetailsScreen(props) {
@@ -18,7 +18,7 @@ export default function RecipeDetailsScreen(props) {
     const [meals, setMeal] = useState(null)
     const [isLoading, setIsLoading] = useState(true)
     const [isFavourite, setIsFavourite] = useState(false)
-
+    
     useEffect(() => { 
         getMealData(item.idMeal)
     }); 
@@ -97,13 +97,23 @@ export default function RecipeDetailsScreen(props) {
         isLoading ? (
             <Loading size = "large" className = "mt-16" />
         ) : ( 
-            <View className = "px-4 flex justify-between space-y-4 bg-white mt-[-46"
+            <View className = "px-4 flex justify-between space-y-4 bg-white mt-[-46]"
                 style = {{
                     borderTopLeftRadius: 50, 
                     borderTopRightRadius : 50, 
                     paddingTop : hp(3), 
                 }}>
             {/* Meal Name */}
+            <View className = "space-y-2 px-4">
+                <Text className = "font-bold flex-1 text-neutral-700"> 
+                    {item?.strMeal}
+                </Text> 
+
+                <Text> 
+                    {item?.strArea}
+                </Text>
+
+            </View>
 
             </View>
         )

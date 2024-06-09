@@ -1,3 +1,4 @@
+
 import { View, Text, ScrollView, SafeAreaView, Image, TextInput, Button } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { 
@@ -101,7 +102,7 @@ export default function HomeScreen() {
           <View className = "mx-4 flex-row justify-between items-center"> 
             <AdjustmentsHorizontalIcon size = {hp(4)} color = {"gray"}/>
             <Image
-              source={profileImageUrl ? { uri: profileImageUrl } : require("../../assets/images/DefaultAvatar.png")}
+              // source={profileImageUrl ? { uri: profileImageUrl } : require("../../assets/images/DefaultAvatar.png")}
               style = {{
                 width: hp(5),
                 height: hp(5), 
