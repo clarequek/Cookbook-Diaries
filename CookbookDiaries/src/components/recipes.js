@@ -5,13 +5,20 @@ import { heightPercentageToDP as hp } from 'react-native-responsive-screen'
 import MasonryList from "@react-native-seoul/masonry-list"
 import Loading from './loading'
 import RecipesCard from './recipescard'
+import Animated, { FadeInDown } from 'react-native-reanimated'
 
 export default function Recipes({meals, categories}) {
 
     const navigation = useNavigation()
-  return (
-    <View
-    className = "mx-4 space-y-4">
+  
+    return (
+    <Animated.View
+    className = "mx-4 space-y-4"
+    entering={FadeInDown.delay(200)
+        .duration(700)
+        .springify()
+        .damping(12)}
+        >
         <Text
         style = {{ 
             fontSize: hp(2), 
@@ -21,7 +28,12 @@ export default function Recipes({meals, categories}) {
             {meals.length} Recipes
             {/* shows like "46 Recipes" */}
         </Text>
-        <View> 
+        <Animated.View
+        entering={FadeInDown.delay(200)
+            .duration(700)
+            .springify()
+            .damping(12)}
+        > 
             {categories.length == 0 || meals.length == 0 
             ? (<Loading
                 size = "large"
@@ -37,7 +49,7 @@ export default function Recipes({meals, categories}) {
                 )}
                 onEndReachedThreshold={0.1}
                 />)}
-        </View>
-    </View>
+        </Animated.View>
+    </Animated.View>
   )
 }

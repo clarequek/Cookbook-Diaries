@@ -10,12 +10,13 @@ import { ChevronLeftIcon } from 'react-native-heroicons/outline'
 import { HeartIcon } from "react-native-heroicons/solid"
 import Loading from '../components/loading'
 import axios from 'axios'
+import Animated, { FadeInDown } from 'react-native-reanimated'
 
 
 export default function RecipeDetailsScreen(props) {
     let item = props.route.params
     const navigation = useNavigation()
-    const [meals, setMeal] = useState(null)
+    const [meal, setMeal] = useState(null)
     const [isLoading, setIsLoading] = useState(true)
     const [isFavourite, setIsFavourite] = useState(false)
     
@@ -42,13 +43,15 @@ export default function RecipeDetailsScreen(props) {
         let indexes = []
 
         for (let i = 1; i <= 20; i++) { 
-            if (meal["strIngredient" + 1]) { 
+            if (meal["strIngredient" + i]) { 
                 indexes.push(i)
             }
         }
+
+        return indexes //every function must return something 
     }
     return (
-        <ScrollView className = "flex-1"
+        <ScrollView className = "flex-1 bg-white"
         showsVerticalScrollIndicator = {false}
         contentContainerStyle = {{ 
             paddingBottom : 30, 
@@ -76,20 +79,22 @@ export default function RecipeDetailsScreen(props) {
             >
                 <ChevronLeftIcon
                 size={hp(3.5)}
-                color={"#f64e32"}
+                color={"#ff8271"}
                 strokeWidth={4.5}
                 />
             </TouchableOpacity>
+        
+            <View className="p-2 rounded-full bg-white mr-5">
+                <TouchableOpacity 
+                onPress={() => setIsFavourite(!isFavourite)}>
+                    <HeartIcon
+                    size={hp(3.5)}
+                    color={isFavourite ? "#ff8271" : "gray"}
+                    strokeWidth={4.5}
+                    />
+                </TouchableOpacity>
+            </View>
 
-            <TouchableOpacity 
-            className="p-2 rounded-full bg-white mr-5"
-            onPress={() => setIsFavourite(!isFavourite)}>
-                <HeartIcon
-                size={hp(3.5)}
-                color={isFavourite ? "#f64e32" : "gray"}
-                strokeWidth={4.5}
-                />
-            </TouchableOpacity>
         </View>
         
         {/* Meal Description */}
@@ -104,26 +109,98 @@ export default function RecipeDetailsScreen(props) {
                     paddingTop : hp(3), 
                 }}>
             {/* Meal Name */}
-            <View className = "space-y-2 px-4">
-                <Text className = "font-bold flex-1 text-neutral-700"> 
-                    {item?.strMeal}
-                </Text> 
+            <Animated.View
+            className="space-y-2 px-4"
+            entering={FadeInDown.delay(200)
+            .duration(700)
+            .springify()
+            .damping(12)}>
+                <View className = "space-y-2 px-4">
+                    <Text className = "font-bold flex-1 text-neutral-700"
+                        style = {{ 
+                            fontSize: hp(3)
+                        }}> 
+                        {meal?.strMeal}
+                    </Text> 
+                </View>
+            </Animated.View>
 
-                <Text> 
-                    {item?.strArea}
+            {/* Ingredients */}
+            <Animated.View className="space-y-4 p-4"
+            entering={FadeInDown.delay(300)
+            .duration(700)
+            .springify()
+            .damping(12)}>
+                <Text
+                style={{
+                    fontSize: hp(2.5),
+                }}
+                className="font-bold flex-1 text-neutral-700"
+                >
+                Ingredients
                 </Text>
 
-            </View>
+                <View className="space-y-2 ml-3">
+                {ingredientsIndexes(meal).map((i) => {
+                    return (
+                    <View className="flex-row space-x-4 items-center" key={i}>
+                        <View
+                        className="bg-[#ff8271] rounded-full"
+                        style={{
+                            height: hp(1.5),
+                            width: hp(1.5),
+                        }}
+                        />
+                        <View className="flex-row space-x-2">
+                        <Text
+                            style={{
+                            fontSize: hp(1.7),
+                            }}
+                            className="font-medium text-neutral-800"
+                        >
+                            {meal["strIngredient" + i]}
+                        </Text>
+                        <Text
+                            className="font-extrabold text-neutral-700"
+                            style={{
+                            fontSize: hp(1.7),
+                            }}
+                        >
+                            {meal["strMeasure" + i]}
+                        </Text>
+                        </View>
+                    </View>
+                    );
+                })}
+                </View>
+            </Animated.View>
 
-            </View>
-        )
-        }
+          {/* Instructions */}
+            <Animated.View
+            className="space-y-4 p-4"
+            entering={FadeInDown.delay(400)
+            .duration(700)
+            .springify()
+            .damping(12)}>
+                <Text
+                className="font-bold flex-1 text-neutral-700"
+                style={{
+                    fontSize: hp(2.5),
+                }}
+                >
+                Instructions
+                </Text>
 
-        
-            <Text>
-                RecipeDetailsScreen
-            </Text>
-            
-         </ScrollView>
-    )
+                <Text
+                className="text-neutral-700"
+                style={{
+                    fontSize: hp(1.7),
+                }}>
+                {meal?.strInstructions}
+                </Text>
+            </Animated.View>
+        </View>
+      )}
+    </ScrollView>
+  );
 }
