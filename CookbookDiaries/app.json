@@ -19,17 +19,20 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "permissions": [
+        "android.permission.RECORD_AUDIO"
+      ]
     },
     "web": {
       "favicon": "./assets/favicon.png"
     },
     "extra": {
       "eas": {
-        "projectId": "63171d73-4d4f-4e01-91c9-6baf7c997503"
+        "projectId": "3de8f6d2-4bde-43e1-84f6-63d6019a8f06"
       }
     },
-    "owner": "clarequek",
+    "owner": "ddxliaa",
     "plugins": [
       [
         "expo-image-picker",

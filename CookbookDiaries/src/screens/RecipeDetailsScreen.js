@@ -9,13 +9,14 @@ import { CachedImage } from '../utilities/index'
 import axios from 'axios'
 import { ChevronLeftIcon } from 'react-native-heroicons/outline'
 import { HeartIcon } from "react-native-heroicons/solid"
+import Loading from '../components/loading'
 
 
 export default function RecipeDetailsScreen(props) {
     let item = props.route.params
-    const navigation = useNavigation
+    const navigation = useNavigation()
     const [meals, setMeal] = useState(null)
-    const [loading, setLoading] = useState(true)
+    const [isLoading, setIsLoading] = useState(true)
     const [isFavourite, setIsFavourite] = useState(false)
 
     useEffect(() => { 
@@ -28,7 +29,7 @@ export default function RecipeDetailsScreen(props) {
         
             if (response && response.data) {
                 setMeal(response.data.meals[0])
-                setLoading(false)
+                setIsLoading(false)
             }
 
         } catch(error) { 
@@ -68,28 +69,45 @@ export default function RecipeDetailsScreen(props) {
         </View>
 
         {/* Back Button and Favorite Icon */}
-
         <View className="w-full absolute flex-row justify-between items-center pt-10">
-            <View className="p-2 rounded-full bg-white ml-5">
-            <TouchableOpacity onPress={() => navigation.goBack()}>
+            <TouchableOpacity 
+            className="p-2 rounded-full bg-white ml-5"
+            onPress = {() => navigation.goBack()}
+            >
                 <ChevronLeftIcon
                 size={hp(3.5)}
                 color={"#f64e32"}
                 strokeWidth={4.5}
                 />
             </TouchableOpacity>
-            </View>
 
-            <View className="p-2 rounded-full bg-white mr-5">
-            <TouchableOpacity onPress={() => setIsFavourite(!isFavourite)}>
+            <TouchableOpacity 
+            className="p-2 rounded-full bg-white mr-5"
+            onPress={() => setIsFavourite(!isFavourite)}>
                 <HeartIcon
                 size={hp(3.5)}
                 color={isFavourite ? "#f64e32" : "gray"}
                 strokeWidth={4.5}
                 />
             </TouchableOpacity>
-            </View>
         </View>
+        
+        {/* Meal Description */}
+        { 
+        isLoading ? (
+            <Loading size = "large" className = "mt-16" />
+        ) : ( 
+            <View className = "px-4 flex justify-between space-y-4 bg-white mt-[-46"
+                style = {{
+                    borderTopLeftRadius: 50, 
+                    borderTopRightRadius : 50, 
+                    paddingTop : hp(3), 
+                }}>
+            {/* Meal Name */}
+
+            </View>
+        )
+        }
 
         
             <Text>
