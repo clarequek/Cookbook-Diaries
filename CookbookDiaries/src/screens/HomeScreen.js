@@ -170,8 +170,6 @@ export default function HomeScreen() {
           <View>
             <Recipes meals = {meals} categories = {categories}/>
           </View>
-
-
         </ScrollView>
       </SafeAreaView>
     </View>
