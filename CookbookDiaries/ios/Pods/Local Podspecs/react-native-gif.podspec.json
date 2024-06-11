@@ -1,0 +1,23 @@
+{
+  "name": "react-native-gif",
+  "version": "1.0.3",
+  "summary": "FLAnimatedImage for React Native",
+  "license": "MIT",
+  "authors": "Samvel Avanesov (seavan@gmail.com)",
+  "homepage": "https://github.com/seavan/react-native-gif",
+  "platforms": {
+    "ios": "9.0"
+  },
+  "source": {
+    "git": "https://github.com/seavan/react-native-gif.git"
+  },
+  "source_files": "ios/**/*.{h,m}",
+  "dependencies": {
+    "React": [
+
+    ],
+    "FLAnimatedImage": [
+
+    ]
+  }
+}

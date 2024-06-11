@@ -1,0 +1,1 @@
+../../../../../node_modules/react-native-gif/ios/RNFLAnimatedImage/RNFLAnimatedImage/RNFLAnimatedImageManager.h
