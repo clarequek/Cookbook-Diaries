@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, KeyboardAvoidingView, TextInput, Platform, TouchableOpacity, Keyboard } from 'react-native'
+import { View, Text, StyleSheet, KeyboardAvoidingView, TextInput, Platform, TouchableOpacity, Keyboard, Button } from 'react-native'
 import React, { useState } from 'react'
 import { useNavigation } from '@react-navigation/native';
 import Task from '../components/task';
@@ -31,6 +31,9 @@ const GroceryListScreen = () => {
 
       {/* Your grocery list */}
       <View style = {styles.tasksWrapper}>
+        {/* Temporary home navigator */}
+        <Button title="Go to Home" onPress={() => navigation.navigate('Home')} />
+
         <Text style = {styles.sectionTitle}> Clarelia, this is your grocery list! </Text>
 
         <View style = {styles.items}>
