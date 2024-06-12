@@ -28,11 +28,11 @@ const styles = StyleSheet.create({
     item: {
         backgroundColor: "#FFF",
         padding: 15, 
-        borderRadius: 10,
+        borderRadius: 90,
         flexDirection: 'row', 
         alignItems: 'center', 
         justifyContent: 'space-between', 
-        marginBottom: 20, 
+        marginBottom: 10, 
     },
     itemLeft: {
         flexDirection: 'row', 
@@ -40,21 +40,22 @@ const styles = StyleSheet.create({
         flexWrap: 'wrap' //wrap to next line if it gets too long
     },
     checkbox: {
-        width: 24, 
-        height: 24,
-        backgroundColor: "blue", 
+        width: 25, 
+        height: 25,
+        backgroundColor: "#ff8271", 
         opacity: 0.4,
         borderRadius: 5, 
         marginRight: 14,
     },
     itemText: {
         maxWidth: '80%',
+        fontSize: 16
 
     },
     circular: {
         width: 12, 
         height: 12, 
-        borderColor : "blue", 
+        borderColor : "#ff8271", 
         borderWidth: 2, 
         borderRadius: 5
 
