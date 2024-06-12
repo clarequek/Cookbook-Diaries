@@ -112,6 +112,9 @@ export default function HomeScreen() {
             />
           </View>
 
+          {/* Temporary to do list navigator */}
+          <Button title="Go to Grocery List" onPress={() => navigation.navigate('GroceryList')} />
+
           {/* Temporary profile page navigator */}
           <Button title="Go to Profile" onPress={() => navigation.navigate('Profile')} />
 
