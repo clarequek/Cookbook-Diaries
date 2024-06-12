@@ -24,7 +24,7 @@ export default function AppNavigation() {
   return (
     <NavigationContainer>
       <Stack.Navigator
-        initialRouteName='Home'
+        initialRouteName='GroceryList'
         screenOptions={{
           headerShown: false,
         }}
