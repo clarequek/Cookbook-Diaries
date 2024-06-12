@@ -1,7 +1,9 @@
-import { View, Text, StyleSheet, KeyboardAvoidingView, TextInput, Platform, TouchableOpacity, Keyboard, Button } from 'react-native'
+import { View, Text, StyleSheet, KeyboardAvoidingView, TextInput, Platform, TouchableOpacity, Keyboard, Button, Image } from 'react-native'
 import React, { useState } from 'react'
 import { useNavigation } from '@react-navigation/native';
 import Task from '../components/task';
+import { heightPercentageToDP as hp } from 'react-native-responsive-screen';
+import { widthPercentageToDP as wp } from 'react-native-responsive-screen';
 
 const GroceryListScreen = () => {
     const navigation = useNavigation();
@@ -28,13 +30,17 @@ const GroceryListScreen = () => {
     }
   return ( 
     <View style = {styles.container}>
+      <Image
+        source = {require("../../assets/images/brunchtransparent.png")} 
+        style = {styles.image}/>
 
-      {/* Your grocery list */}
+      {/* Title */}
       <View style = {styles.tasksWrapper}>
+
         {/* Temporary home navigator */}
         <Button title="Go to Home" onPress={() => navigation.navigate('Home')} />
 
-        <Text style = {styles.sectionTitle}> Clarelia, this is your grocery list! </Text>
+        <Text style = {styles.sectionTitle}> My grocery list: </Text>
 
         <View style = {styles.items}>
           {
@@ -60,7 +66,7 @@ const GroceryListScreen = () => {
         style = {styles.writeTaskWrapper}> 
         <TextInput 
         style = {styles.textInput}
-        placeholder='Write a task'
+        placeholder='Add to your grocery list!'
         value = {task}
         onChangeText={text => setTask(text)} />
 
@@ -84,20 +90,25 @@ const styles = StyleSheet.create({
     flex: 1, 
     backgroundColor: '#fff5e6'
   },
+  image : { 
+    width: wp(100),
+    height: hp(20),
+  },
   tasksWrapper: {
-    paddingTop: 80,
+    paddingTop: 0,
     paddingHorizontal: 20,
   },
   sectionTitle: {
-    fontSize: 24, 
+    fontSize: hp(3.5),
     fontWeight: 'bold',
+    color: "#ebb01a",
   },
   items: {
-    marginTop: 30
+    marginTop: 20
   }, 
   writeTaskWrapper: {
     position: 'absolute', 
-    bottom: 60, 
+    bottom: 30, 
     width: "100%", 
     flexDirection: "row", 
     justifyContent: "space-around", 
@@ -105,18 +116,19 @@ const styles = StyleSheet.create({
 
   },
   textInput: { 
+    fontSize: 20,
+    fontWeight: '400',
     backgroundColor: "#FFF",
     paddingVertical: 15, 
     paddingHorizontal: 15, 
     borderRadius: 60,
     borderColor: "#C0C0C0",
     borderWidth: 1,
-    width: 250,
-
+    width: wp(67),
   },
   addWrapper: { 
-    width: 60,
-    height: 60,
+    width: wp(20),
+    height: hp(10),
     backgroundColor: "#FFF", 
     borderRadius: 60, 
     borderWidth: 1, 
@@ -125,6 +137,8 @@ const styles = StyleSheet.create({
     alignItems: 'center'
   },
   addText: { 
+    fontSize: 28,
+    fontWeight: '500'
 
   }
 })
