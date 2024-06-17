@@ -32,7 +32,7 @@ const GroceryListScreen = () => {
     <View style = {styles.container}>
       <Image
         source = {require("../../assets/images/brunchtransparent.png")} 
-        style = {styles.image}/>
+        style = {styles.headerImage}/>
 
       {/* Title */}
       <View style = {styles.tasksWrapper}>
@@ -90,7 +90,7 @@ const styles = StyleSheet.create({
     flex: 1, 
     backgroundColor: '#fff5e6'
   },
-  image : { 
+  headerImage : { 
     width: wp(100),
     height: hp(20),
   },
