@@ -108,6 +108,29 @@ import {
             marginBottom: 20,
             alignItems: 'center',
           }}
+          onPress = {() => navigation.navigate("GroceryLocator")}
+          >
+            <Text
+              style = {{
+                color: colors.white,
+                fontSize: hp(2), 
+                fontWeight: "medium",
+                fontFamily: fonts.Bold,
+              }}>
+             Grocery Locator
+            </Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+          style = {{
+            backgroundColor: colors.pink,
+            paddingHorizontal: hp(5), 
+            paddingVertical: hp(1.5),
+            borderRadius: hp(1.5),
+            marginTop: 20,
+            marginBottom: 20,
+            alignItems: 'center',
+          }}
           onPress = {() => navigation.navigate("Profile")}
           >
             <Text
