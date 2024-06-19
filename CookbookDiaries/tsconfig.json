@@ -14,5 +14,4 @@
     "**/*.ts",
     "**/*.tsx"
   ],
-  // "extends": "expo/tsconfig.base"
 }
