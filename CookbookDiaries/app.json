@@ -13,16 +13,10 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.ddxliaa.cookbookdiaries"
-    },
-    "android": {
-      "adaptiveIcon": {
-        "foregroundImage": "./assets/images/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
-      },
-      "permissions": [
-        "android.permission.RECORD_AUDIO"
-      ]
+      "bundleIdentifier": "com.ddxliaa.cookbookdiaries",
+      "infoPlist": {
+        "NSLocationWhenInUseUsageDescription": "We need your location to show nearby grocery stores."
+      }
     },
     "web": {
       "favicon": "./assets/favicon.png"
