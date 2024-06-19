@@ -16,6 +16,7 @@ import RecipeDetailsScreen from '../screens/RecipeDetailsScreen';
 import ProfileScreen from '../screens/ProfileScreen';
 import GroceryListScreen from '../screens/GroceryList';
 import EditProfileScreen from '../screens/EditProfileScreen';
+import GroceryLocatorScreen from '../screens/GroceryLocator';
 
 
 const Stack = createNativeStackNavigator(); 
@@ -42,6 +43,7 @@ export default function AppNavigation() {
         <Stack.Screen name = "Profile" component={ProfileScreen}/>
         <Stack.Screen name = "GroceryList" component = {GroceryListScreen}/> 
         <Stack.Screen name = "EditProfile" component = {EditProfileScreen}/> 
+        <Stack.Screen name = "GroceryLocator" component = {GroceryLocatorScreen}/>
       </Stack.Navigator>
     </NavigationContainer>
   );

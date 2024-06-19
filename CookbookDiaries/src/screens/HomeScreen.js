@@ -121,6 +121,15 @@ export default function HomeScreen() {
             />
           </View>
 
+          {/* Temporary to do list navigator */}
+          <Button title="Go to Grocery List" onPress={() => navigation.navigate('GroceryList')} />
+
+          {/* Temporary grocery store navigator */}
+          <Button title="Go to Grocery Locator" onPress={() => navigation.navigate('GroceryLocator')} />
+
+          {/* Temporary profile page navigator */}
+          <Button title="Go to Profile" onPress={() => navigation.navigate('Profile')} />
+
           {/* Headlines */}
           <View className = "mx-4 space-y-1 mb-2"> 
             <View> 
