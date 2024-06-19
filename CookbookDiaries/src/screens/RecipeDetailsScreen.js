@@ -1,5 +1,5 @@
 
-import { View, Text, ScrollView, Image, TouchableOpacity } from 'react-native'
+import { View, Text, ScrollView, Image, TouchableOpacity, Button } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { StatusBar } from 'expo-status-bar'
 import { heightPercentageToDP as hp } from 'react-native-responsive-screen'
@@ -11,6 +11,8 @@ import { HeartIcon } from "react-native-heroicons/solid"
 import Loading from '../components/loading'
 import axios from 'axios'
 import Animated, { FadeInDown } from 'react-native-reanimated'
+import { fonts } from "../utilities/fonts";
+import { colors } from "../utilities/colors";
 
 
 export default function RecipeDetailsScreen(props) {
@@ -50,6 +52,22 @@ export default function RecipeDetailsScreen(props) {
 
         return indexes //every function must return something 
     }
+
+    const formatInstructions = (instructions) => {
+        return instructions.split('. ').map((instruction, index) => ({
+            step: index + 1,
+            instruction: instruction.trim()
+        })).filter(instruction => instruction.instruction);
+    };
+
+    const handleAddToGroceryList = () => {
+        const ingredients = ingredientsIndexes(meal).map((i) => ({
+            ingredient: meal["strIngredient" + i],
+            quantity: meal["strMeasure" + i]
+        }));
+        navigation.navigate('GroceryList', { ingredients });
+    };
+
     return (
         <ScrollView className = "flex-1 bg-white"
         showsVerticalScrollIndicator = {false}
@@ -118,7 +136,8 @@ export default function RecipeDetailsScreen(props) {
                 <View className = "space-y-2 px-4">
                     <Text className = "font-bold flex-1 text-neutral-700"
                         style = {{ 
-                            fontSize: hp(3)
+                            fontSize: hp(3),
+                            fontFamily: fonts.Bold,
                         }}> 
                         {meal?.strMeal}
                     </Text> 
@@ -134,6 +153,7 @@ export default function RecipeDetailsScreen(props) {
                 <Text
                 style={{
                     fontSize: hp(2.5),
+                    fontFamily: fonts.Bold,
                 }}
                 className="font-bold flex-1 text-neutral-700"
                 >
@@ -155,6 +175,7 @@ export default function RecipeDetailsScreen(props) {
                         <Text
                             style={{
                             fontSize: hp(1.7),
+                            fontFamily: fonts.Regular,
                             }}
                             className="font-medium text-neutral-800"
                         >
@@ -173,31 +194,47 @@ export default function RecipeDetailsScreen(props) {
                     );
                 })}
                 </View>
+
+                <Button
+                            title="Add to Grocery List"
+                            onPress={handleAddToGroceryList}
+                            color="#ff8271"
+                />
+                
             </Animated.View>
-
-          {/* Instructions */}
+            {/* Instructions */}
             <Animated.View
-            className="space-y-4 p-4"
-            entering={FadeInDown.delay(400)
-            .duration(700)
-            .springify()
-            .damping(12)}>
+                className="space-y-4 p-4"
+                entering={FadeInDown.delay(400)
+                    .duration(700)
+                    .springify()
+                    .damping(12)}>
                 <Text
-                className="font-bold flex-1 text-neutral-700"
-                style={{
-                    fontSize: hp(2.5),
-                }}
+                    className="font-bold flex-1 text-neutral-700"
+                    style={{
+                        fontSize: hp(2.5),
+                        fontFamily: fonts.Bold,
+                    }}
                 >
-                Instructions
+                    Instructions
                 </Text>
-
-                <Text
-                className="text-neutral-700"
-                style={{
-                    fontSize: hp(1.7),
-                }}>
-                {meal?.strInstructions}
-                </Text>
+                {formatInstructions(meal?.strInstructions).map((step, index) => (
+                    <View key={index} style={{ flexDirection: 'row', alignItems: 'flex-start' }}>
+                        <Text style={{ //bullet point
+                            fontSize: hp(1.7),
+                            color: 'black',
+                            fontWeight: 'bold',
+                            marginRight: 5,
+                            fontFamily: fonts.Bold,
+                        }}>{`${step.step}.`}</Text>
+                        <Text style={{ //actual instructions
+                            fontSize: hp(1.7),
+                            color: 'black',
+                            flexShrink: 1,
+                            fontFamily: fonts.Regular,
+                        }}>{step.instruction}</Text>
+                    </View>
+                ))}
             </Animated.View>
         </View>
       )}

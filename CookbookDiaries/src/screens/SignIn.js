@@ -30,7 +30,7 @@ export default function SignIn() {
     try {
       const response = await signInWithEmailAndPassword(auth, email, password);
       console.log(response);
-      navigation.navigate('Home');
+      navigation.navigate('Main');
     } catch (error) {
       console.log(error);
       alert('Invalid email address or password.');
@@ -212,7 +212,7 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
   },
   forgotButtonText: {
-    color: colors.darkgrey,
+    color: colors.pink,
     fontSize: 16,
   },
   createAccountText: {

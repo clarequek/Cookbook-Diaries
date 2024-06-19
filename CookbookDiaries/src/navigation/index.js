@@ -10,10 +10,12 @@ import SignInSignUpScreen from '../screens/SignInSignUp'
 import SignInScreen from '../screens/SignIn';
 import SignUpScreen from '../screens/SignUp';
 import ForgetPasswordScreen from '../screens/ForgetPassword';
+import MainScreen from '../screens/MainScreen';
 import HomeScreen from '../screens/HomeScreen';
 import RecipeDetailsScreen from '../screens/RecipeDetailsScreen';
 import ProfileScreen from '../screens/ProfileScreen';
 import GroceryListScreen from '../screens/GroceryList';
+import EditProfileScreen from '../screens/EditProfileScreen';
 
 
 const Stack = createNativeStackNavigator(); 
@@ -24,7 +26,7 @@ export default function AppNavigation() {
   return (
     <NavigationContainer>
       <Stack.Navigator
-        initialRouteName='GroceryList'
+        initialRouteName='Main'
         screenOptions={{
           headerShown: false,
         }}
@@ -34,10 +36,12 @@ export default function AppNavigation() {
         <Stack.Screen name="SignIn" component={SignInScreen} />
         <Stack.Screen name="SignUp" component={SignUpScreen} />
         <Stack.Screen name="ForgetPassword" component={ForgetPasswordScreen} />
+        <Stack.Screen name="Main" component={MainScreen} />
         <Stack.Screen name="Home" component={HomeScreen} />
         <Stack.Screen name = "RecipeDetails" component={RecipeDetailsScreen}/>
         <Stack.Screen name = "Profile" component={ProfileScreen}/>
         <Stack.Screen name = "GroceryList" component = {GroceryListScreen}/> 
+        <Stack.Screen name = "EditProfile" component = {EditProfileScreen}/> 
       </Stack.Navigator>
     </NavigationContainer>
   );

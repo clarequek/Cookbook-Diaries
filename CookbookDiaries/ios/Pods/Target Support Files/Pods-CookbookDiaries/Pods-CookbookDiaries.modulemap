@@ -1,6 +1,0 @@
-module Pods_CookbookDiaries {
-  umbrella header "Pods-CookbookDiaries-umbrella.h"
-
-  export *
-  module * { export * }
-}

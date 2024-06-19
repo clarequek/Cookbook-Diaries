@@ -1,5 +1,7 @@
 
-import { View, Text, ScrollView, SafeAreaView, Image, TextInput, Button } from 'react-native'
+import { View, Text, ScrollView, SafeAreaView, Image, TextInput, Button, StyleSheet, TouchableOpacity
+
+ } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { 
   MagnifyingGlassIcon, 
@@ -15,6 +17,9 @@ import { FIREBASE_DB, FIREBASE_AUTH } from '../../FirebaseConfig';
 import { getDatabase, ref, get as getFireBase } from "firebase/database";
 import { useNavigation } from '@react-navigation/native';
 import { doc, getDoc } from 'firebase/firestore';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import { fonts } from "../utilities/fonts";
+import { colors } from "../utilities/colors";
 
 
 {/* import heroicons if you wanna make icons on a home screen */}
@@ -89,6 +94,13 @@ export default function HomeScreen() {
   return (
     <View className = "flex-1 bg-[#fff5e6]">
       <StatusBar style = "dark" />
+      {/* Back arrow button */}
+      <TouchableOpacity style={styles.backButtonWrapper} onPress={() => navigation.goBack()}>
+        <View style={styles.iconContainer}>
+          <Ionicons name={"arrow-back-outline"} color='#000000' size={25} />
+        </View>
+      </TouchableOpacity>
+
       <SafeAreaView>
         <ScrollView 
         showsVerticalScrollIndicator={false}
@@ -112,18 +124,13 @@ export default function HomeScreen() {
             />
           </View>
 
-          {/* Temporary to do list navigator */}
-          <Button title="Go to Grocery List" onPress={() => navigation.navigate('GroceryList')} />
-
-          {/* Temporary profile page navigator */}
-          <Button title="Go to Profile" onPress={() => navigation.navigate('Profile')} />
-
           {/* Headlines */}
           <View className = "mx-4 space-y-1 mb-2"> 
             <View> 
               <Text
               style = {{
                 fontSize: hp(3),
+                fontFamily: fonts.SemiBold,
               }}
               className = "font-bold text-neutral-800"> 
                 Hi, {userName} {/* Display user name */}
@@ -133,6 +140,7 @@ export default function HomeScreen() {
             <Text
             style = {{
               fontSize: hp(3.5), 
+              fontFamily: fonts.Bold,
             }}
             className = "font-extrabold text-[#ebb01a]"> 
                 What's cooking today? 
@@ -140,23 +148,14 @@ export default function HomeScreen() {
           </View>
 
           {/* Search bar */}
-          <View className= "mx-4 flex-row items-center border rounded-xl border-gray p-[6px]"> 
-            <View className = "bg-white rounded-full p-2">
-              <MagnifyingGlassIcon 
-              size = {hp(2.5)} 
-              color = {"#ff8271"} 
-              strokeWidth = {3}
-              />
-            </View>
-            <TextInput 
-            placeholder='Look for recipe'
-            placeholderTextColor = {'gray'}
-            style = {{
-              fontSize: hp(1.7)
-            }}
-            className = "flex-1 text-base mb-1, pl-1 tracking-widest"
+          <View style={styles.inputContainer}>
+            
+            <Ionicons name={"search-outline"} size={30} color={colors.darkgrey} />
+            <TextInput
+              style= {styles.input}
+              placeholder="Look for a recipe"
             />
-          </View>
+        </View>
 
           {/* Categories */}
           <View>
@@ -179,6 +178,33 @@ export default function HomeScreen() {
   )
 }
 
+const styles = StyleSheet.create({
+  backButtonWrapper: {
+    marginTop: 30,
+  },
+  iconContainer: {
+    height: 40,
+    width: 40,
+    borderRadius: 20,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  input: {
+    flex: 1,
+    paddingHorizontal: 20,
+    fontFamily: fonts.Light,
+  },
+  inputContainer: {
+    borderWidth: 1,
+    padding: 10,
+    borderRadius: 100,
+    flexDirection: "row",
+    borderColor: colors.darkgrey,
+    alignItems: "center",
+    marginBottom: 20,
+  },
+});
+
 {/* when you are doing your code and you dk whats the problem 
 1. check the files exist in your terminal 
 2. disconnect server and reconnect again */}
@@ -187,4 +213,14 @@ export default function HomeScreen() {
 battery level and network status 
 
 can import StatusBar from "react-native" 
-or from "expo-status-bar"*/}
+or from "expo-status-bar"
+<TextInput 
+            placeholder='Look for recipe'
+            placeholderTextColor = {'gray'}
+            style = {{
+              fontSize: hp(1.7),
+              fontFamily: fonts.Light,
+            }}
+            className = "flex-1 text-base mb-1, pl-1 tracking-widest"
+            />*/}
+

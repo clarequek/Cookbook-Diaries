@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, Image, StyleSheet, Button } from "react-native";
+import { View, Text, Image, StyleSheet, Button, TouchableOpacity } from "react-native";
 import { FIREBASE_AUTH, FIREBASE_DB } from '../../FirebaseConfig';
 import { getDoc, doc } from 'firebase/firestore';
 import { getStorage, ref, getDownloadURL } from 'firebase/storage';
 import { colors } from "../utilities/colors";
 import { useNavigation } from "@react-navigation/native";
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import { RotateInDownLeft } from "react-native-reanimated";
+import { fonts } from "../utilities/fonts";
 
 export default function ProfileScreen() {
   const [userData, setUserData] = useState(null);
@@ -37,20 +40,38 @@ export default function ProfileScreen() {
     fetchUserData();
   }, []);
 
+  const renderBio = () => {
+    return userData.bio ? userData.bio : "No bio yet.";
+  };
+
+  const renderExperience = () => {
+    return userData.experience ? userData.experience : "Cook";
+  };
+
   return (
     <View style={styles.container}>
+      {/* Back arrow button */}
+      <TouchableOpacity style={styles.backButtonWrapper} onPress={() => navigation.goBack()}>
+        <View style={styles.iconContainer}>
+          <Ionicons name={"arrow-back-outline"} color='#000000' size={25} />
+        </View>
+      </TouchableOpacity>
+      
       {userData && (
         <>
           <View style={styles.profileContainer}>
-            {/* Temporary profile page navigator */}
-            <Button title="Go to Home" onPress={() => navigation.navigate('Home')} />
-
             <Image
-              source={profileImageUrl ? { uri: profileImageUrl } : require("../../assets/images/DefaultAvatar.png")}
+              source= {require("../../assets/images/DefaultAvatar1.png")}
               style={styles.profileImage}
             />
             <Text style={styles.username}>{userData.username}</Text>
             <Text style={styles.email}>{userData.email}</Text>
+            <Text style={styles.experience}>Experience: {renderExperience()}</Text>
+            <Text style={styles.bio}>{renderBio()}</Text>
+            <TouchableOpacity style = {styles.buttonContainer} onPress = {() => navigation.navigate("EditProfile")}>
+              <Ionicons name={"pencil-outline"} size={20} color={colors.white} />
+              <Text style={styles.editText}> Edit Profile </Text>
+            </TouchableOpacity>
           </View>
         </>
       )}
@@ -62,11 +83,21 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: colors.cream,
+    padding: 20,
+  },
+  profileContainer: {
     justifyContent: "center",
     alignItems: "center",
   },
-  profileContainer: {
+  buttonContainer: {
+    justifyContent: "center",
     alignItems: "center",
+    backgroundColor: colors.pink,
+    flexDirection: 'row',
+    borderRadius: 20,
+    width: 125,
+    marginTop: 25,
+    height: 30,
   },
   profileImage: {
     width: 150,
@@ -78,9 +109,40 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: "bold",
     marginBottom: 10,
+    fontFamily: fonts.Bold,
   },
   email: {
     fontSize: 16,
     color: colors.darkgrey,
+    fontFamily: fonts.SemiBold,
   },
+  bio: {
+    fontSize: 14,
+    color: colors.grey,
+    fontFamily: fonts.Regular,
+    marginVertical: 10,
+    textAlign: 'center',
+    marginTop: 0,
+  },
+  experience: {
+    fontSize: 16,
+    color: colors.black,
+    fontFamily: fonts.SemiBold,
+    marginBottom: 10,
+    marginTop: 10,
+  },
+  backButtonWrapper: {
+    marginTop: 30,
+  },
+  iconContainer: {
+    height: 40,
+    width: 40,
+    borderRadius: 20,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+ editText: {
+    fontFamily: fonts.SemiBold, 
+    color: colors.white,
+  }
 });
