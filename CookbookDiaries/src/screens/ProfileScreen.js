@@ -9,14 +9,25 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import { RotateInDownLeft } from "react-native-reanimated";
 import { fonts } from "../utilities/fonts";
 
+import DefaultAvatar1 from '../../assets/images/DefaultAvatar1.png';
+import DefaultAvatar2 from '../../assets/images/DefaultAvatar2.png';
+
 export default function ProfileScreen() {
   const [userData, setUserData] = useState(null);
-  const [profileImageUrl, setProfileImageUrl] = useState(null);
+  const [selectedProfileImage, setSelectedProfileImage] = useState(null);
   const db = FIREBASE_DB;
   const auth = FIREBASE_AUTH;
   const navigation = useNavigation();
 
   useEffect(() => {
+
+    const checkUsernameExists = async (username) => {
+      const usersRef = collection(db, 'users');
+      const q = query(usersRef, where('username', '==', username));
+      const querySnapshot = await getDocs(q);
+      return !querySnapshot.empty;
+    };
+    
     const fetchUserData = async () => {
       try {
         const userDocRef = doc(db, "users", auth.currentUser.uid);
@@ -25,11 +36,14 @@ export default function ProfileScreen() {
           const userData = userDocSnap.data();
           setUserData(userData);
 
-          if (userData.profileImage) {
-            const storage = getStorage();
-            const imageRef = ref(storage, userData.profileImage);
-            const imageUrl = await getDownloadURL(imageRef);
-            setProfileImageUrl(imageUrl);
+          // Set the profile image based on the stored value
+          if (userData.profileImage === 1) {
+            setSelectedProfileImage(DefaultAvatar1);
+          } else if (userData.profileImage === 2) {
+            setSelectedProfileImage(DefaultAvatar2);
+          } else {
+            // Fallback to default image
+            setSelectedProfileImage(DefaultAvatar1);
           }
         }
       } catch (error) {
@@ -61,7 +75,7 @@ export default function ProfileScreen() {
         <>
           <View style={styles.profileContainer}>
             <Image
-              source= {require("../../assets/images/DefaultAvatar1.png")}
+              source={selectedProfileImage}
               style={styles.profileImage}
             />
             <Text style={styles.username}>{userData.username}</Text>

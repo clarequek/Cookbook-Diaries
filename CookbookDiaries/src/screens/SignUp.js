@@ -1,6 +1,6 @@
 import React, { useState, useRef } from "react";
 import { useNavigation } from '@react-navigation/native';
-import { Text, View, StyleSheet, Button, TextInput, TouchableOpacity, ActivityIndicator, Image, ScrollView } from "react-native";
+import { Text, View, StyleSheet, Button, TextInput, TouchableOpacity, ActivityIndicator, Image, ScrollView, KeyboardAvoidingView, Platform } from "react-native";
 import { FIREBASE_AUTH, FIREBASE_DB } from '../../FirebaseConfig';
 import { createUserWithEmailAndPassword, sendEmailVerification } from "firebase/auth";
 import { getFirestore, collection, query, doc, where, getDocs, setDoc } from 'firebase/firestore';
@@ -17,7 +17,7 @@ export default function SignUp() {
   const navigation = useNavigation();
   const animation = useRef(null);
 
-  const [profileImage, setProfileImage] = useState(DefaultAvatar2);
+  const [profileImage, setProfileImage] = useState(1);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -78,7 +78,7 @@ export default function SignUp() {
       });
 
       alert('User registered successfully! Please check your email inbox for a verification link to complete your account setup.');
-      navigation.navigate('screens/SignIn');
+      navigation.navigate('SignIn');
     } catch (error) {
       console.error('Error during sign-up:', error);
       alert(`An error occurred: ${error.message}`);
@@ -88,114 +88,121 @@ export default function SignUp() {
   };
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      {/* Back arrow button */}
-      <TouchableOpacity style={styles.backButtonWrapper} onPress={() => navigation.goBack()}>
-        <View style={styles.iconContainer}>
-          <Ionicons name={"arrow-back-outline"} color={colors.black} size={25} />
-        </View>
-      </TouchableOpacity>
-      
-      <View style={styles.textContainer}>
+    <KeyboardAvoidingView
+      style={{ flex: 1 }}
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+    >
+      <ScrollView contentContainerStyle={styles.container}>
+        {/* Back arrow button */}
+        <TouchableOpacity style={styles.backButtonWrapper} onPress={() => navigation.goBack()}>
+          <View style={styles.iconContainer}>
+            <Ionicons name={"arrow-back-outline"} color={colors.black} size={25} />
+          </View>
+        </TouchableOpacity>
         
-        {/* Lottie Logo */}
-        <View style={{ height: 200, marginTop: -70 }}>
-          <LottieView
-            autoPlay
-            ref={animation}
-            style={{ width: 200, height: 200 }}
-            source={require("../../assets/lottie/food-logo.json")}
-          />
-        </View>
-        <Text style={styles.headerText}>Sign up to get started.</Text>
+        <View style={styles.textContainer}>
+          
+          {/* Lottie Logo */}
+          <View style={{ height: 200, marginTop: -70 }}>
+            <LottieView
+              autoPlay
+              ref={animation}
+              style={{ width: 200, height: 200 }}
+              source={require("../../assets/lottie/food-logo.json")}
+            />
+          </View>
+          <Text style={styles.headerText}>Sign up to get started.</Text>
 
-        {/* Profile Picture Selection */}
-        <View style={styles.avatarContainer}>
-          <Image source={profileImage} style={styles.avatar} />
-          <TouchableOpacity onPress={() => setProfileImage(profileImage === DefaultAvatar1 ? DefaultAvatar2 : DefaultAvatar1)}>
-            <Ionicons name={"swap-horizontal-outline"} color={colors.black} size={25} style={styles.swapIcon} />
-          </TouchableOpacity>
-        </View>
-
-        {/* Form */}
-        <View style={styles.form}>
-          {/* Username */}
-          <View style={styles.inputContainer}>
-            <Ionicons name={"person-outline"} size={30} color={colors.darkgrey} />
-            <TextInput
-              value={username}
-              style={styles.input}
-              placeholder="Enter your username"
-              autoCapitalize='none'
-              onChangeText={(text) => setUsername(text)}
-            />
-          </View>
-          {/* Name */}
-          <View style={styles.inputContainer}>
-            <Ionicons name={"person-outline"} size={30} color={colors.darkgrey} />
-            <TextInput
-              value={name}
-              style={styles.input}
-              placeholder="Enter your name"
-              autoCapitalize='none'
-              onChangeText={(text) => setName(text)}
-            />
-          </View>
-          {/* Email */}
-          <View style={styles.inputContainer}>
-            <Ionicons name={"mail-outline"} size={30} color={colors.darkgrey} />
-            <TextInput
-              value={email}
-              style={styles.input}
-              placeholder="Enter your email"
-              autoCapitalize='none'
-              onChangeText={(text) => setEmail(text)}
-            />
-          </View>
-          {/* Password */}
-          <View style={styles.inputContainer}>
-            <Ionicons name={"lock-closed-outline"} size={30} color={colors.darkgrey} />
-            <TextInput
-              value={password}
-              style={styles.input}
-              placeholder="Enter your password"
-              autoCapitalize='none'
-              secureTextEntry
-              onChangeText={(text) => setPassword(text)}
-            />
-          </View>
-          {/* Confirm Password */}
-          <View style={styles.inputContainer}>
-            <Ionicons name={"lock-closed-outline"} size={30} color={colors.darkgrey} />
-            <TextInput
-              value={confirmPassword}
-              style={styles.input}
-              placeholder="Confirm your password"
-              autoCapitalize='none'
-              secureTextEntry
-              onChangeText={(text) => setConfirmPassword(text)}
-            />
-          </View>
-        </View>
-        {loading ? (
-          <ActivityIndicator size="large" />
-        ) : (
-          <>
-            {/* Sign up button */}
-            <TouchableOpacity style={styles.buttonContainer} onPress={signUp}>
-              <Text style={styles.buttonText}>Sign Up</Text>
+          {/* Profile Picture Selection */}
+          <View style={styles.avatarContainer}>
+            <Image source={profileImage === 1 ? DefaultAvatar1 : DefaultAvatar2} style={styles.avatar} />
+            <TouchableOpacity onPress={() => setProfileImage(profileImage === 1 ? 2 : 1)}> 
+              <View style={styles.swapIconContainer}>
+                <Ionicons name={"swap-horizontal-outline"} color={colors.white} size={15} style={styles.swapIcon} />
+              </View>
             </TouchableOpacity>
-            {/* Sign in button */}
-            <View style={styles.row}>
-              <Text style={styles.desc}>Have an account? </Text>
-              <TouchableOpacity onPress={() => navigation.navigate('SignIn')}>
-                <Text style={styles.signInText}>Sign in.</Text>
-              </TouchableOpacity>
+          </View>
+          
+          {/* Form */}
+          <View style={styles.form}>
+            {/* Username */}
+            <View style={styles.inputContainer}>
+              <Ionicons name={"person-outline"} size={30} color={colors.darkgrey} />
+              <TextInput
+                value={username}
+                style={styles.input}
+                placeholder="Enter your username"
+                autoCapitalize='none'
+                onChangeText={(text) => setUsername(text)}
+              />
             </View>
-          </>
-        )}
-      </View>
-    </ScrollView>
+            {/* Name */}
+            <View style={styles.inputContainer}>
+              <Ionicons name={"person-outline"} size={30} color={colors.darkgrey} />
+              <TextInput
+                value={name}
+                style={styles.input}
+                placeholder="Enter your name"
+                autoCapitalize='none'
+                onChangeText={(text) => setName(text)}
+              />
+            </View>
+            {/* Email */}
+            <View style={styles.inputContainer}>
+              <Ionicons name={"mail-outline"} size={30} color={colors.darkgrey} />
+              <TextInput
+                value={email}
+                style={styles.input}
+                placeholder="Enter your email"
+                autoCapitalize='none'
+                onChangeText={(text) => setEmail(text)}
+              />
+            </View>
+            {/* Password */}
+            <View style={styles.inputContainer}>
+              <Ionicons name={"lock-closed-outline"} size={30} color={colors.darkgrey} />
+              <TextInput
+                value={password}
+                style={styles.input}
+                placeholder="Enter your password"
+                autoCapitalize='none'
+                secureTextEntry
+                onChangeText={(text) => setPassword(text)}
+              />
+            </View>
+            {/* Confirm Password */}
+            <View style={styles.inputContainer}>
+              <Ionicons name={"lock-closed-outline"} size={30} color={colors.darkgrey} />
+              <TextInput
+                value={confirmPassword}
+                style={styles.input}
+                placeholder="Confirm your password"
+                autoCapitalize='none'
+                secureTextEntry
+                onChangeText={(text) => setConfirmPassword(text)}
+              />
+            </View>
+          </View>
+          {loading ? (
+            <ActivityIndicator size="large" />
+          ) : (
+            <>
+              {/* Sign up button */}
+              <TouchableOpacity style={styles.buttonContainer} onPress={signUp}>
+                <Text style={styles.buttonText}>Sign Up</Text>
+              </TouchableOpacity>
+              {/* Sign in button */}
+              <View style={styles.row}>
+                <Text style={styles.desc}>Have an account? </Text>
+                <TouchableOpacity onPress={() => navigation.navigate('SignIn')}>
+                  <Text style={styles.signInText}>Sign in.</Text>
+                </TouchableOpacity>
+              </View>
+            </>
+          )}
+        </View>
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 }
 
@@ -214,7 +221,6 @@ const styles = StyleSheet.create({
   },
   avatarContainer: {
     flexDirection: 'row',
-    justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 20,
   },
@@ -288,7 +294,15 @@ const styles = StyleSheet.create({
     marginTop: 8,
     fontFamily: fonts.Light,
   },
-  swapIcon: {
-    marginLeft: 10,
-  },
+
+  swapIconContainer: {
+    height: 30,
+    width: 30,
+    borderRadius: 15,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: colors.pink,
+    marginLeft: -20,
+    marginTop: 70,
+  }
 });

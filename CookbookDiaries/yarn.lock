@@ -2531,6 +2531,11 @@
   dependencies:
     plist "^3.1.0"
 
+"@react-native-picker/picker@^2.7.7":
+  version "2.7.7"
+  resolved "https://registry.npmjs.org/@react-native-picker/picker/-/picker-2.7.7.tgz"
+  integrity sha512-CTHthVmx8ujlH/u5AnxLQfsheh/DoEbo+Kbx0HGTlbKVLC1eZ4Kr9jXIIUcwB7JEgOXifdZIPQCsoTc/7GQ0ag==
+
 "@react-native-seoul/masonry-list@^1.4.2":
   version "1.4.2"
   resolved "https://registry.npmjs.org/@react-native-seoul/masonry-list/-/masonry-list-1.4.2.tgz"
