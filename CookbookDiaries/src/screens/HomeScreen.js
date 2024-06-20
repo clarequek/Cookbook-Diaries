@@ -7,6 +7,7 @@ import {
   MagnifyingGlassIcon, 
   AdjustmentsHorizontalIcon, 
 } from "react-native-heroicons/outline"; 
+import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { StatusBar } from "expo-status-bar"; 
 import { heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import Categories from '../components/categories';
@@ -17,6 +18,8 @@ import { useNavigation } from '@react-navigation/native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { fonts } from "../utilities/fonts";
 import { colors } from "../utilities/colors";
+import DefaultAvatar1 from '../../assets/images/DefaultAvatar1.png';
+import DefaultAvatar2 from '../../assets/images/DefaultAvatar2.png';
 
 
 {/* import heroicons if you wanna make icons on a home screen */}
@@ -25,10 +28,9 @@ export default function HomeScreen() {
   const [activeCategory, setActiveCategory] = useState("Beef")
   const [categories, setCategories] = useState([])
   const [meals, setMeals] = useState([])
-  const [userName, setUserName] = useState('');
-  const [profileImageUrl, setProfileImageUrl] = useState('');
+  const [profileImage, setProfileImage] = useState(null);
+  const [name, setName] = useState('');
   const navigation = useNavigation();
-  const [userData, setUserData] = useState(null);
   const db = FIREBASE_DB;
   const auth = FIREBASE_AUTH;
 
@@ -45,20 +47,25 @@ export default function HomeScreen() {
   }; 
 
   const fetchUserData = async () => {
-    const db = firebase.firestore();
-    const userDocRef = db.collection("users").doc("USER_ID"); // Adjust "USER_ID" according to your database structure
-
     try {
-      const userDocSnap = await userDocRef.get();
-      if (userDocSnap.exists) {
-        const userData = userDocSnap.data();
-        setUserName(userData.name || ''); // Assuming 'username' is a field in your user data
-        setProfileImageUrl(userData.profileImage || ''); // Assuming 'profileImage' is a field in your user data
-      } else {
-        console.log('No such document!');
-      }
+        const userDocRef = doc(db, "users", auth.currentUser.uid);
+        const userDocSnap = await getDoc(userDocRef);
+        if (userDocSnap.exists()) {
+          const userData = userDocSnap.data();
+          setName(userData.name);
+            
+            // Set the profile image based on the stored value
+          if (userData.profileImage === 1) {
+            setProfileImage(DefaultAvatar1);
+          } else if (userData.profileImage === 2) {
+            setProfileImage(DefaultAvatar2);
+          } else {
+            // Fallback to default image
+            setProfileImage(DefaultAvatar1);
+          }
+        }
     } catch (error) {
-      console.error("Error fetching user data:", error);
+        console.error("Error fetching user data:", error);
     }
   };
 
@@ -111,7 +118,7 @@ export default function HomeScreen() {
           <View className = "mx-4 flex-row justify-between items-center"> 
             <AdjustmentsHorizontalIcon size = {hp(4)} color = {"gray"}/>
             <Image
-              // source={profileImageUrl ? { uri: profileImageUrl } : require("../../assets/images/DefaultAvatar.png")}
+              source={profileImage}
               style = {{
                 width: hp(5),
                 height: hp(5), 
@@ -130,7 +137,7 @@ export default function HomeScreen() {
                 fontFamily: fonts.SemiBold,
               }}
               className = "font-bold text-neutral-800"> 
-                Hi, {userName} {/* Display user name */}
+                Hi {name}, {/* Display user name */}
               </Text>
             </View>
 
