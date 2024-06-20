@@ -48,7 +48,7 @@ const GroceryStoreLocator = () => {
         {/* Title*/}
         <Text className = 'font-extrabold text-[#ebb01a]'      
         style={styles.title}>
-          Locate grocery stores!
+          Grocery stores near you:
         </Text>
       </View>
       {errorMsg ? (
@@ -59,13 +59,14 @@ const GroceryStoreLocator = () => {
           initialRegion={{
             latitude: location.latitude,
             longitude: location.longitude,
-            latitudeDelta: 0.0922,
-            longitudeDelta: 0.0421,
+            latitudeDelta: 0.03,
+            longitudeDelta: 0.03,
           }}
         >
           <Marker
             coordinate={location}
             title="You are here"
+            pinColor='red'
           />
           {stores.map((store, index) => (
             <Marker
@@ -76,7 +77,7 @@ const GroceryStoreLocator = () => {
               }}
               title={store.tags?.name || 'Grocery Store'}
               description={store.tags?.['addr:street'] || 'No address available'}
-              pinColor="red"
+              pinColor="#ff8271"
             />
           ))}
         </MapView>
@@ -109,9 +110,9 @@ const styles = StyleSheet.create({
     fontSize: 24,
   },
   map: {
-    flex: 1,
     margin: 10,
-    borderRadius: 10,
+    borderRadius: 50,
+    height: '50%', // Adjust the height as needed
   },
   errorMsg: {
     color: 'red',
