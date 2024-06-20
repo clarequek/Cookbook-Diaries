@@ -14,14 +14,14 @@ const GroceryListScreen = (props) => {
     const [quantity, setQuantity] = useState()
     const [taskItems, setTaskItems] = useState([])
 
-    const handleAddTask = () => { 
+    const handleAddTask = () => { //PLAN: add task to a new database created called grocery list for users
       Keyboard.dismiss() //adding this line makes keyboard disappear 
       setTaskItems([...taskItems, task])  
       setTask(null)
       //taskItems = taskItems.append(task)
     }
     
-    const completeTask = (index) => { 
+    const completeTask = (index) => {  //PLAN: once task is completed, delete document from firebase
       let itemsCopy = [...taskItems] //creates a new array of Items and store in itemsCop
       itemsCopy.splice(index, 1) 
       //Explanation of splice() Parameters:
