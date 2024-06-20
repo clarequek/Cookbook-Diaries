@@ -1,24 +1,27 @@
 import { View, Text, StyleSheet, KeyboardAvoidingView, TextInput, Platform, TouchableOpacity, Keyboard, Button, Image } from 'react-native'
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useNavigation } from '@react-navigation/native';
 import Task from '../components/task';
 import { heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import { widthPercentageToDP as wp } from 'react-native-responsive-screen';
+import { fonts } from "../utilities/fonts";
+import { colors } from "../utilities/colors";
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
-const GroceryListScreen = () => {
+const GroceryListScreen = (props) => {
     const navigation = useNavigation();
     const [task, setTask] = useState() //create a State in a functional component 
+    const [quantity, setQuantity] = useState()
     const [taskItems, setTaskItems] = useState([])
 
-    const handleAddTask = () => { 
+    const handleAddTask = () => { //PLAN: add task to a new database created called grocery list for users
       Keyboard.dismiss() //adding this line makes keyboard disappear 
       setTaskItems([...taskItems, task])  
       setTask(null)
       //taskItems = taskItems.append(task)
     }
     
-    const completeTask = (index) => { 
+    const completeTask = (index) => {  //PLAN: once task is completed, delete document from firebase
       let itemsCopy = [...taskItems] //creates a new array of Items and store in itemsCop
       itemsCopy.splice(index, 1) 
       //Explanation of splice() Parameters:
@@ -31,15 +34,15 @@ const GroceryListScreen = () => {
     }
   return ( 
     <View style = {styles.container}>
-      <Image
-        source = {require("../../assets/images/brunchtransparent.png")} 
-        style = {styles.headerImage}/>
 
       {/* Title */}
       <View style = {styles.tasksWrapper}>
 
+        {/* Back arrow button */}
         <TouchableOpacity style={styles.backButtonWrapper} onPress={() => navigation.goBack()}>
-          <Ionicons name="arrow-back-outline" color="#000000" size={25} />
+          <View style={styles.iconContainer}>
+            <Ionicons name={"arrow-back-outline"} color='#000000' size={25} />
+          </View>
         </TouchableOpacity>
 
         <Text className = 'font-extrabold text-[#ebb01a]'
@@ -78,7 +81,7 @@ const GroceryListScreen = () => {
         <TouchableOpacity
         onPress={() => handleAddTask()}>
           <View style = {styles.addWrapper}>
-            <Text style = {styles.addText}> + </Text>
+            <Ionicons name={"add-outline"} color={colors.darkgrey} size={25} />
           </View>
         </TouchableOpacity>
       </KeyboardAvoidingView>
@@ -93,7 +96,7 @@ export default GroceryListScreen
 const styles = StyleSheet.create({
   container: {
     flex: 1, 
-    backgroundColor: '#fff5e6'
+    backgroundColor: colors.cream,
   },
   headerImage : { 
     width: wp(100),
@@ -105,6 +108,8 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     fontSize: hp(3.5),
+    color: colors.pink,
+    fontFamily: fonts.Bold
   },
   items: {
     marginTop: 20
@@ -119,29 +124,37 @@ const styles = StyleSheet.create({
 
   },
   textInput: { 
-    fontSize: 20,
+    fontSize: 15,
     fontWeight: '400',
-    backgroundColor: "#FFF",
     paddingVertical: 15, 
     paddingHorizontal: 15, 
     borderRadius: 60,
-    borderColor: "#C0C0C0",
+    borderColor: colors.darkgrey,
     borderWidth: 1,
     width: wp(67),
+    fontFamily: fonts.Light,
   },
   addWrapper: { 
-    width: wp(20),
-    height: hp(10),
-    backgroundColor: "#FFF", 
-    borderRadius: 60, 
+    width: 60, 
+    height: 60,
+    borderRadius: 30, 
     borderWidth: 1, 
-    borderColor: "#C0C0C0",
+    borderColor: colors.darkgrey,
     justifyContent: 'center', 
     alignItems: 'center'
   },
   addText: { 
     fontSize: 28,
-    fontWeight: '500'
-
-  }
+    fontFamily: fonts.Light,
+  },
+  backButtonWrapper: {
+    marginTop: 30,
+  },
+  iconContainer: {
+    height: 40,
+    width: 40,
+    borderRadius: 20,
+    justifyContent: "center",
+    alignItems: "center",
+  },
 })
