@@ -4,6 +4,7 @@ import { useNavigation } from '@react-navigation/native';
 import Task from '../components/task';
 import { heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import { widthPercentageToDP as wp } from 'react-native-responsive-screen';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 
 const GroceryListScreen = () => {
     const navigation = useNavigation();
@@ -37,10 +38,14 @@ const GroceryListScreen = () => {
       {/* Title */}
       <View style = {styles.tasksWrapper}>
 
-        {/* Temporary home navigator */}
-        <Button title="Go to Home" onPress={() => navigation.navigate('Home')} />
+        <TouchableOpacity style={styles.backButtonWrapper} onPress={() => navigation.goBack()}>
+          <Ionicons name="arrow-back-outline" color="#000000" size={25} />
+        </TouchableOpacity>
 
-        <Text style = {styles.sectionTitle}> My grocery list: </Text>
+        <Text className = 'font-extrabold text-[#ebb01a]'
+        style = {styles.sectionTitle}> 
+          My grocery list: 
+        </Text>
 
         <View style = {styles.items}>
           {
@@ -100,8 +105,6 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     fontSize: hp(3.5),
-    fontWeight: 'bold',
-    color: "#ebb01a",
   },
   items: {
     marginTop: 20
