@@ -3,12 +3,11 @@ import { useNavigation } from '@react-navigation/native';
 import { Text, View, StyleSheet, Button, TextInput, TouchableOpacity, ActivityIndicator, Image, ScrollView, KeyboardAvoidingView, Platform } from "react-native";
 import { FIREBASE_AUTH, FIREBASE_DB } from '../../FirebaseConfig';
 import { createUserWithEmailAndPassword, sendEmailVerification } from "firebase/auth";
-import { getFirestore, collection, query, doc, where, getDocs, setDoc } from 'firebase/firestore';
+import { getFirestore, collection, query, doc, where, getDocs, setDoc, addDoc } from 'firebase/firestore';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import LottieView from "lottie-react-native";
 import { fonts } from "../utilities/fonts";
 import { colors } from "../utilities/colors";
-import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 
 import DefaultAvatar1 from '../../assets/images/DefaultAvatar1.png';
 import DefaultAvatar2 from '../../assets/images/DefaultAvatar2.png';
@@ -24,6 +23,7 @@ export default function SignUp() {
   const [username, setUsername] = useState('');
   const [name, setName] = useState('');
   const [loading, setLoading] = useState(false);
+  const [grocerylist, setGrocerylist] = useState([]); //initialised as empty array to add items later on 
   const auth = FIREBASE_AUTH;
   const db = FIREBASE_DB;
 
@@ -75,6 +75,7 @@ export default function SignUp() {
         email: email,
         name: name,
         profileImage: profileImage,
+        groceryList: grocerylist,
       });
 
       alert('User registered successfully! Please check your email inbox for a verification link to complete your account setup.');

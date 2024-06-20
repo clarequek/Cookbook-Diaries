@@ -3,6 +3,9 @@ import { Text, View, StyleSheet, TextInput, TouchableOpacity, ActivityIndicator 
 import { useNavigation } from '@react-navigation/native';
 import { FIREBASE_AUTH } from '../../FirebaseConfig';
 import { sendPasswordResetEmail } from 'firebase/auth';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import { fonts } from "../utilities/fonts";
+import { colors } from "../utilities/colors"; 
 
 const ForgotPassword = () => {
   const navigation = useNavigation();
@@ -27,13 +30,16 @@ const ForgotPassword = () => {
     <View style={styles.container}>
       <Text style={styles.headerText}>Forgot Password?</Text>
       <Text style={styles.desc}>Enter your email address below to receive a password reset link.</Text>
-      <TextInput
-        value={email}
-        style={styles.input}
-        placeholder="email"
-        autoCapitalize="none"
-        onChangeText={(text) => setEmail(text)}
-      />
+      <View style={styles.inputContainer}>
+              <Ionicons name={"mail-outline"} size={30} color={colors.darkgrey} />
+              <TextInput
+                value={email}
+                style={styles.input}
+                placeholder="Enter your email"
+                autoCapitalize='none'
+                onChangeText={(text) => setEmail(text)}
+              />
+      </View>
       <TouchableOpacity style={styles.buttonContainer} onPress={handleForgotPassword}>
         <Text style={styles.buttonText}>Send Reset Link</Text>
       </TouchableOpacity>
@@ -55,22 +61,20 @@ const styles = StyleSheet.create({
   },
   headerText: {
     fontSize: 24,
-    fontWeight: 'bold',
-    color: '#000000',
+    fontFamily: fonts.Bold,
+    color: colors.black,
     marginBottom: 20,
   },
   desc: {
-    fontSize: 16,
-    color: '#a9a9a9',
+    fontSize: 15,
+    color: colors.darkgrey,
+    fontFamily: fonts.Light,
     marginBottom: 20,
   },
   input: {
-    borderWidth: 1,
-    borderColor: '#000000',
-    padding: 10,
-    marginBottom: 20,
-    borderRadius: 5,
-    width: '100%',
+    flex: 1,
+    paddingHorizontal: 20,
+    fontFamily: fonts.Light,
   },
   buttonContainer: {
     backgroundColor: '#ff8271',
@@ -88,7 +92,15 @@ const styles = StyleSheet.create({
   goBack: {
     marginTop: 20,
     color: '#ff8271',
-    textDecorationLine: 'underline',
+  },
+  inputContainer: {
+    borderWidth: 1,
+    padding: 10,
+    borderRadius: 100,
+    flexDirection: "row",
+    borderColor: colors.darkgrey,
+    alignItems: "center",
+    marginBottom: 20,
   },
 });
 

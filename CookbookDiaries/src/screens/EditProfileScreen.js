@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, TextInput, StyleSheet, TouchableOpacity, Button, Image } from "react-native";
+import { View, Text, TextInput, StyleSheet, TouchableOpacity, Button, Image, Modal } from "react-native";
 import { FIREBASE_AUTH, FIREBASE_DB } from '../../FirebaseConfig';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { colors } from "../utilities/colors";
@@ -41,8 +41,8 @@ export default function EditProfileScreen() {
             }
         };
 
-    fetchUserData();
-  }, []);
+        fetchUserData();
+    }, []);
 
   const handleSave = async () => {
     try {
@@ -63,24 +63,9 @@ export default function EditProfileScreen() {
   };
 
   const experienceOptions = [
-    "Home Cook",
-    "Hobbyist",
-    "Food Blogger/Influencer",
-    "Culinary Student",
-    "Intern/Apprentice",
-    "Catering Assistant",
-    "Line Cook",
-    "Prep Cook",
-    "Pastry Chef/Baker",
-    "Sous Chef",
-    "Head Chef/Executive Chef",
-    "Private Chef",
-    "Catering Chef",
-    "Food Truck Chef",
-    "Garde Manger",
-    "Saucier",
-    "Butcher",
-    "Cooking Instructor"
+    "Begginer",
+    "Intermediate",
+    "Advanced",
   ];
 
   return (
@@ -158,6 +143,8 @@ export default function EditProfileScreen() {
                 selectedValue={experience}
                 style={styles.picker}
                 onValueChange={(itemValue) => setExperience(itemValue)}
+                itemStyle={{fontSize: 15, fontFamily: fonts.Regular}}
+                height={50}
             >
                 {experienceOptions.map((experience, index) => (
                     <Picker.Item
@@ -240,7 +227,7 @@ const styles = StyleSheet.create({
   picker: {
     flex: 1,
     paddingHorizontal: 10, // Add some horizontal padding
-    marginTop: -60,
+    marginTop: 0,
   },
 
   specialInputContainer: {
@@ -251,7 +238,7 @@ const styles = StyleSheet.create({
     borderColor: colors.darkgrey,
     alignItems: "center",
     marginBottom: 20,
-    height: 125,
+    height: 150,
   },
 
   buttonContainer: {
