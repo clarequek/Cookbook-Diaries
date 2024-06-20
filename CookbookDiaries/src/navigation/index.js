@@ -27,13 +27,13 @@ export default function AppNavigation() {
   return (
     <NavigationContainer>
       <Stack.Navigator
-        initialRouteName='Main'
+        initialRouteName='Welcome'
         screenOptions={{
           headerShown: false,
         }}
       >
         <Stack.Screen name="Welcome" component={WelcomeScreen} />
-        <Stack.Screen name = "SignInSrignUp" component={SignInSignUpScreen} />
+        <Stack.Screen name = "SignInSignUp" component={SignInSignUpScreen} />
         <Stack.Screen name="SignIn" component={SignInScreen} />
         <Stack.Screen name="SignUp" component={SignUpScreen} />
         <Stack.Screen name="ForgetPassword" component={ForgetPasswordScreen} />
