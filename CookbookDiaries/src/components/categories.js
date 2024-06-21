@@ -2,6 +2,7 @@ import { View, Text, ScrollView, TouchableOpacity, Image } from 'react-native';
 import React from 'react';
 import { categoryData } from "../constants";
 import { heightPercentageToDP as hp } from 'react-native-responsive-screen';
+import { fonts } from '../utilities/fonts';
 
 export default function Categories({
     categories,
@@ -39,6 +40,7 @@ export default function Categories({
                             className = "text-neutral-800"
                             style = {{ 
                                 fontSize: hp(1.6),
+                                fontFamily: fonts.Regular
                             }}> 
                                 {category.strCategory}
                         </Text>
