@@ -2,6 +2,7 @@ import { View, Text, Pressable, Image } from 'react-native'
 import React from 'react'
 import { heightPercentageToDP as hp } from 'react-native-responsive-screen'
 import { LinearGradient } from 'expo-linear-gradient'
+import { fonts } from '../utilities/fonts'
 
 export default function RecipesCard({index, navigation, item}) {
   let isEven = index % 2 == 0
@@ -46,8 +47,9 @@ export default function RecipesCard({index, navigation, item}) {
             <Text
               style = {{ 
                 fontSize: hp(2.2),
+                fontFamily: fonts.SemiBold,
               }}
-              className = "font-semibold ml-2 text-white absolute bottom-7 left-2 max-w[80%]"> 
+              className = "ml-2 text-white absolute bottom-7 left-2 max-w[80%]"> 
               {
                 item.strMeal.length > 20 
                 ? item.strMeal.slice(0, 20) + "..." 
