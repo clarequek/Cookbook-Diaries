@@ -7,6 +7,8 @@ import { widthPercentageToDP as wp } from 'react-native-responsive-screen';
 import { fonts } from "../utilities/fonts";
 import { colors } from "../utilities/colors";
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import { FIREBASE_AUTH, FIREBASE_DB } from '../../FirebaseConfig';
+import { doc, getDoc, setDoc } from 'firebase/firestore';
 
 const GroceryListScreen = (props) => {
     const navigation = useNavigation();
@@ -14,14 +16,23 @@ const GroceryListScreen = (props) => {
     const [quantity, setQuantity] = useState()
     const [taskItems, setTaskItems] = useState([])
 
-    const handleAddTask = () => { //PLAN: add task to a new database created called grocery list for users
+    const auth = FIREBASE_AUTH;
+    const db = FIREBASE_DB;
+
+    useEffect(() => {
+      fetchGroceryList();
+    }, []); 
+
+    const handleAddTask = async () => { //PLAN: add task to an array called 'grocerylist' for users
       Keyboard.dismiss() //adding this line makes keyboard disappear 
-      setTaskItems([...taskItems, task])  
-      setTask(null)
+      const newTaskItems = [...taskItems, task];
+      setTaskItems(newTaskItems)  
+      setTask('')
+      await saveGroceryList(newTaskItems);
       //taskItems = taskItems.append(task)
     }
     
-    const completeTask = (index) => {  //PLAN: once task is completed, delete document from firebase
+    const completeTask = async(index) => {  //PLAN: once task is completed, delete from array
       let itemsCopy = [...taskItems] //creates a new array of Items and store in itemsCop
       itemsCopy.splice(index, 1) 
       //Explanation of splice() Parameters:
@@ -31,7 +42,33 @@ const GroceryListScreen = (props) => {
       //In this case, it is 1, meaning only one element at the specified index will be removed
       //Then it returns itemsCopy with the removed element 
       setTaskItems(itemsCopy)
+      await saveGroceryList(itemsCopy);
     }
+  
+    const saveGroceryList = async (newTaskItems) => {
+      try {
+        const userDocRef = doc(db, "users", auth.currentUser.uid);
+        await setDoc(userDocRef, {
+          grocerylist: newTaskItems //new task items is an array 
+        }, { merge: true });
+      } catch (error) {
+        console.error("Error saving grocery list:", error);
+      }
+    };
+
+    const fetchGroceryList = async () => {
+      try {
+        const userDocRef = doc(db, "users", auth.currentUser.uid);
+        const userDocSnap = await getDoc(userDocRef);
+        if (userDocSnap.exists()) {
+          const userData = userDocSnap.data();
+          setTaskItems(userData.grocerylist || []);
+        }
+      } catch (error) {
+        console.error("Error fetching grocery list:", error);
+      }
+    };
+
   return ( 
     <View style = {styles.container}>
 
