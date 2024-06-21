@@ -18,6 +18,7 @@ export default function EditProfileScreen() {
     const [email, setEmail] = useState('');
     const [bio, setBio] = useState('');
     const [experience, setExperience] = useState('');
+    const [grocerylist, setGrocerylist] = useState([]);
     const db = FIREBASE_DB;
     const auth = FIREBASE_AUTH;
     const navigation = useNavigation();
@@ -35,6 +36,7 @@ export default function EditProfileScreen() {
                     setBio(userData.bio || '');
                     setProfileImage(userData.profileImage);
                     setExperience(userData.experience || '');
+                    setGrocerylist(userData.grocerylist || []);
                 }
             } catch (error) {
                 console.error("Error fetching user data:", error);
@@ -54,6 +56,7 @@ export default function EditProfileScreen() {
         email,
         bio,
         experience,
+        grocerylist,
       });
 
       navigation.goBack();
