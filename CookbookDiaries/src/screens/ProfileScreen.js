@@ -8,6 +8,8 @@ import { useNavigation } from "@react-navigation/native";
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { RotateInDownLeft } from "react-native-reanimated";
 import { fonts } from "../utilities/fonts";
+import { ChevronLeftIcon } from 'react-native-heroicons/outline'
+import { heightPercentageToDP as hp } from "react-native-responsive-screen";
 
 import DefaultAvatar1 from '../../assets/images/DefaultAvatar1.png';
 import DefaultAvatar2 from '../../assets/images/DefaultAvatar2.png';
@@ -64,11 +66,15 @@ export default function ProfileScreen() {
 
   return (
     <View style={styles.container}>
-      {/* Back arrow button */}
-      <TouchableOpacity style={styles.backButtonWrapper} onPress={() => navigation.goBack()}>
-        <View style={styles.iconContainer}>
-          <Ionicons name={"arrow-back-outline"} color='#000000' size={25} />
-        </View>
+      <TouchableOpacity 
+        className="p-2 rounded-full bg-white ml-1"
+        onPress = {() => navigation.goBack()}
+              >
+          <ChevronLeftIcon
+            size={hp(3.5)}
+            color={colors.pink}
+            strokeWidth={4.5}
+        />
       </TouchableOpacity>
       
       {userData && (

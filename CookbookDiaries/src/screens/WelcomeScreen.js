@@ -54,7 +54,7 @@ export default function WelcomeScreen() {
         className = "text-[#ff8271] tracking-widest font-medium"
         style = {{
           fontSize: hp(1.75),
-          fontFamily: fonts.Light,
+          fontFamily: fonts.SemiBold
         }}> 
           Cook some good food today!
         </Text>

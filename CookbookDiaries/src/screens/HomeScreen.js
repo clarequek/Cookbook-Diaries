@@ -16,6 +16,7 @@ import Recipes from '../components/recipes';
 import { FIREBASE_DB, FIREBASE_AUTH } from '../../FirebaseConfig';
 import { useNavigation } from '@react-navigation/native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import { ChevronLeftIcon } from 'react-native-heroicons/outline'
 import { fonts } from "../utilities/fonts";
 import { colors } from "../utilities/colors";
 import DefaultAvatar1 from '../../assets/images/DefaultAvatar1.png';
@@ -98,13 +99,6 @@ export default function HomeScreen() {
   return (
     <View className = "flex-1 bg-[#fff5e6]">
       <StatusBar style = "dark" />
-      {/* Back arrow button */}
-      <TouchableOpacity style={styles.backButtonWrapper} onPress={() => navigation.goBack()}>
-        <View style={styles.iconContainer}>
-          <Ionicons name={"arrow-back-outline"} color='#000000' size={25} />
-        </View>
-      </TouchableOpacity>
-
       <SafeAreaView>
         <ScrollView 
         showsVerticalScrollIndicator={false}
@@ -114,9 +108,18 @@ export default function HomeScreen() {
         className = "space-y-6 pt-13"
         >
 
-          {/* Avatar and Bell Icon */}
+          {/* Back arrow button and Profile */}
           <View className = "mx-4 flex-row justify-between items-center"> 
-            <AdjustmentsHorizontalIcon size = {hp(4)} color = {"gray"}/>
+            <TouchableOpacity 
+              className="p-2 rounded-full bg-white ml-1"
+              onPress = {() => navigation.goBack()}
+              >
+                <ChevronLeftIcon
+                  size={hp(3.5)}
+                  color={colors.pink}
+                  strokeWidth={4.5}
+                />
+            </TouchableOpacity>
             <Image
               source={profileImage}
               style = {{

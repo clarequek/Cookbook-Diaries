@@ -181,7 +181,7 @@ export default function RecipeDetailsScreen(props) {
             >
                 <ChevronLeftIcon
                 size={hp(3.5)}
-                color={"#ff8271"}
+                color={colors.pink}
                 strokeWidth={4.5}
                 />
             </TouchableOpacity>

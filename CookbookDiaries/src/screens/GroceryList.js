@@ -7,6 +7,7 @@ import { widthPercentageToDP as wp } from 'react-native-responsive-screen';
 import { fonts } from "../utilities/fonts";
 import { colors } from "../utilities/colors";
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import { ChevronLeftIcon } from 'react-native-heroicons/outline'
 
 const GroceryListScreen = (props) => {
     const navigation = useNavigation();
@@ -37,18 +38,25 @@ const GroceryListScreen = (props) => {
 
       {/* Title */}
       <View style = {styles.tasksWrapper}>
-
-        {/* Back arrow button */}
-        <TouchableOpacity style={styles.backButtonWrapper} onPress={() => navigation.goBack()}>
-          <View style={styles.iconContainer}>
-            <Ionicons name={"arrow-back-outline"} color='#000000' size={25} />
-          </View>
-        </TouchableOpacity>
-
-        <Text className = 'font-extrabold text-[#ebb01a]'
+        <View className ="w-full absolute flex-row items-center pt-10"
+          style = {{
+            justifyContent: 'space-evenly'
+          }}> 
+            <TouchableOpacity 
+              className="p-2 rounded-full bg-white ml-1"
+              onPress = {() => navigation.goBack()}
+              >
+                <ChevronLeftIcon
+                  size={hp(3.5)}
+                  color={colors.pink}
+                  strokeWidth={4.5}
+              />
+            </TouchableOpacity>
+          <Text className = 'font-extrabold text-[#ebb01a]'
         style = {styles.sectionTitle}> 
           My grocery list: 
-        </Text>
+          </Text>
+        </View>
 
         <View style = {styles.items}>
           {

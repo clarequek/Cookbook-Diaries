@@ -9,6 +9,8 @@ import { heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import { widthPercentageToDP as wp } from 'react-native-responsive-screen';
 import { fonts } from '../utilities/fonts';
 import { colors } from '../utilities/colors';
+import { ChevronLeftIcon } from 'react-native-heroicons/outline'
+
 
 const OPENROUTESERVICE_API_KEY = '5b3ce3597851110001cf62486ab0fa18e3874fc18d55f8fac2631085';
 
@@ -86,8 +88,15 @@ const GroceryStoreLocator = () => {
     //Back button and title 
     <View style={styles.container}>
       <View style={styles.header}>
-        <TouchableOpacity style={styles.backButtonWrapper} onPress={() => navigation.goBack()}>
-          <Ionicons name="arrow-back-outline" color="#000000" size={25} />
+      <TouchableOpacity 
+        className="p-2 rounded-full bg-white ml-1"
+        onPress = {() => navigation.goBack()}
+        >
+          <ChevronLeftIcon
+            size={hp(3.5)}
+            color={colors.pink}
+            strokeWidth={4.5}
+        />
         </TouchableOpacity>
         <Text className='font-extrabold text-[#ebb01a]' style={styles.title}>Grocery stores near you:</Text>
       </View>
@@ -141,6 +150,7 @@ const styles = StyleSheet.create({
     paddingBottom: 5,
     paddingHorizontal: 10,
     backgroundColor: colors.cream,
+    justifyContent: 'space-between',
   },
   backButtonWrapper: {
     marginRight: 10,
