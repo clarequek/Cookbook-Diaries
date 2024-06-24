@@ -14,7 +14,7 @@ import { doc, getDoc, setDoc } from 'firebase/firestore';
 const GroceryListScreen = (props) => {
   const navigation = useNavigation();
   const [task, setTask] = useState(); //create a State in a functional component 
-  const [quantity, setQuantity] = useState();
+  const [quantity, setQuantity] = useState('');
   const [taskItems, setTaskItems] = useState([]);
 
   const auth = FIREBASE_AUTH;
@@ -125,20 +125,14 @@ const GroceryListScreen = (props) => {
             <Ionicons name={"remove-circle"} color={colors.pink} size={25} />
           </TouchableOpacity>
 
-          {quantity === '' && (
-            <TextInput
-              style={styles.qtyPlaceholder}
-              placeholder='QTY'
-              placeholderTextColor={colors.darkgrey}
-              editable={false}
-            />
-          )}
           <TextInput
             style={styles.qtyInput}
-            placeholder=''
+            placeholder='QTY'
+            placeholderTextColor={colors.darkgrey}
             value={quantity}
             onChangeText={text => setQuantity(text)}
             keyboardType='numeric'
+            textAlign='center'
           />
 
           <TouchableOpacity onPress={() => incrementQuantity()}>
@@ -213,6 +207,8 @@ const styles = StyleSheet.create({
     marginLeft: 10,
     marginRight: 10,
     fontFamily: fonts.Bold,
+    justifyContent: "center",
+    alignItems: 'center',
     textAlign: 'center', // Center the text within the TextInput
   },
   addWrapper: {

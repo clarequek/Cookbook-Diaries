@@ -108,7 +108,7 @@ export default function HomeScreen() {
         className = "space-y-6 pt-13"
         >
 
-          {/* Back arrow button and Profile */}
+          {/* Back arrow button, Title and Profile */}
           <View className = "mx-4 flex-row justify-between items-center"> 
             <TouchableOpacity 
               className="p-2 rounded-full bg-white ml-1"
@@ -120,6 +120,12 @@ export default function HomeScreen() {
                   strokeWidth={4.5}
                 />
             </TouchableOpacity>
+
+            <Text className='font-extrabold' 
+            style = {styles.title}> 
+              Recipe Book
+            </Text>
+
             <Image
               source={profileImage}
               style = {{
@@ -136,7 +142,7 @@ export default function HomeScreen() {
             <View> 
               <Text
               style = {{
-                fontSize: hp(3),
+                fontSize: hp(3.5),
                 fontFamily: fonts.SemiBold,
               }}
               className = "font-bold text-neutral-800"> 
@@ -146,7 +152,7 @@ export default function HomeScreen() {
 
             <Text
             style = {{
-              fontSize: hp(3.5), 
+              fontSize: hp(3), 
               fontFamily: fonts.Bold,
             }}
             className = "font-extrabold text-[#ebb01a]"> 
@@ -195,6 +201,13 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     justifyContent: "center",
     alignItems: "center",
+  },
+  title: {
+    flex: 1,
+    fontSize: hp(3.5),
+    color: colors.pink,
+    fontFamily: fonts.Bold,
+    textAlign: 'center',
   },
   input: {
     flex: 1,

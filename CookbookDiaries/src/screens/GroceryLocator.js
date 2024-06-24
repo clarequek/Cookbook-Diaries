@@ -11,7 +11,6 @@ import { fonts } from '../utilities/fonts';
 import { colors } from '../utilities/colors';
 import { ChevronLeftIcon } from 'react-native-heroicons/outline'
 
-
 const OPENROUTESERVICE_API_KEY = '5b3ce3597851110001cf62486ab0fa18e3874fc18d55f8fac2631085';
 
 const GroceryStoreLocator = () => {
@@ -89,7 +88,7 @@ const GroceryStoreLocator = () => {
     <View style={styles.container}>
       <View style={styles.header}>
       <TouchableOpacity 
-        className="p-2 rounded-full bg-white ml-1"
+        style={styles.backButtonWrapper}
         onPress = {() => navigation.goBack()}
         >
           <ChevronLeftIcon
@@ -98,8 +97,10 @@ const GroceryStoreLocator = () => {
             strokeWidth={4.5}
         />
         </TouchableOpacity>
-        <Text className='font-extrabold text-[#ebb01a]' style={styles.title}>Grocery stores near you:</Text>
+        <Text className='font-extrabold' style={styles.title}>Grocery stores near you:</Text>
       </View>
+
+
       {errorMsg ? (
         <Text style={styles.errorMsg}>{errorMsg}</Text>
       ) : location ? (
@@ -150,7 +151,7 @@ const styles = StyleSheet.create({
     paddingBottom: 5,
     paddingHorizontal: 10,
     backgroundColor: colors.cream,
-    justifyContent: 'space-between',
+    justifyContent: 'center',
   },
   backButtonWrapper: {
     marginRight: 10,
@@ -158,8 +159,10 @@ const styles = StyleSheet.create({
   },
   title: {
     flex: 1,
-    fontSize: 24,
-    fontFamily: fonts.Bold
+    fontSize: hp(3),
+    color: colors.pink,
+    fontFamily: fonts.Bold,
+    textAlign: 'center',
   },
   map: {
     margin: 10,
@@ -184,13 +187,13 @@ const styles = StyleSheet.create({
     height: '15%', // Reduce the height of the info container
   },
   infoTitle: {
-    fontSize: 23,
+    fontSize: hp(2.8),
     fontFamily: fonts.Bold,
     marginBottom: 5,
     color: colors.pink,
   },
   infoText: {
-    fontSize: 16,
+    fontSize: hp(2),
     marginBottom: 5,
     fontFamily: fonts.Regular
   },
