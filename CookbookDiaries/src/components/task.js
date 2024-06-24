@@ -1,5 +1,8 @@
 import React from 'react'
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native'
+import { fonts } from "../utilities/fonts"
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import { colors } from "../utilities/colors"
 
 const Task = (props) => { 
     
@@ -14,10 +17,10 @@ const Task = (props) => {
                     {props.text}
                 </Text>
             </View>
-            
-            <View style = {styles.circular}>
 
-            </View>
+            <TouchableOpacity>
+                <Ionicons name={"pencil-outline"} color={colors.pink} size={25} />
+            </TouchableOpacity>
         </View>
     )
 }
@@ -49,7 +52,8 @@ const styles = StyleSheet.create({
     },
     itemText: {
         maxWidth: '80%',
-        fontSize: 16
+        fontSize: 16,
+        fontFamily: fonts.Regular,
 
     },
     circular: {
