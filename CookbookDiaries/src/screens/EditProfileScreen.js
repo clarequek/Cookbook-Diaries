@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { View, Text, TextInput, StyleSheet, TouchableOpacity, Button, Image, Modal } from "react-native";
 import { FIREBASE_AUTH, FIREBASE_DB } from '../../FirebaseConfig';
@@ -36,7 +37,7 @@ export default function EditProfileScreen() {
                     setBio(userData.bio || '');
                     setProfileImage(userData.profileImage);
                     setExperience(userData.experience || '');
-                    setGrocerylist(userData.grocerylist || []);
+                    setGrocerylist(userData.grocerylist || []); //to ensure that grocerylist is still captured after editing
                 }
             } catch (error) {
                 console.error("Error fetching user data:", error);
