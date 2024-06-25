@@ -66,7 +66,7 @@ export default function EditProfileScreen() {
   };
 
   const experienceOptions = [
-    "Begginer",
+    "Beginner",
     "Intermediate",
     "Advanced",
   ];

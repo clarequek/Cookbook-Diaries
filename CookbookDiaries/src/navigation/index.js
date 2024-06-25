@@ -17,6 +17,7 @@ import ProfileScreen from '../screens/ProfileScreen';
 import GroceryListScreen from '../screens/GroceryList';
 import EditProfileScreen from '../screens/EditProfileScreen';
 import GroceryLocatorScreen from '../screens/GroceryLocator';
+import IngredientSubstitutionScreen from '../screens/IngredientSubstitutionScreen';
 
 
 const Stack = createNativeStackNavigator(); 
@@ -27,7 +28,7 @@ export default function AppNavigation() {
   return (
     <NavigationContainer>
       <Stack.Navigator
-        initialRouteName='Main'
+        initialRouteName='IngredientSubstitution'
         screenOptions={{
           headerShown: false,
         }}
@@ -44,6 +45,7 @@ export default function AppNavigation() {
         <Stack.Screen name = "GroceryList" component = {GroceryListScreen}/> 
         <Stack.Screen name = "EditProfile" component = {EditProfileScreen}/> 
         <Stack.Screen name = "GroceryLocator" component = {GroceryLocatorScreen}/>
+        <Stack.Screen name = "IngredientSubstitution" component = {IngredientSubstitutionScreen}/>
       </Stack.Navigator>
     </NavigationContainer>
   );
