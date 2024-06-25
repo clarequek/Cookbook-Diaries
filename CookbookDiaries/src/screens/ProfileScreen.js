@@ -22,13 +22,6 @@ export default function ProfileScreen() {
   const navigation = useNavigation();
 
   useEffect(() => {
-
-    const checkUsernameExists = async (username) => {
-      const usersRef = collection(db, 'users');
-      const q = query(usersRef, where('username', '==', username));
-      const querySnapshot = await getDocs(q);
-      return !querySnapshot.empty;
-    };
     
     const fetchUserData = async () => {
       try {
