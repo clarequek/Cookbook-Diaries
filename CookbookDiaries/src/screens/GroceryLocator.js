@@ -87,7 +87,7 @@ const GroceryStoreLocator = () => {
     //Back button and title 
     <View style={styles.container}>
       <View style={styles.header}>
-      <TouchableOpacity 
+      <TouchableOpacity className = "p-2 rounded-full bg-white ml-1"
         style={styles.backButtonWrapper}
         onPress = {() => navigation.goBack()}
         >
@@ -159,7 +159,7 @@ const styles = StyleSheet.create({
   },
   title: {
     flex: 1,
-    fontSize: hp(3),
+    fontSize: hp(2.8),
     color: colors.pink,
     fontFamily: fonts.Bold,
     textAlign: 'center',
@@ -187,13 +187,13 @@ const styles = StyleSheet.create({
     height: '15%', // Reduce the height of the info container
   },
   infoTitle: {
-    fontSize: hp(2.8),
+    fontSize: hp(2.5),
     fontFamily: fonts.Bold,
     marginBottom: 5,
     color: colors.pink,
   },
   infoText: {
-    fontSize: hp(2),
+    fontSize: hp(1.8),
     marginBottom: 5,
     fontFamily: fonts.Regular
   },
