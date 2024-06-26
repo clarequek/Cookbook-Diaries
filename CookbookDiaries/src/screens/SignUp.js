@@ -11,6 +11,10 @@ import { colors } from "../utilities/colors";
 
 import DefaultAvatar1 from '../../assets/images/DefaultAvatar1.png';
 import DefaultAvatar2 from '../../assets/images/DefaultAvatar2.png';
+import DefaultAvatar3 from '../../assets/images/DefaultAvatar3.png';
+import DefaultAvatar4 from '../../assets/images/DefaultAvatar4.png';
+import DefaultAvatar5 from '../../assets/images/DefaultAvatar5.png';
+
 
 export default function SignUp() {
   const navigation = useNavigation();
@@ -88,6 +92,14 @@ export default function SignUp() {
     }
   };
 
+  const profileImages = [
+    DefaultAvatar1,
+    DefaultAvatar2,
+    DefaultAvatar3,
+    DefaultAvatar4,
+    DefaultAvatar5,
+  ];
+
   return (
     <KeyboardAvoidingView
       style={{ flex: 1 }}
@@ -116,10 +128,10 @@ export default function SignUp() {
 
           {/* Profile Picture Selection */}
           <View style={styles.avatarContainer}>
-            <Image source={profileImage === 1 ? DefaultAvatar1 : DefaultAvatar2} style={styles.avatar} />
-            <TouchableOpacity onPress={() => setProfileImage(profileImage === 1 ? 2 : 1)}> 
+            <Image source={profileImages[profileImage - 1]} style={styles.avatar} />
+            <TouchableOpacity onPress={() => setProfileImage((profileImage % 5) + 1)}>
               <View style={styles.swapIconContainer}>
-                <Ionicons name={"swap-horizontal-outline"} color={colors.white} size={15} style={styles.swapIcon} />
+                <Ionicons name={"swap-horizontal"} color={colors.white} size={15} style={styles.swapIcon} />
               </View>
             </TouchableOpacity>
           </View>
@@ -302,7 +314,7 @@ const styles = StyleSheet.create({
     borderRadius: 15,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: colors.pink,
+    backgroundColor: colors.lightpink,
     marginLeft: -20,
     marginTop: 70,
   }

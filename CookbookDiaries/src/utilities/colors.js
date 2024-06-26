@@ -5,5 +5,8 @@ export const colors = {
     black: '#000000',
     darkgrey: '#a9a9a9',
     lightgrey: '#d3d3d3',
-    lightpink: '#fbc2bd'
+    lightpink: '#fbc2bd',
+    lightergrey: '#f5f5f5',
+    yellow: '#fdc934',
+    darkergrey: '#444444',
 };

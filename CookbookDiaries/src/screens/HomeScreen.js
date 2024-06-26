@@ -1,4 +1,3 @@
-
 import { View, Text, ScrollView, SafeAreaView, Image, TextInput, Button, StyleSheet, TouchableOpacity
 
  } from 'react-native'
@@ -26,11 +25,12 @@ import DefaultAvatar2 from '../../assets/images/DefaultAvatar2.png';
 {/* import heroicons if you wanna make icons on a home screen */}
 
 export default function HomeScreen() {
-  const [activeCategory, setActiveCategory] = useState("Beef")
+  const [activeCategory, setActiveCategory] = useState("All")
   const [categories, setCategories] = useState([])
   const [meals, setMeals] = useState([])
   const [profileImage, setProfileImage] = useState(null);
   const [name, setName] = useState('');
+  const [search, setSearch] = useState('');
   const navigation = useNavigation();
   const db = FIREBASE_DB;
   const auth = FIREBASE_AUTH;
@@ -38,14 +38,18 @@ export default function HomeScreen() {
   useEffect(() => {
     fetchUserData();
     getCategories();
-    getRecipes();
-  }, []); 
+    getAllRecipes();
+  }, []);
 
-  const handleChangeCategory = (category) => { 
-    getRecipes(category); 
+  const handleChangeCategory = (category) => {
     setActiveCategory(category);
     setMeals([]);
-  }; 
+    if (category === "All") {
+      getAllRecipes();
+    } else {
+      getRecipes(category);
+    }
+  };
 
   const fetchUserData = async () => {
     try {
@@ -71,7 +75,7 @@ export default function HomeScreen() {
   };
 
   const getCategories= async () => { 
-    try{
+    try {
       const response = await axios.get(
         "https://themealdb.com/api/json/v1/1/categories.php"
       ); 
@@ -96,6 +100,54 @@ export default function HomeScreen() {
       console.log(error.message)
     }
   }
+
+  const getAllRecipes = async (category = "All") => { //have a sorting mechanism for this
+    try {
+      const urls = [
+        `https://www.themealdb.com/api/json/v1/1/filter.php?c=beef`,
+        `https://www.themealdb.com/api/json/v1/1/filter.php?c=chicken`,
+        `https://www.themealdb.com/api/json/v1/1/filter.php?c=dessert`,
+        `https://www.themealdb.com/api/json/v1/1/filter.php?c=lamb`,
+        `https://www.themealdb.com/api/json/v1/1/filter.php?c=miscellaneous`,
+        `https://www.themealdb.com/api/json/v1/1/filter.php?c=pasta`,
+        `https://www.themealdb.com/api/json/v1/1/filter.php?c=pork`,
+        `https://www.themealdb.com/api/json/v1/1/filter.php?c=seafood`,
+        `https://www.themealdb.com/api/json/v1/1/filter.php?c=side`,
+        `https://www.themealdb.com/api/json/v1/1/filter.php?c=starter`,
+        `https://www.themealdb.com/api/json/v1/1/filter.php?c=vegan`,
+        `https://www.themealdb.com/api/json/v1/1/filter.php?c=vegetarian`,
+        `https://www.themealdb.com/api/json/v1/1/filter.php?c=breakfast`,
+        `https://www.themealdb.com/api/json/v1/1/filter.php?c=goat`
+      ];
+  
+      const responses = await Promise.all(urls.map(url => axios.get(url)));
+  
+      // Extract meals data from all responses
+      const allMeals = responses.flatMap(response =>
+        response && response.data ? response.data.meals : []
+      );
+  
+      // Set the meals state with all the extracted meals data
+      setMeals(allMeals);
+    } catch (error) {
+      console.log(error.message);
+    }
+  };
+
+  const handleSearch= async() => {
+    try { 
+      const response = await axios.get(
+        `https://www.themealdb.com/api/json/v1/1/search.php?s=${search}`
+      )
+      if (response && response.data) { 
+        setMeals(response.data.meals)
+      }
+    } catch(error) { 
+      console.log(error.message)
+    }
+  }
+
+
   return (
     <View className = "flex-1 bg-[#fff5e6]">
       <StatusBar style = "dark" />
@@ -109,66 +161,92 @@ export default function HomeScreen() {
         >
 
           {/* Back arrow button, Title and Profile */}
-          <View className = "mx-4 flex-row justify-between items-center"> 
+          <View className = "mx-4 space-y-1 flex-row justify-between items-center"> 
             <TouchableOpacity 
               className="p-2 rounded-full bg-white ml-1"
               onPress = {() => navigation.goBack()}
               >
                 <ChevronLeftIcon
-                  size={hp(3.5)}
+                  size={hp(2.5)}
                   color={colors.pink}
                   strokeWidth={4.5}
                 />
             </TouchableOpacity>
 
-            <Text className='font-extrabold' 
-            style = {styles.title}> 
-              Recipe Book
-            </Text>
+
+          </View>
+
+          {/* Headlines */}
+          <View className = "mx-4 space-y-1 mb-2" style = {{flexDirection: 'row',}}> 
+            <View>
+              <View style={styles.headline}> 
+                <Text
+                style = {{
+                  fontSize: hp(2.0),
+                  fontFamily: fonts.SemiBold,
+                  color: colors.darkgrey,
+                }}
+                className = "font-bold text-neutral-800"> 
+                  Hi,
+                </Text>
+
+                <Text> </Text> 
+                {/* Display User's Name */}
+                <Text
+                style = {{
+                  fontSize: hp(2.0),
+                  fontFamily: fonts.SemiBold,
+                  color: colors.black,
+               }}
+                className = "font-bold text-neutral-800"> 
+                  {name}
+                </Text>
+              </View>
+
+              <Text
+                style = {{
+                  fontSize: hp(3), 
+                  fontFamily: fonts.Bold,
+                }}
+                className = "font-extrabold text-[#ff8271]"> 
+                  What's cooking today? 
+              </Text>
+
+            </View>
 
             <Image
               source={profileImage}
               style = {{
-                width: hp(5),
-                height: hp(5), 
-                resizeMode: "cover",
+                width: hp(6),
+                height: hp(6), 
+                marginLeft: 10,
               }}
               className = "rounded-full"
             />
+
           </View>
 
-          {/* Headlines */}
-          <View className = "mx-4 space-y-1 mb-2"> 
-            <View> 
-              <Text
-              style = {{
-                fontSize: hp(3.5),
-                fontFamily: fonts.SemiBold,
-              }}
-              className = "font-bold text-neutral-800"> 
-                Hi {name}, {/* Display user name */}
-              </Text>
+          {/* Search bar and filter icon */}
+          <View style = {{flexDirection: 'row', 
+            //justifyContent: 'space-around'
+            }}>
+            {/* Search bar */}
+            <View style={styles.searchContainer}>
+              <View style={styles.inputContainer}> 
+                <Ionicons name={"search-outline"} size={20} color={colors.darkgrey} />
+                <TextInput
+                  style= {styles.input}
+                  placeholder="Look for a recipe"
+                  onChangeText={(text) => setSearch(text)}
+                  onSubmitEditing={handleSearch}
+                />
+              </View>
             </View>
-
-            <Text
-            style = {{
-              fontSize: hp(3), 
-              fontFamily: fonts.Bold,
-            }}
-            className = "font-extrabold text-[#ebb01a]"> 
-                What's cooking today? 
-            </Text>
+            {/* Filter button */}
+            <TouchableOpacity style = {styles.filterContainer}>
+              <Ionicons name={"filter"} size={30} color={colors.pink} />
+            </TouchableOpacity>
           </View>
-
-          {/* Search bar */}
-          <View style={styles.inputContainer}>
-            
-            <Ionicons name={"search-outline"} size={30} color={colors.darkgrey} />
-            <TextInput
-              style= {styles.input}
-              placeholder="Look for a recipe"
-            />
-        </View>
 
           {/* Categories */}
           <View>
@@ -213,16 +291,38 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: 20,
     fontFamily: fonts.Light,
+    color: colors.darkergrey,
   },
   inputContainer: {
-    borderWidth: 1,
     padding: 10,
-    borderRadius: 100,
+    backgroundColor: colors.white,
+    borderRadius: 20,
     flexDirection: "row",
-    borderColor: colors.darkgrey,
     alignItems: "center",
     marginBottom: 20,
+    height: 40,
   },
+
+  searchContainer: {
+    alignItems: "center",
+    width: '85%',
+    marginLeft: 10,
+  },
+
+  headline: {
+    flexDirection: 'row',
+  },
+
+  filterContainer: {
+    marginLeft: 5,
+    marginTop: 0,
+    alignItems: "center",
+    width: 40,
+    height: 40,
+    borderRadius: 15,
+    justifyContent: 'center',
+  },
+
 });
 
 {/* when you are doing your code and you dk whats the problem 

@@ -7,12 +7,15 @@ import { fonts } from "../utilities/fonts";
 import { Picker } from '@react-native-picker/picker';
 import { useNavigation } from "@react-navigation/native";
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import DefaultAvatar1 from '../../assets/images/DefaultAvatar1.png';
-import DefaultAvatar2 from '../../assets/images/DefaultAvatar2.png';
 import { ChevronLeftIcon } from 'react-native-heroicons/outline'
 import { heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import { Alert } from 'react-native';
 
+import DefaultAvatar1 from '../../assets/images/DefaultAvatar1.png';
+import DefaultAvatar2 from '../../assets/images/DefaultAvatar2.png';
+import DefaultAvatar3 from '../../assets/images/DefaultAvatar3.png';
+import DefaultAvatar4 from '../../assets/images/DefaultAvatar4.png';
+import DefaultAvatar5 from '../../assets/images/DefaultAvatar5.png';
 
 export default function EditProfileScreen() {
     const [profileImage, setProfileImage] = useState(null);
@@ -46,7 +49,7 @@ export default function EditProfileScreen() {
                 setEmail(userData.email);
                 setBio(userData.bio || '');
                 setProfileImage(userData.profileImage);
-                setExperience(userData.experience || '');
+                setExperience(userData.experience || 'No experience stated.');
                 setGrocerylist(userData.grocerylist || []); //to ensure that grocerylist is still captured after editing
               }
           } catch (error) {
@@ -81,6 +84,14 @@ export default function EditProfileScreen() {
     }
   };
 
+  const profileImages = [
+    DefaultAvatar1,
+    DefaultAvatar2,
+    DefaultAvatar3,
+    DefaultAvatar4,
+    DefaultAvatar5,
+  ];
+
   const experienceOptions = [
     "Beginner",
     "Intermediate",
@@ -92,8 +103,8 @@ export default function EditProfileScreen() {
         <TouchableOpacity 
             style = {{
               borderRadius: 100,
-              width: 45,
-              height: 45,
+              width: 35,
+              height: 35,
               marginTop: 50,
               marginLeft: 20,
               backgroundColor: colors.white,
@@ -103,7 +114,7 @@ export default function EditProfileScreen() {
             onPress = {() => navigation.goBack()}
         >
             <ChevronLeftIcon
-              size={hp(3.5)}
+              size={hp(2.5)}
               color={colors.pink}
               strokeWidth={4.5}
             />
@@ -111,12 +122,12 @@ export default function EditProfileScreen() {
 
         {/* Profile Picture Selection */}
         <View style={styles.avatarContainer}>
-            <Image source={profileImage === 1 ? DefaultAvatar1 : DefaultAvatar2} style={styles.profileImage} />
-            <TouchableOpacity onPress={() => setProfileImage(profileImage === 1 ? 2 : 1)}> 
-                <View style={styles.swapIconContainer}>
-                    <Ionicons name={"swap-horizontal-outline"} color={colors.white} size={15} style={styles.swapIcon} />
-                </View>
-            </TouchableOpacity>
+          <Image source={profileImages[profileImage - 1]} style={styles.profileImage} />
+          <TouchableOpacity onPress={() => setProfileImage((profileImage % 5) + 1)}>
+            <View style={styles.swapIconContainer}>
+              <Ionicons name={"swap-horizontal-outline"} color={colors.white} size={15} style={styles.swapIcon} />
+            </View>
+          </TouchableOpacity>
         </View>
 
         <View style={styles.profileContainer}>
@@ -205,7 +216,7 @@ const styles = StyleSheet.create({
   input: {
     flex: 1,
     paddingHorizontal: 20,
-    fontFamily: fonts.Light,
+    fontFamily: fonts.SemiBold,
   },
 
   backButtonWrapper: {
@@ -230,7 +241,7 @@ const styles = StyleSheet.create({
     borderRadius: 15,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: colors.pink,
+    backgroundColor: colors.lightpink,
     marginLeft: -20,
     marginTop: 70,
   },

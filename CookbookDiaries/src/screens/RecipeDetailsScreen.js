@@ -6,27 +6,30 @@ import { widthPercentageToDP as wp } from 'react-native-responsive-screen'
 import { useNavigation } from '@react-navigation/native'
 import { CachedImage } from '../utilities/index'
 import { ChevronLeftIcon } from 'react-native-heroicons/outline'
-import { HeartIcon } from "react-native-heroicons/solid"
 import Loading from '../components/loading'
 import axios from 'axios'
 import Animated, { FadeInDown } from 'react-native-reanimated'
 import { fonts } from "../utilities/fonts";
 import { colors } from "../utilities/colors";
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import { FIREBASE_DB } from '../../FirebaseConfig';
-import { collection, addDoc, query, where, getDocs } from 'firebase/firestore';
+import { collection, addDoc, query, where, getDocs, doc, updateDoc, arrayUnion } from 'firebase/firestore';
+import { FIREBASE_AUTH, FIREBASE_DB } from '../../FirebaseConfig';
 import { Alert } from 'react-native';
 
 
 export default function RecipeDetailsScreen(props) {
     let item = props.route.params
     const db = FIREBASE_DB
+    const auth = FIREBASE_AUTH
     const navigation = useNavigation()
     const [meal, setMeal] = useState(null)
     const [isLoading, setIsLoading] = useState(true)
     const [isFavourite, setIsFavourite] = useState(false)
     const [rating, setRating] = useState(0);
     const [averageRating, setAverageRating] = useState(0);
+    const [task, setTask] = useState(); //create a State in a functional component 
+    const [quantity, setQuantity] = useState('');
+    const [taskItems, setTaskItems] = useState([]);
     
     useEffect(() => { 
         getMealData(item.idMeal)
@@ -67,17 +70,36 @@ export default function RecipeDetailsScreen(props) {
         })).filter(instruction => instruction.instruction);
     };
 
-    const handleAddToGroceryList = (ingredient, quantity) => {
-        const ingredientItem = { ingredient, quantity };
-        navigation.navigate('GroceryList', { ingredients: [ingredientItem] });
+    const saveGroceryList = async (newTaskItems) => {
+        try {
+            const userDocRef = doc(db, "users", auth.currentUser.uid);
+            await updateDoc(userDocRef, {
+                grocerylist: arrayUnion(...newTaskItems)
+            });
+        } catch (error) {
+            console.error("Error saving grocery list:", error);
+        }
     };
 
-    const handleAddAllToGroceryList = () => {
-        const ingredients = ingredientsIndexes(meal).map((i) => ({
-            ingredient: meal["strIngredient" + i],
-            quantity: meal["strMeasure" + i]
-        }));
-        navigation.navigate('GroceryList', { ingredients });
+    const handleAddToGroceryList = async (ingredient, measure) => {
+        const newTaskItems = [...taskItems, { name: ingredient, quantity: measure }];
+        setTaskItems(newTaskItems);
+        await saveGroceryList(newTaskItems);
+        Alert.alert("Added to Grocery List", `${ingredient} (${measure}) added to your grocery list.`);
+    };
+
+    const handleAddAllToGroceryList = async () => {
+        const newTaskItems = [...taskItems];
+        ingredientsIndexes(meal).forEach((i) => {
+            const ingredient = meal["strIngredient" + i];
+            const measure = meal["strMeasure" + i];
+            if (ingredient) {
+                newTaskItems.push({ name: ingredient, quantity: measure });
+            }
+        });
+        setTaskItems(newTaskItems);
+        await saveGroceryList(newTaskItems);
+        Alert.alert("Added to Grocery List", "All ingredients added to your grocery list.");
     };
 
     const handleRateRecipe = async () => {
@@ -180,7 +202,7 @@ export default function RecipeDetailsScreen(props) {
             onPress = {() => navigation.goBack()}
             >
                 <ChevronLeftIcon
-                size={hp(3.5)}
+                size={hp(2.5)}
                 color={colors.pink}
                 strokeWidth={4.5}
                 />
@@ -189,11 +211,11 @@ export default function RecipeDetailsScreen(props) {
             <View className="p-2 rounded-full bg-white mr-5">
                 <TouchableOpacity 
                 onPress={() => setIsFavourite(!isFavourite)}>
-                    <HeartIcon
-                    size={hp(3.5)}
-                    color={isFavourite ? "#ff8271" : "gray"}
-                    strokeWidth={4.5}
-                    />
+                    <Ionicons
+                        name={"bookmark"} 
+                        color={isFavourite ? "#ff8271" : "gray"}
+                        size={hp(2.5)}
+                        strokeWidth={4.5}/>
                 </TouchableOpacity>
             </View>
 
@@ -318,7 +340,9 @@ export default function RecipeDetailsScreen(props) {
                 })}
                 </View>
 
-                <TouchableOpacity style={styles.buttonContainer} onPress={handleAddAllToGroceryList}>
+                <TouchableOpacity style={styles.buttonContainer} 
+                    onPress={handleAddAllToGroceryList}
+                >
                     <Ionicons name={"cart-outline"} size={20} color={colors.white} />
                     <Text style={styles.buttonText}>   Add all to grocery list!</Text>
                 </TouchableOpacity>
