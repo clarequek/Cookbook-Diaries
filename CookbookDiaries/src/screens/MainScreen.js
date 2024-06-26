@@ -45,12 +45,12 @@ import {
           <LottieView
             autoPlay
             ref={animation}
-            style={{ width: 200, height: 200 }}
-            source={require("../../assets/lottie/food-logo.json")}
+            style={{ width: 250, height: 250 }}
+            source={require("../../assets/lottie/drinksalad.json")}
           />
         </View>
   
-        {/* Button to go to Home */}
+        {/* Button to go to different places */}
         <View> 
           <TouchableOpacity
           style = {{
@@ -121,6 +121,28 @@ import {
             </Text>
           </TouchableOpacity>
 
+          <TouchableOpacity
+          style = {{
+            backgroundColor: colors.pink,
+            paddingHorizontal: hp(5), 
+            paddingVertical: hp(1.5),
+            borderRadius: hp(1.5),
+            marginTop: 20,
+            marginBottom: 20,
+            alignItems: 'center',
+          }}
+          onPress = {() => navigation.navigate("IngredientSubstitution")}
+          >
+            <Text
+              style = {{
+                color: colors.white,
+                fontSize: hp(2), 
+                fontWeight: "medium",
+                fontFamily: fonts.Bold,
+              }}>
+              Ingredient Substitution
+            </Text>
+          </TouchableOpacity>
           <TouchableOpacity
           style = {{
             backgroundColor: colors.pink,

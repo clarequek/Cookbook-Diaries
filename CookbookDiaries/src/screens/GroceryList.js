@@ -86,9 +86,10 @@ const GroceryListScreen = (props) => {
 
   return ( 
     <View style={styles.container}>
-      {/* Title */}
+      {/* Back Button and Title */}
       <View style={styles.header}>
-        <TouchableOpacity style={styles.backButtonWrapper} onPress={() => navigation.goBack()}>
+        <TouchableOpacity className = 'p-2 rounded-full bg-white ml-1'
+        style={styles.backButtonWrapper} onPress={() => navigation.goBack()}>
           <ChevronLeftIcon
             size={hp(3.5)}
             color={colors.pink}
