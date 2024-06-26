@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { View, Text, TextInput, StyleSheet, TouchableOpacity, Button, Image, Modal } from "react-native";
 import { FIREBASE_AUTH, FIREBASE_DB } from '../../FirebaseConfig';
-import { doc, getDoc, setDoc } from 'firebase/firestore';
+import { collection, query, doc, where, getDocs, setDoc, getDoc } from 'firebase/firestore';
 import { colors } from "../utilities/colors";
 import { fonts } from "../utilities/fonts";
 import { Picker } from '@react-native-picker/picker';
@@ -10,6 +10,9 @@ import { useNavigation } from "@react-navigation/native";
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import DefaultAvatar1 from '../../assets/images/DefaultAvatar1.png';
 import DefaultAvatar2 from '../../assets/images/DefaultAvatar2.png';
+import { ChevronLeftIcon } from 'react-native-heroicons/outline'
+import { heightPercentageToDP as hp } from 'react-native-responsive-screen';
+import { Alert } from 'react-native';
 
 
 export default function EditProfileScreen() {
@@ -23,26 +26,34 @@ export default function EditProfileScreen() {
     const db = FIREBASE_DB;
     const auth = FIREBASE_AUTH;
     const navigation = useNavigation();
+    
+    const checkUsernameExists = async (username) => {
+      const usersRef = collection(db, 'users');
+      const q = query(usersRef, where('username', '==', username));
+      const querySnapshot = await getDocs(q);
+      return !querySnapshot.empty;
+    };
 
     useEffect(() => {
-        const fetchUserData = async () => {
-            try {
-                const userDocRef = doc(db, "users", auth.currentUser.uid);
-                const userDocSnap = await getDoc(userDocRef);
-                if (userDocSnap.exists()) {
-                    const userData = userDocSnap.data();
-                    setUsername(userData.username);
-                    setName(userData.name);
-                    setEmail(userData.email);
-                    setBio(userData.bio || '');
-                    setProfileImage(userData.profileImage);
-                    setExperience(userData.experience || '');
-                    setGrocerylist(userData.grocerylist || []); //to ensure that grocerylist is still captured after editing
-                }
-            } catch (error) {
-                console.error("Error fetching user data:", error);
-            }
-        };
+
+      const fetchUserData = async () => {
+          try {
+              const userDocRef = doc(db, "users", auth.currentUser.uid);
+              const userDocSnap = await getDoc(userDocRef);                
+              if (userDocSnap.exists()) {
+                const userData = userDocSnap.data();
+                setUsername(userData.username);
+                setName(userData.name);
+                setEmail(userData.email);
+                setBio(userData.bio || '');
+                setProfileImage(userData.profileImage);
+                setExperience(userData.experience || '');
+                setGrocerylist(userData.grocerylist || []); //to ensure that grocerylist is still captured after editing
+              }
+          } catch (error) {
+            console.error("Error fetching user data:", error);
+          }
+      };
 
         fetchUserData();
     }, []);
@@ -50,6 +61,11 @@ export default function EditProfileScreen() {
   const handleSave = async () => {
     try {
       const userDocRef = doc(db, "users", auth.currentUser.uid);
+      if (await checkUsernameExists(username)) {
+        Alert.alert("Username already exists", "Please choose a different username.");
+        return;
+      }
+
       await setDoc(userDocRef, {
         profileImage,
         username,
@@ -73,12 +89,25 @@ export default function EditProfileScreen() {
   ];
 
   return (
-    <View style={styles.container}>
-        {/* Back arrow button */}
-        <TouchableOpacity style={styles.backButtonWrapper} onPress={() => navigation.goBack()}>
-            <View style={styles.iconContainer}>
-                <Ionicons name={"arrow-back-outline"} color='#000000' size={25} />
-            </View>
+    <View className = "flex-1 bg-[#fff5e6]">
+        <TouchableOpacity 
+            style = {{
+              borderRadius: 100,
+              width: 45,
+              height: 45,
+              marginTop: 50,
+              marginLeft: 20,
+              backgroundColor: colors.white,
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}
+            onPress = {() => navigation.goBack()}
+        >
+            <ChevronLeftIcon
+              size={hp(3.5)}
+              color={colors.pink}
+              strokeWidth={4.5}
+            />
         </TouchableOpacity>
 
         {/* Profile Picture Selection */}
@@ -113,18 +142,6 @@ export default function EditProfileScreen() {
                 placeholder="Enter your name"
                 autoCapitalize='none'
                 onChangeText={setName}
-              />
-        </View>
-
-        {/* Email */}
-        <View style={styles.inputContainer}>
-              <Ionicons name={"mail-outline"} size={30} color={colors.darkgrey} />
-              <TextInput
-                value={email}
-                style={styles.input}
-                placeholder="Enter your email"
-                autoCapitalize='none'
-                onChangeText={setEmail}
               />
         </View>
 
@@ -227,6 +244,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginBottom: 20,
     height: 50,
+    width: '95%',
   },
   picker: {
     flex: 1,
@@ -243,6 +261,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginBottom: 20,
     height: 150,
+    width: '95%'
   },
 
   buttonContainer: {

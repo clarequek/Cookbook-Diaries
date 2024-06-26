@@ -22,13 +22,6 @@ export default function ProfileScreen() {
   const navigation = useNavigation();
 
   useEffect(() => {
-
-    const checkUsernameExists = async (username) => {
-      const usersRef = collection(db, 'users');
-      const q = query(usersRef, where('username', '==', username));
-      const querySnapshot = await getDocs(q);
-      return !querySnapshot.empty;
-    };
     
     const fetchUserData = async () => {
       try {
@@ -65,16 +58,25 @@ export default function ProfileScreen() {
   };
 
   return (
-    <View style={styles.container}>
+    <View className = "flex-1 bg-[#fff5e6]">
       <TouchableOpacity 
-        className="p-2 rounded-full bg-white ml-1"
-        onPress = {() => navigation.goBack()}
-              >
+            style = {{
+              borderRadius: 100,
+              width: 45,
+              height: 45,
+              marginTop: 50,
+              marginLeft: 20,
+              backgroundColor: colors.white,
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}
+            onPress = {() => navigation.goBack()}
+        >
           <ChevronLeftIcon
             size={hp(3.5)}
             color={colors.pink}
             strokeWidth={4.5}
-        />
+          />
       </TouchableOpacity>
       
       {userData && (
