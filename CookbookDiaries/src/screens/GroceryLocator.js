@@ -9,7 +9,8 @@ import { heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import { widthPercentageToDP as wp } from 'react-native-responsive-screen';
 import { fonts } from '../utilities/fonts';
 import { colors } from '../utilities/colors';
-import { ChevronLeftIcon } from 'react-native-heroicons/outline'
+import { ChevronLeftIcon } from 'react-native-heroicons/outline';
+import Loading from '../components/loading';
 
 const OPENROUTESERVICE_API_KEY = '5b3ce3597851110001cf62486ab0fa18e3874fc18d55f8fac2631085';
 
@@ -87,15 +88,15 @@ const GroceryStoreLocator = () => {
     <View style={styles.container}>
       {/* Back button and title */}
       <View style={styles.header}>
-      <TouchableOpacity className = "p-2 rounded-full bg-white ml-1"
-        style={styles.backButtonWrapper}
-        onPress = {() => navigation.goBack()}
+        <TouchableOpacity className="p-2 rounded-full bg-white ml-1"
+          style={styles.backButtonWrapper}
+          onPress={() => navigation.goBack()}
         >
           <ChevronLeftIcon
             size={hp(3.5)}
             color={colors.pink}
             strokeWidth={4.5}
-        />
+          />
         </TouchableOpacity>
         <Text className='font-extrabold' style={styles.title}>Grocery stores near you:</Text>
       </View>
@@ -126,7 +127,8 @@ const GroceryStoreLocator = () => {
           ))}
         </MapView>
       ) : (
-        <Text style={styles.loadingText}>Loading...</Text>
+        // Loading component
+        <Loading size="large" color={colors.pink} /> 
       )}
       {/* Information of store selected */}
       {selectedStore && (
