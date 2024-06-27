@@ -24,8 +24,8 @@ const IngredientSubstitutionScreen = () => {
     <View style={styles.container}>
       {/* Back button and title */}
       <View style={styles.header}>
-        <TouchableOpacity className = "p-2 rounded-full bg-white ml-1"
-        style={styles.backButtonWrapper} onPress={() => navigation.goBack()}>
+        <TouchableOpacity className="p-2 rounded-full bg-white ml-1"
+          style={styles.backButtonWrapper} onPress={() => navigation.goBack()}>
           <ChevronLeftIcon
             size={hp(3.5)}
             color={colors.pink}
@@ -37,8 +37,9 @@ const IngredientSubstitutionScreen = () => {
         </Text>
       </View>
 
+      {/* Search bar + Icon */}
       <View style={styles.inputContainer}>
-        <Ionicons name="search" size={20} color={colors.darkgrey} style={styles.searchIcon} />
+        <Ionicons name="search" size={25} color={colors.darkgrey} style={styles.searchIcon} />
         <TextInput
           style={styles.input}
           placeholder="Enter an ingredient"
@@ -46,9 +47,13 @@ const IngredientSubstitutionScreen = () => {
           onChangeText={setIngredient}
         />
       </View>
+
+      {/* Get substitutions Button */}
       <TouchableOpacity style={styles.button} onPress={fetchSubstitutions}>
         <Text style={styles.buttonText}>Get Substitutions</Text>
       </TouchableOpacity>
+
+      {/* List of Substitutions */}
       <FlatList
         data={substitutions}
         keyExtractor={(item, index) => index.toString()}
@@ -58,6 +63,7 @@ const IngredientSubstitutionScreen = () => {
             <Text style={styles.substitution}>{item}</Text>
           </View>
         )}
+        //Disclaimer
         ListFooterComponent={
           <Text style={styles.disclaimer}>
             Disclaimer: The provided substitutions are suggestions and may not be suitable for all recipes or dietary needs. Please use discretion and consult a professional if needed.
@@ -109,6 +115,7 @@ const styles = StyleSheet.create({
   input: {
     flex: 1,
     fontFamily: fonts.Regular,
+    fontSize: hp(2.2),
   },
   button: {
     backgroundColor: colors.pink,
@@ -120,7 +127,7 @@ const styles = StyleSheet.create({
   buttonText: {
     color: colors.white,
     fontFamily: fonts.Bold,
-    fontSize: 16,
+    fontSize: hp(2.2),
   },
   card: {
     flexDirection: 'row',

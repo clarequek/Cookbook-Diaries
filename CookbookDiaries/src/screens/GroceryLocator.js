@@ -84,8 +84,8 @@ const GroceryStoreLocator = () => {
   }, []);
 
   return (
-    //Back button and title 
     <View style={styles.container}>
+      {/* Back button and title */}
       <View style={styles.header}>
       <TouchableOpacity className = "p-2 rounded-full bg-white ml-1"
         style={styles.backButtonWrapper}
@@ -100,7 +100,7 @@ const GroceryStoreLocator = () => {
         <Text className='font-extrabold' style={styles.title}>Grocery stores near you:</Text>
       </View>
 
-
+      {/* Map */}
       {errorMsg ? (
         <Text style={styles.errorMsg}>{errorMsg}</Text>
       ) : location ? (
@@ -128,6 +128,7 @@ const GroceryStoreLocator = () => {
       ) : (
         <Text style={styles.loadingText}>Loading...</Text>
       )}
+      {/* Information of store selected */}
       {selectedStore && (
         <View style={styles.infoContainer}>
           <Text style={styles.infoTitle}>{selectedStore.tags?.name || 'Grocery Store'}</Text>
