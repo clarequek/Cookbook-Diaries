@@ -110,7 +110,7 @@ export default function HomeScreen() {
 
           {/* Back arrow button, Title and Profile */}
           <View className = "mx-4 flex-row justify-between items-center"> 
-            <TouchableOpacity 
+            {/* <TouchableOpacity 
               className="p-2 rounded-full bg-white ml-1"
               onPress = {() => navigation.goBack()}
               >
@@ -119,12 +119,12 @@ export default function HomeScreen() {
                   color={colors.pink}
                   strokeWidth={4.5}
                 />
-            </TouchableOpacity>
+            </TouchableOpacity> */}
 
-            <Text className='font-extrabold' 
+            {/* <Text className='font-extrabold' 
             style = {styles.title}> 
               Recipe Book
-            </Text>
+            </Text> */}
 
             <Image
               source={profileImage}
@@ -138,7 +138,7 @@ export default function HomeScreen() {
           </View>
 
           {/* Headlines */}
-          <View className = "mx-4 space-y-1 mb-2"> 
+          <View className = "mx-4 space-y-1"> 
             <View> 
               <Text
               style = {{
@@ -204,7 +204,7 @@ const styles = StyleSheet.create({
   },
   title: {
     flex: 1,
-    fontSize: hp(3.5),
+    fontSize: hp(3),
     color: colors.pink,
     fontFamily: fonts.Bold,
     textAlign: 'center',
@@ -221,7 +221,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     borderColor: colors.darkgrey,
     alignItems: "center",
-    marginBottom: 20,
+    marginBottom: 3,
   },
 });
 

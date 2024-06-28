@@ -24,14 +24,14 @@ const IngredientSubstitutionScreen = () => {
     <View style={styles.container}>
       {/* Back button and title */}
       <View style={styles.header}>
-        <TouchableOpacity className="p-2 rounded-full bg-white ml-1"
+        {/* <TouchableOpacity className="p-2 rounded-full bg-white ml-1"
           style={styles.backButtonWrapper} onPress={() => navigation.goBack()}>
           <ChevronLeftIcon
             size={hp(3.5)}
             color={colors.pink}
             strokeWidth={4.5}
           />
-        </TouchableOpacity>
+        </TouchableOpacity> */}
         <Text className='font-extrabold' style={styles.title}>
           Ingredient Substitution
         </Text>
@@ -94,7 +94,7 @@ const styles = StyleSheet.create({
   },
   title: {
     flex: 1,
-    fontSize: hp(2.7),
+    fontSize: hp(3),
     color: colors.pink,
     fontFamily: fonts.Bold,
     textAlign: 'center',
