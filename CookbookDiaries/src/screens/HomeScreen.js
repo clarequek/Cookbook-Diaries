@@ -126,9 +126,15 @@ export default function HomeScreen() {
       const allMeals = responses.flatMap(response =>
         response && response.data ? response.data.meals : []
       );
-  
-      // Set the meals state with all the extracted meals data
-      setMeals(allMeals);
+
+      // Sort meals alphabetically by name
+    const mealsSortedAlphabetically = allMeals.sort((a, b) =>
+      a.strMeal.localeCompare(b.strMeal)
+    );
+
+    // Set the meals state with sorted meals data
+    setMeals(mealsSortedAlphabetically);
+
     } catch (error) {
       console.log(error.message);
     }

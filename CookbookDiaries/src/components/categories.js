@@ -12,11 +12,6 @@ export default function Categories({
     handleChangeCategory,
 }) {
 
-    // Check if categories is null or undefined
-    if (!categories || categories.length === 0) {
-        return null; // You can return a fallback UI or null if no categories are available
-    }
-    
     const allRecipesCategory = { strCategory: "All", strCategoryThumb: 'https://media.istockphoto.com/id/1316145932/photo/table-top-view-of-spicy-food.jpg?b=1&s=612x612&w=0&k=20&c=X6CkFGpSKhNZeiii8Pp2M_YrBdqs7tRaBytkGi48a0U=' };
     const updatedCategories = [allRecipesCategory, ...categories];
 

@@ -30,7 +30,7 @@ export default function RecipeDetailsScreen(props) {
     const [task, setTask] = useState(); //create a State in a functional component 
     const [quantity, setQuantity] = useState('');
     const [taskItems, setTaskItems] = useState([]);
-    
+
     useEffect(() => { 
         getMealData(item.idMeal)
         fetchAverageRating(item.idMeal)
@@ -104,10 +104,11 @@ export default function RecipeDetailsScreen(props) {
 
     const handleRateRecipe = async () => {
         try {
-            const docRef = await addDoc(collection(db, 'ratings'), {
+            const docRef = await addDoc(collection(db, 'ratings'), { //change back to ratings
                 mealId: item.idMeal,
-                rating: rating,
-                timestamp: new Date()
+                //rating: rating,
+                strMeal: item.strMeal,
+                //timestamp: new Date()
             });
             console.log("Document written with ID: ", docRef.id);
             Alert.alert("Rating Submitted", "Thank you for rating this recipe!", [{ text: "OK" }]);
@@ -247,17 +248,16 @@ export default function RecipeDetailsScreen(props) {
                         }}> 
                         {meal?.strMeal}
                     </Text> 
+
+                    {/* Displaying Average Rating */}
+                    <View style={styles.averageRatingContainer}>
+                        <Text style={styles.averageRatingText}>
+                            {averageRating}
+                        </Text>
+                        <Ionicons name={"star"} color={colors.yellow} size={20} />
+                    </View>
                 </View>
             </Animated.View>
-
-            {/* Displaying Average Rating */}
-            <View style={styles.averageRatingContainer}>
-                <Text style={styles.averageRatingText}>
-                    {averageRating}
-                </Text>
-                <Ionicons name={"star"} color={colors.pink} size={25} />
-            </View>
-
 
             {/* Ingredients */}
             <Animated.View className="space-y-4 p-4"
@@ -279,6 +279,7 @@ export default function RecipeDetailsScreen(props) {
                 {ingredientsIndexes(meal).map((i) => {
                     return (
                     <View className="flex-row space-x-4 items-center" key={i}>
+                        {/*Bullet Point */}
                         <View
                         className="bg-[#ff8271] rounded-full"
                         style={{
@@ -304,6 +305,7 @@ export default function RecipeDetailsScreen(props) {
                         >
                             {meal["strMeasure" + i]}
                         </Text>
+                        </View>
 
                         <View style={styles.buttons}> 
                             {/* Plus Button */}
@@ -332,9 +334,7 @@ export default function RecipeDetailsScreen(props) {
                                 <Ionicons name={"color-wand-outline"} size={15} color={colors.white} />
                             </TouchableOpacity> 
                         </View>
-                        
-
-                        </View>
+                    
                     </View>
                     );
                 })}
@@ -465,7 +465,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
     },
     averageRatingContainer: {
-        justifyContent: 'center',
+        //justifyContent: 'center',
         alignItems: 'center',
         marginVertical: 20,
         flexDirection: "row",
@@ -474,8 +474,8 @@ const styles = StyleSheet.create({
     },
     averageRatingText: {
         fontSize: 15,
-        fontFamily: fonts.Bold,
-        color: colors.pink,
+        fontFamily: fonts.SemiBold,
+        color: colors.black,
     },
     buttons: {
         justifyContent: 'flex-end', // Align items to the end of the container (far right)
@@ -483,6 +483,6 @@ const styles = StyleSheet.create({
         flexDirection: 'row', // Use flexDirection: 'row' to align items horizontally
     },
     container: {
-        justifyContent: 'flex-end',
+        justifyContent: 'space-around',
     },
 })
