@@ -13,6 +13,10 @@ import { heightPercentageToDP as hp } from "react-native-responsive-screen";
 
 import DefaultAvatar1 from '../../assets/images/DefaultAvatar1.png';
 import DefaultAvatar2 from '../../assets/images/DefaultAvatar2.png';
+import DefaultAvatar3 from '../../assets/images/DefaultAvatar3.png';
+import DefaultAvatar4 from '../../assets/images/DefaultAvatar4.png';
+import DefaultAvatar5 from '../../assets/images/DefaultAvatar5.png';
+
 
 export default function ProfileScreen() {
   const [userData, setUserData] = useState(null);
@@ -36,6 +40,12 @@ export default function ProfileScreen() {
             setSelectedProfileImage(DefaultAvatar1);
           } else if (userData.profileImage === 2) {
             setSelectedProfileImage(DefaultAvatar2);
+          } else if (userData.profileImage === 3) {
+            setSelectedProfileImage(DefaultAvatar3);
+          } else if (userData.profileImage === 4) {
+            setSelectedProfileImage(DefaultAvatar4);
+          } else if (userData.profileImage === 5) {
+            setSelectedProfileImage(DefaultAvatar5);
           } else {
             // Fallback to default image
             setSelectedProfileImage(DefaultAvatar1);
@@ -62,8 +72,8 @@ export default function ProfileScreen() {
       <TouchableOpacity 
             style = {{
               borderRadius: 100,
-              width: 45,
-              height: 45,
+              width: 35,
+              height: 35,
               marginTop: 50,
               marginLeft: 20,
               backgroundColor: colors.white,
@@ -73,7 +83,7 @@ export default function ProfileScreen() {
             onPress = {() => navigation.goBack()}
         >
           <ChevronLeftIcon
-            size={hp(3.5)}
+            size={hp(2.5)}
             color={colors.pink}
             strokeWidth={4.5}
           />

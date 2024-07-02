@@ -6,28 +6,31 @@ import { widthPercentageToDP as wp } from 'react-native-responsive-screen'
 import { useNavigation } from '@react-navigation/native'
 import { CachedImage } from '../utilities/index'
 import { ChevronLeftIcon } from 'react-native-heroicons/outline'
-import { HeartIcon } from "react-native-heroicons/solid"
 import Loading from '../components/loading'
 import axios from 'axios'
 import Animated, { FadeInDown } from 'react-native-reanimated'
 import { fonts } from "../utilities/fonts";
 import { colors } from "../utilities/colors";
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import { FIREBASE_DB } from '../../FirebaseConfig';
-import { collection, addDoc, query, where, getDocs } from 'firebase/firestore';
+import { collection, addDoc, query, where, getDocs, doc, updateDoc, arrayUnion } from 'firebase/firestore';
+import { FIREBASE_AUTH, FIREBASE_DB } from '../../FirebaseConfig';
 import { Alert } from 'react-native';
 
 
 export default function RecipeDetailsScreen(props) {
     let item = props.route.params
     const db = FIREBASE_DB
+    const auth = FIREBASE_AUTH
     const navigation = useNavigation()
     const [meal, setMeal] = useState(null)
     const [isLoading, setIsLoading] = useState(true)
     const [isFavourite, setIsFavourite] = useState(false)
     const [rating, setRating] = useState(0);
     const [averageRating, setAverageRating] = useState(0);
-    
+    const [task, setTask] = useState(); //create a State in a functional component 
+    const [quantity, setQuantity] = useState('');
+    const [taskItems, setTaskItems] = useState([]);
+
     useEffect(() => { 
         getMealData(item.idMeal)
         fetchAverageRating(item.idMeal)
@@ -67,25 +70,45 @@ export default function RecipeDetailsScreen(props) {
         })).filter(instruction => instruction.instruction);
     };
 
-    const handleAddToGroceryList = (ingredient, quantity) => {
-        const ingredientItem = { ingredient, quantity };
-        navigation.navigate('GroceryList', { ingredients: [ingredientItem] });
+    const saveGroceryList = async (newTaskItems) => {
+        try {
+            const userDocRef = doc(db, "users", auth.currentUser.uid);
+            await updateDoc(userDocRef, {
+                grocerylist: arrayUnion(...newTaskItems)
+            });
+        } catch (error) {
+            console.error("Error saving grocery list:", error);
+        }
     };
 
-    const handleAddAllToGroceryList = () => {
-        const ingredients = ingredientsIndexes(meal).map((i) => ({
-            ingredient: meal["strIngredient" + i],
-            quantity: meal["strMeasure" + i]
-        }));
-        navigation.navigate('GroceryList', { ingredients });
+    const handleAddToGroceryList = async (ingredient, measure) => {
+        const newTaskItems = [...taskItems, { name: ingredient, quantity: measure }];
+        setTaskItems(newTaskItems);
+        await saveGroceryList(newTaskItems);
+        Alert.alert("Added to Grocery List", `${ingredient} (${measure}) added to your grocery list.`);
+    };
+
+    const handleAddAllToGroceryList = async () => {
+        const newTaskItems = [...taskItems];
+        ingredientsIndexes(meal).forEach((i) => {
+            const ingredient = meal["strIngredient" + i];
+            const measure = meal["strMeasure" + i];
+            if (ingredient) {
+                newTaskItems.push({ name: ingredient, quantity: measure });
+            }
+        });
+        setTaskItems(newTaskItems);
+        await saveGroceryList(newTaskItems);
+        Alert.alert("Added to Grocery List", "All ingredients added to your grocery list.");
     };
 
     const handleRateRecipe = async () => {
         try {
-            const docRef = await addDoc(collection(db, 'ratings'), {
+            const docRef = await addDoc(collection(db, 'ratings'), { //change back to ratings
                 mealId: item.idMeal,
-                rating: rating,
-                timestamp: new Date()
+                //rating: rating,
+                strMeal: item.strMeal,
+                //timestamp: new Date()
             });
             console.log("Document written with ID: ", docRef.id);
             Alert.alert("Rating Submitted", "Thank you for rating this recipe!", [{ text: "OK" }]);
@@ -180,7 +203,7 @@ export default function RecipeDetailsScreen(props) {
             onPress = {() => navigation.goBack()}
             >
                 <ChevronLeftIcon
-                size={hp(3.5)}
+                size={hp(2.5)}
                 color={colors.pink}
                 strokeWidth={4.5}
                 />
@@ -189,11 +212,11 @@ export default function RecipeDetailsScreen(props) {
             <View className="p-2 rounded-full bg-white mr-5">
                 <TouchableOpacity 
                 onPress={() => setIsFavourite(!isFavourite)}>
-                    <HeartIcon
-                    size={hp(3.5)}
-                    color={isFavourite ? "#ff8271" : "gray"}
-                    strokeWidth={4.5}
-                    />
+                    <Ionicons
+                        name={"bookmark"} 
+                        color={isFavourite ? "#ff8271" : "gray"}
+                        size={hp(2.5)}
+                        strokeWidth={4.5}/>
                 </TouchableOpacity>
             </View>
 
@@ -225,17 +248,16 @@ export default function RecipeDetailsScreen(props) {
                         }}> 
                         {meal?.strMeal}
                     </Text> 
+
+                    {/* Displaying Average Rating */}
+                    <View style={styles.averageRatingContainer}>
+                        <Text style={styles.averageRatingText}>
+                            {averageRating}
+                        </Text>
+                        <Ionicons name={"star"} color={colors.yellow} size={20} />
+                    </View>
                 </View>
             </Animated.View>
-
-            {/* Displaying Average Rating */}
-            <View style={styles.averageRatingContainer}>
-                <Text style={styles.averageRatingText}>
-                    {averageRating}
-                </Text>
-                <Ionicons name={"star"} color={colors.pink} size={25} />
-            </View>
-
 
             {/* Ingredients */}
             <Animated.View className="space-y-4 p-4"
@@ -257,6 +279,7 @@ export default function RecipeDetailsScreen(props) {
                 {ingredientsIndexes(meal).map((i) => {
                     return (
                     <View className="flex-row space-x-4 items-center" key={i}>
+                        {/*Bullet Point */}
                         <View
                         className="bg-[#ff8271] rounded-full"
                         style={{
@@ -282,6 +305,7 @@ export default function RecipeDetailsScreen(props) {
                         >
                             {meal["strMeasure" + i]}
                         </Text>
+                        </View>
 
                         <View style={styles.buttons}> 
                             {/* Plus Button */}
@@ -310,15 +334,15 @@ export default function RecipeDetailsScreen(props) {
                                 <Ionicons name={"color-wand-outline"} size={15} color={colors.white} />
                             </TouchableOpacity> 
                         </View>
-                        
-
-                        </View>
+                    
                     </View>
                     );
                 })}
                 </View>
 
-                <TouchableOpacity style={styles.buttonContainer} onPress={handleAddAllToGroceryList}>
+                <TouchableOpacity style={styles.buttonContainer} 
+                    onPress={handleAddAllToGroceryList}
+                >
                     <Ionicons name={"cart-outline"} size={20} color={colors.white} />
                     <Text style={styles.buttonText}>   Add all to grocery list!</Text>
                 </TouchableOpacity>
@@ -441,7 +465,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
     },
     averageRatingContainer: {
-        justifyContent: 'center',
+        //justifyContent: 'center',
         alignItems: 'center',
         marginVertical: 20,
         flexDirection: "row",
@@ -450,8 +474,8 @@ const styles = StyleSheet.create({
     },
     averageRatingText: {
         fontSize: 15,
-        fontFamily: fonts.Bold,
-        color: colors.pink,
+        fontFamily: fonts.SemiBold,
+        color: colors.black,
     },
     buttons: {
         justifyContent: 'flex-end', // Align items to the end of the container (far right)
@@ -459,6 +483,6 @@ const styles = StyleSheet.create({
         flexDirection: 'row', // Use flexDirection: 'row' to align items horizontally
     },
     container: {
-        justifyContent: 'flex-end',
+        justifyContent: 'space-around',
     },
 })

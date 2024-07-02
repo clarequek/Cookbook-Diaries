@@ -88,16 +88,16 @@ const GroceryStoreLocator = () => {
     <View style={styles.container}>
       {/* Back button and title */}
       <View style={styles.header}>
-        {/* <TouchableOpacity className="p-2 rounded-full bg-white ml-1"
-          style={styles.backButtonWrapper}
-          onPress={() => navigation.goBack()}
+        <TouchableOpacity 
+          className="p-2 rounded-full bg-white ml-1"
+          onPress = {() => navigation.goBack()}
         >
           <ChevronLeftIcon
-            size={hp(3.5)}
+            size={hp(2.5)}
             color={colors.pink}
             strokeWidth={4.5}
           />
-        </TouchableOpacity> */}
+        </TouchableOpacity>
         <Text className='font-extrabold' style={styles.title}>Grocery stores near you:</Text>
       </View>
 

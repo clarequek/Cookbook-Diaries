@@ -10,12 +10,14 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import { ChevronLeftIcon } from 'react-native-heroicons/outline';
 import { FIREBASE_AUTH, FIREBASE_DB } from '../../FirebaseConfig';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
+import { ingredientsCategory } from '../components/categories'; 
 
 const GroceryListScreen = (props) => {
   const navigation = useNavigation();
   const [task, setTask] = useState(); //create a State in a functional component 
   const [quantity, setQuantity] = useState('');
   const [taskItems, setTaskItems] = useState([]);
+  const [category, setCategory] = useState('Vegetables');
 
   const auth = FIREBASE_AUTH;
   const db = FIREBASE_DB;
@@ -31,6 +33,7 @@ const GroceryListScreen = (props) => {
     }
 
     Keyboard.dismiss(); //adding this line makes keyboard disappear 
+    const category = determineCategory(task);
     const newTaskItems = [...taskItems, { name: task, quantity: quantity }];
     setTaskItems(newTaskItems);
     setTask('');
@@ -84,18 +87,32 @@ const GroceryListScreen = (props) => {
     setQuantity(prevQuantity => Math.max(0, (parseInt(prevQuantity, 10) || 0) - 1) + '');
   };
 
+  const determineCategory = (ingredient) => {
+    const lowercaseIngredient = ingredient.toLowerCase();
+    
+    for (const [category, items] of Object.entries(ingredientsCategory)) {
+      for (const item of items) {
+        if (lowercaseIngredient.includes(item.toLowerCase())) { //doesn't work yet...
+          return category;
+        }
+      }
+    }
+    
+    return 'Other';
+  };
+
   return ( 
     <View style={styles.container}>
-      {/* Back Button and Title */}
+      
+      {/* Title */}
       <View style={styles.header}>
-        {/* <TouchableOpacity className = 'p-2 rounded-full bg-white ml-1'
-        style={styles.backButtonWrapper} onPress={() => navigation.goBack()}>
+        <TouchableOpacity style={styles.backButtonWrapper} onPress={() => navigation.goBack()}>
           <ChevronLeftIcon
-            size={hp(3.5)}
+            size={hp(2.5)}
             color={colors.pink}
             strokeWidth={4.5}
           />
-        </TouchableOpacity> */}
+        </TouchableOpacity>
         <Text className='font-extrabold text-[#ebb01a]' style={styles.sectionTitle}>
           My grocery list:
         </Text>
@@ -173,7 +190,7 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     flex: 1,
-    fontSize: hp(3),
+    fontSize: hp(3.5),
     color: colors.pink,
     fontFamily: fonts.Bold,
     textAlign: 'center',
@@ -225,8 +242,13 @@ const styles = StyleSheet.create({
     fontFamily: fonts.Light,
   },
   backButtonWrapper: {
-    marginRight: 10,
-    padding: 5,
+    borderRadius: 100,
+    width: 35,
+    height: 35,
+    marginLeft: 20,
+    backgroundColor: colors.white,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   qty: {
     marginTop: 10,
