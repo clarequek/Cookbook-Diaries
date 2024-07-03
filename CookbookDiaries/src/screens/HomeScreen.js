@@ -168,7 +168,7 @@ export default function HomeScreen() {
 
           {/* Back arrow button, Title and Profile */}
           <View className = "mx-4 space-y-1 flex-row justify-between items-center"> 
-            <TouchableOpacity 
+            {/* <TouchableOpacity 
               className="p-2 rounded-full bg-white ml-1"
               onPress = {() => navigation.goBack()}
               >
@@ -177,7 +177,7 @@ export default function HomeScreen() {
                   color={colors.pink}
                   strokeWidth={4.5}
                 />
-            </TouchableOpacity> 
+            </TouchableOpacity>  */}
 
 
           </View>
