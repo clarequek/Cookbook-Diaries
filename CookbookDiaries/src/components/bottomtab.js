@@ -7,6 +7,7 @@ import IngredientSubstitutionScreen from '../screens/IngredientSubstitutionScree
 import GroceryLocatorScreen from '../screens/GroceryLocator';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { colors } from '../utilities/colors';
+import SocialScreen from '../screens/SocialScreen';
 
 const Tab = createBottomTabNavigator();
 
@@ -23,10 +24,12 @@ const MainTabNavigator = () => {
             iconName = 'person';
           } else if (route.name === 'Substitution') {
             iconName = 'search';
-          }  else if (route.name === 'Grocery List') {
+          } else if (route.name === 'List') {
             iconName = 'list';
-          } else if (route.name === 'Grocery Locator') {
+          } else if (route.name === 'Locator') {
             iconName = 'map';
+          } else if (route.name === 'Social') {
+            iconName = 'people'; // Changed to a valid Ionicons icon name
           }
 
           return <Ionicons name={iconName} size={size} color={color} />;
@@ -43,8 +46,9 @@ const MainTabNavigator = () => {
       <Tab.Screen name="Home" component={HomeScreen} />
       <Tab.Screen name="Profile" component={ProfileScreen} />
       <Tab.Screen name="Substitution" component={IngredientSubstitutionScreen} />
-      <Tab.Screen name="Grocery List" component={GroceryListScreen} />
-      <Tab.Screen name="Grocery Locator" component={GroceryLocatorScreen} />
+      <Tab.Screen name="List" component={GroceryListScreen} />
+      <Tab.Screen name="Locator" component={GroceryLocatorScreen} />
+      <Tab.Screen name="Social" component={SocialScreen} />
     </Tab.Navigator>
   );
 };
