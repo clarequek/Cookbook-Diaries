@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, FlatList, Image, TouchableOpacity, TextInput, StyleSheet, Button } from 'react-native';
+import { launchImageLibrary } from 'react-native-image-picker';
 import { collection, query, orderBy, onSnapshot, addDoc, serverTimestamp, getDoc, doc, setDoc, deleteDoc, getDocs } from 'firebase/firestore';
-import { FIREBASE_DB, FIREBASE_AUTH } from '../../FirebaseConfig';
+import { FIREBASE_DB, FIREBASE_AUTH, FIREBASE_STORAGE } from '../../FirebaseConfig';
 import { colors } from '../utilities/colors';
 import { fonts } from '../utilities/fonts';
 import CommentSection from "../components/commentsection";
@@ -34,12 +35,29 @@ const SocialScreen = () => {
     fetchPosts();
   }, []);
 
+  const selectImage = () => {
+    launchImageLibrary({ mediaType: 'photo' }, (response) => {
+      if (!response.didCancel && !response.error) {
+        setNewPostImage(response.assets[0].uri);
+      }
+    });
+  };
+
+  const uploadImage = async (uri) => {
+    if (!uri) return '';
+    const filename = uri.substring(uri.lastIndexOf('/') + 1);
+    const storageRef = FIREBASE_STORAGE.ref(`images/${filename}`);
+    await storageRef.putFile(uri);
+    return await storageRef.getDownloadURL();
+  };
+
   const addNewPost = async () => {
     const userId = FIREBASE_AUTH.currentUser.uid;
     try {
+      const imageUrl = await uploadImage(newPostImage);
       await addDoc(collection(FIREBASE_DB, "posts"), {
         text: newPostText,
-        image: newPostImage,
+        image: imageUrl,
         createdAt: serverTimestamp(),
         user: userId,
         likes: 0
@@ -97,28 +115,14 @@ const SocialScreen = () => {
 
   return (
     <View style={styles.container}>
-      <View style={styles.newPostContainer}>
-        <TextInput
-          style={styles.input}
-          placeholder="What's on your mind?"
-          value={newPostText}
-          onChangeText={setNewPostText}
-        />
-        <TextInput
-          style={styles.input}
-          placeholder="Image URL"
-          value={newPostImage}
-          onChangeText={setNewPostImage}
-        />
-        <Button title="Post" onPress={addNewPost} />
-      </View>
+      <TouchableOpacity style={styles.addPostButton} onPress={selectImage}>
+        <Text style={styles.addPostButtonText}>Add New Post</Text>
+      </TouchableOpacity>
       <FlatList
         data={posts}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
           <View style={styles.postContainer}>
-
-            {/* Pfp + Username  */}
             <View style={styles.postHeader}>
               {item.userData && item.userData.profileImage ? (
                 <Image source={{ uri: item.userData.profileImage }} style={styles.profileImage} />
@@ -127,11 +131,7 @@ const SocialScreen = () => {
               )}
               <Text style={styles.username}>{item.userData?.username || 'Unknown'}</Text>
             </View>
-
-            {/* Picture */}
             <Image source={{ uri: item.image }} style={styles.image} />
-
-            {/* Caption + Likes */}
             <View style={styles.postFooter}>
               <View style={styles.likesContainer}>
                 <TouchableOpacity onPress={() => handleLike(item.id)}>
@@ -140,8 +140,6 @@ const SocialScreen = () => {
                 <Text style={styles.likes}>{item.likesCount} likes</Text>
               </View>
               <Text style={styles.caption}><Text style={styles.username}>{item.userData?.username || 'Unknown'}: </Text>{item.text}</Text>
-
-              {/* Comment section */}
               <CommentSection postId={item.id} />
             </View>
           </View>
@@ -158,16 +156,17 @@ const styles = StyleSheet.create({
     paddingTop: hp(5.5),
     padding: hp(2),
   },
-  newPostContainer: {
+  addPostButton: {
+    backgroundColor: colors.pink,
+    padding: hp(1.5),
+    alignItems: 'center',
     marginBottom: hp(2),
-  },
-  input: {
-    borderWidth: 1,
-    borderColor: '#ccc',
-    padding: hp(1),
-    marginBottom: hp(1),
     borderRadius: hp(1),
-    backgroundColor: '#fff',
+  },
+  addPostButtonText: {
+    color: '#fff',
+    fontFamily: fonts.SemiBold,
+    fontSize: hp(2),
   },
   postContainer: {
     marginBottom: hp(2),
