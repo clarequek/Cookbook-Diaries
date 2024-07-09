@@ -10,6 +10,7 @@ import ForgetPasswordScreen from '../screens/ForgetPassword';
 import MainTabNavigator from '../components/bottomtab';
 import RecipeDetailsScreen from '../screens/RecipeDetailsScreen';
 import EditProfileScreen from '../screens/EditProfileScreen';
+import CreatePostScreen from '../screens/CreatePostScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -30,6 +31,7 @@ export default function AppNavigation() {
         <Stack.Screen name="Main" component={MainTabNavigator} />
         <Stack.Screen name ="RecipeDetails" component= {RecipeDetailsScreen}/>
         <Stack.Screen name ="EditProfile" component= {EditProfileScreen}/>
+        <Stack.Screen name = "CreatePost" component = {CreatePostScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );

@@ -71,7 +71,8 @@ const styles = StyleSheet.create({
   commentInputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginTop: hp(1),
+    paddingTop: hp(0.5),
+
   },
   commentInput: {
     flex: 1,
@@ -93,8 +94,7 @@ const styles = StyleSheet.create({
     fontFamily: fonts.SemiBold,
   },
   comment: {
-    paddingVertical: hp(0.5),
-    fontSize: hp(1.5),
+    fontSize: hp(1.3),
     fontFamily: fonts.Regular,
   },
   username: {

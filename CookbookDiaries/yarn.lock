@@ -2545,6 +2545,11 @@
   dependencies:
     plist "^3.1.0"
 
+"@react-native-firebase/storage@^20.1.0":
+  version "20.1.0"
+  resolved "https://registry.npmjs.org/@react-native-firebase/storage/-/storage-20.1.0.tgz"
+  integrity sha512-VntPX054ukkGhmsfCYFY7Bqras2UxvQUODKx56Ak3sZzzn7HUODnm2pUV7VxZ4SajGxtJtVu30cBdp8Tz7j1Sw==
+
 "@react-native-picker/picker@^2.7.7":
   version "2.7.7"
   resolved "https://registry.npmjs.org/@react-native-picker/picker/-/picker-2.7.7.tgz"
@@ -4538,9 +4543,9 @@ expo-image-loader@~4.7.0:
   integrity sha512-cx+MxxsAMGl9AiWnQUzrkJMJH4eNOGlu7XkLGnAXSJrRoIiciGaKqzeaD326IyCTV+Z1fXvIliSgNW+DscvD8g==
 
 expo-image-picker@~15.0.5:
-  version "15.0.5"
-  resolved "https://registry.npmjs.org/expo-image-picker/-/expo-image-picker-15.0.5.tgz"
-  integrity sha512-Qqp16udsadx/YpNcNaWzfbmO0tbMxyX9bS1aFiDVC+Zffh8LY8S4HJJcnWqSC2TeuAl+9SxUwTloJagvPeMBBw==
+  version "15.0.7"
+  resolved "https://registry.npmjs.org/expo-image-picker/-/expo-image-picker-15.0.7.tgz"
+  integrity sha512-u8qiPZNfDb+ap6PJ8pq2iTO7JKX+ikAUQ0K0c7gXGliKLxoXgDdDmXxz9/6QdICTshJBJlBvI0MwY5NWu7A/uw==
   dependencies:
     expo-image-loader "~4.7.0"
 
@@ -7350,6 +7355,11 @@ react-native-heroicons@^4.0.0:
   version "4.0.0"
   resolved "https://registry.npmjs.org/react-native-heroicons/-/react-native-heroicons-4.0.0.tgz"
   integrity sha512-RY3XhAr0aQxLtWUkIUifTUBYC3tOspe0pMTHTATpQYyg6Uw7PYO5qmHYFul9w8tvYAB43WDRZ+yomdVmMQ2Jqw==
+
+react-native-image-picker@^7.1.2:
+  version "7.1.2"
+  resolved "https://registry.npmjs.org/react-native-image-picker/-/react-native-image-picker-7.1.2.tgz"
+  integrity sha512-b5y5nP60RIPxlAXlptn2QwlIuZWCUDWa/YPUVjgHc0Ih60mRiOg1PSzf0IjHSLeOZShCpirpvSPGnDExIpTRUg==
 
 react-native-maps@^1.15.6:
   version "1.15.6"
