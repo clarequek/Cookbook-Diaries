@@ -174,8 +174,6 @@ const SocialScreen = () => {
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
           <View style={styles.postContainer}>
-
-            {/* Pfp + Username  */}
             <View style={styles.postHeader}>
               {item.userData && item.userData.profileImage ? (
                 <Image source={{ uri: item.userData.profileImage }} style={styles.profileImage} />
@@ -199,8 +197,6 @@ const SocialScreen = () => {
                 <Text style={styles.likes}>{item.likesCount} likes</Text>
               </View>
               <Text style={styles.caption}><Text style={styles.username}>{item.userData?.username || 'Unknown'}: </Text>{item.text}</Text>
-
-              {/* Comment section */}
               <CommentSection postId={item.id} />
             </View>
           </View>
@@ -217,16 +213,17 @@ const styles = StyleSheet.create({
     paddingTop: hp(5.5),
     padding: hp(2),
   },
-  newPostContainer: {
+  addPostButton: {
+    backgroundColor: colors.pink,
+    padding: hp(1.5),
+    alignItems: 'center',
     marginBottom: hp(2),
-  },
-  input: {
-    borderWidth: 1,
-    borderColor: '#ccc',
-    padding: hp(1),
-    marginBottom: hp(1),
     borderRadius: hp(1),
-    backgroundColor: '#fff',
+  },
+  addPostButtonText: {
+    color: '#fff',
+    fontFamily: fonts.SemiBold,
+    fontSize: hp(2),
   },
   pickImageText: {
     color: 'blue',
