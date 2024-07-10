@@ -1,19 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, FlatList, Image, TouchableOpacity, TextInput, StyleSheet, Button, Alert } from 'react-native';
-import { collection, query, orderBy, onSnapshot, addDoc, serverTimestamp, getDoc, doc, setDoc, deleteDoc, getDocs } from 'firebase/firestore';
-import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
-import * as ImagePicker from 'expo-image-picker';
-import { FIREBASE_DB, FIREBASE_AUTH, FIREBASE_STORAGE } from '../../FirebaseConfig';
+import { View, Text, FlatList, Image, TouchableOpacity, StyleSheet } from 'react-native';
+import { collection, query, orderBy, onSnapshot, getDoc, doc, setDoc, deleteDoc, getDocs, serverTimestamp } from 'firebase/firestore';
+import { FIREBASE_DB, FIREBASE_AUTH } from '../../FirebaseConfig';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { colors } from '../utilities/colors';
 import { fonts } from '../utilities/fonts';
 import { heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import CommentSection from "../components/commentsection";
+import { useNavigation } from '@react-navigation/native';
 
 const SocialScreen = () => {
+  const navigation = useNavigation();
   const [posts, setPosts] = useState([]);
-  const [newPostText, setNewPostText] = useState('');
-  const [newPostImage, setNewPostImage] = useState(null);
 
   useEffect(() => {
     const fetchPosts = async () => {
@@ -35,81 +33,6 @@ const SocialScreen = () => {
 
     fetchPosts();
   }, []);
-
-  const requestPermission = async () => {
-    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-    if (status !== 'granted') {
-      Alert.alert('Permission Denied', 'Sorry, we need camera roll permissions to make this work!');
-      return false;
-    }
-    return true;
-  };
-
-  const pickImage = async () => {
-    const hasPermission = await requestPermission();
-    if (!hasPermission) return;
-
-    try {
-      let result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.Images,
-        allowsEditing: true,
-        aspect: [4, 3],
-        quality: 1,
-      });
-
-      console.log('Image picker result:', result);
-
-      if (!result.canceled) {
-        console.log('Image picked:', result.assets[0].uri);
-        setNewPostImage(result.assets[0].uri);
-      } else {
-        console.log('Image picking cancelled');
-      }
-    } catch (error) {
-      console.error('Error picking image:', error);
-    }
-  };
-
-  const uploadImage = async (uri) => {
-    try {
-      const response = await fetch(uri);
-      const blob = await response.blob();
-      const filename = uri.substring(uri.lastIndexOf('/') + 1);
-      const storageRef = ref(FIREBASE_STORAGE, `images/${filename}`);
-      await uploadBytes(storageRef, blob);
-      const downloadURL = await getDownloadURL(storageRef);
-      console.log('Image uploaded. URL:', downloadURL);
-      return downloadURL;
-    } catch (error) {
-      console.error('Error uploading image:', error);
-      throw error;
-    }
-  };
-
-  const addNewPost = async () => {
-    const userId = FIREBASE_AUTH.currentUser.uid;
-    let imageUrl = '';
-
-    try {
-      if (newPostImage) {
-        imageUrl = await uploadImage(newPostImage);
-      }
-
-      await addDoc(collection(FIREBASE_DB, "posts"), {
-        text: newPostText,
-        image: imageUrl,
-        createdAt: serverTimestamp(),
-        user: userId,
-        likes: 0
-      });
-
-      console.log('Post added successfully');
-      setNewPostText('');
-      setNewPostImage(null);
-    } catch (error) {
-      console.error("Error adding document:", error);
-    }
-  };
 
   const handleLike = async (postId) => {
     const userId = FIREBASE_AUTH.currentUser.uid;
@@ -157,18 +80,11 @@ const SocialScreen = () => {
 
   return (
     <View style={styles.container}>
-      <View style={styles.newPostContainer}>
-        <TextInput
-          style={styles.input}
-          placeholder="What's on your mind?"
-          value={newPostText}
-          onChangeText={setNewPostText}
-        />
-        <TouchableOpacity onPress={pickImage}>
-          <Text style={styles.pickImageText}>Pick an image</Text>
-        </TouchableOpacity>
-        <Button title="Post" onPress={addNewPost} />
-      </View>
+      <TouchableOpacity style={styles.addPostButton} onPress={() => navigation.navigate('CreatePost')}>
+        <Ionicons name="add-circle-outline" size={hp(3)} color="#fff" />
+        <Text style={styles.addPostButtonText}>Create New Post</Text>
+      </TouchableOpacity>
+
       <FlatList
         data={posts}
         keyExtractor={(item) => item.id}
@@ -184,11 +100,14 @@ const SocialScreen = () => {
             </View>
 
             {/* Picture */}
-            {item.image ? (
+            {item.image && (
               <Image source={{ uri: item.image }} style={styles.image} />
-            ) : null}
+            )}
+            {item.text && !item.image && (
+              <Text style={styles.textOnlyPost}>{item.text}</Text>
+            )}
 
-            {/* Caption + Likes */}
+            {/* Likes */}
             <View style={styles.postFooter}>
               <View style={styles.likesContainer}>
                 <TouchableOpacity onPress={() => handleLike(item.id)}>
@@ -196,7 +115,9 @@ const SocialScreen = () => {
                 </TouchableOpacity>
                 <Text style={styles.likes}>{item.likesCount} likes</Text>
               </View>
-              <Text style={styles.caption}><Text style={styles.username}>{item.userData?.username || 'Unknown'}: </Text>{item.text}</Text>
+              {item.image && item.text && (
+                <Text style={styles.caption}>{item.text}</Text>
+              )}
               <CommentSection postId={item.id} />
             </View>
           </View>
@@ -219,16 +140,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: hp(2),
     borderRadius: hp(1),
+    flexDirection: 'row',
+    justifyContent: 'center',
   },
   addPostButtonText: {
     color: '#fff',
     fontFamily: fonts.SemiBold,
     fontSize: hp(2),
-  },
-  pickImageText: {
-    color: 'blue',
-    textAlign: 'center',
-    marginBottom: hp(1),
+    marginLeft: hp(0.5),
   },
   postContainer: {
     marginBottom: hp(2),
@@ -267,6 +186,12 @@ const styles = StyleSheet.create({
   image: {
     width: '100%',
     height: hp(25),
+    marginBottom: hp(1),
+  },
+  textOnlyPost: {
+    fontSize: hp(2),
+    fontFamily: fonts.Regular,
+    color: colors.darkGrey,
     marginBottom: hp(1),
   },
   postFooter: {
