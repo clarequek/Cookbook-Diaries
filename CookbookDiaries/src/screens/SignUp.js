@@ -28,6 +28,7 @@ export default function SignUp() {
   const [name, setName] = useState('');
   const [loading, setLoading] = useState(false);
   const [groceryList, setGroceryList] = useState([]); //initialised as empty array to add items later on 
+  const [favourites, setFavourites] = useState([]);
   const auth = FIREBASE_AUTH;
   const db = FIREBASE_DB;
 
@@ -80,6 +81,7 @@ export default function SignUp() {
         name: name,
         profileImage: profileImage,
         groceryList: groceryList,
+        favourites: favourites,
       });
 
       alert('User registered successfully! Please check your email inbox for a verification link to complete your account setup.');
