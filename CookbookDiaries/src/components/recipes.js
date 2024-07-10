@@ -10,7 +10,7 @@ import Animated, { FadeInDown } from 'react-native-reanimated'
 export default function Recipes({meals, categories}) {
 
     const navigation = useNavigation()
-    
+  
     return (
     <Animated.View
     className = "mx-4 space-y-4"

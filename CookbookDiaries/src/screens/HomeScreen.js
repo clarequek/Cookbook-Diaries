@@ -1,11 +1,7 @@
-import { View, Text, ScrollView, SafeAreaView, Image, TextInput, Button, StyleSheet, TouchableOpacity
+import { View, Text, ScrollView, SafeAreaView, Image, TextInput, StyleSheet, TouchableOpacity
 
  } from 'react-native'
 import React, { useEffect, useState } from 'react'
-import { 
-  MagnifyingGlassIcon, 
-  AdjustmentsHorizontalIcon, 
-} from "react-native-heroicons/outline"; 
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { StatusBar } from "expo-status-bar"; 
 import { heightPercentageToDP as hp } from 'react-native-responsive-screen';
@@ -15,17 +11,19 @@ import Recipes from '../components/recipes';
 import { FIREBASE_DB, FIREBASE_AUTH } from '../../FirebaseConfig';
 import { useNavigation } from '@react-navigation/native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import { ChevronLeftIcon } from 'react-native-heroicons/outline'
 import { fonts } from "../utilities/fonts";
 import { colors } from "../utilities/colors";
+
 import DefaultAvatar1 from '../../assets/images/DefaultAvatar1.png';
 import DefaultAvatar2 from '../../assets/images/DefaultAvatar2.png';
-
+import DefaultAvatar3 from '../../assets/images/DefaultAvatar3.png';
+import DefaultAvatar4 from '../../assets/images/DefaultAvatar4.png';
+import DefaultAvatar5 from '../../assets/images/DefaultAvatar5.png';
 
 {/* import heroicons if you wanna make icons on a home screen */}
 
 export default function HomeScreen() {
-  const [activeCategory, setActiveCategory] = useState("All")
+  const [activeCategory, setActiveCategory] = useState("Beef")
   const [categories, setCategories] = useState([])
   const [meals, setMeals] = useState([])
   const [profileImage, setProfileImage] = useState(null);
@@ -38,19 +36,15 @@ export default function HomeScreen() {
   useEffect(() => {
     fetchUserData();
     getCategories();
-    getAllRecipes();
-  }, []);
-
-  const handleChangeCategory = (category) => {
+    getRecipes();
+  }, []); 
+ 
+  const handleChangeCategory = (category) => { 
+    getRecipes(category); 
     setActiveCategory(category);
     setMeals([]);
-    if (category === "All") {
-      getAllRecipes();
-    } else {
-      getRecipes(category);
-    }
-  };
-
+  }; 
+ 
   const fetchUserData = async () => {
     try {
         const userDocRef = doc(db, "users", auth.currentUser.uid);
@@ -64,6 +58,12 @@ export default function HomeScreen() {
             setProfileImage(DefaultAvatar1);
           } else if (userData.profileImage === 2) {
             setProfileImage(DefaultAvatar2);
+          } else if (userData.profileImage === 3) {
+            setProfileImage(DefaultAvatar3);
+          } else if (userData.profileImage === 4) {
+            setProfileImage(DefaultAvatar4);
+          } else if (userData.profileImage === 5) {
+            setProfileImage(DefaultAvatar5);
           } else {
             // Fallback to default image
             setProfileImage(DefaultAvatar1);
@@ -73,9 +73,9 @@ export default function HomeScreen() {
         console.error("Error fetching user data:", error);
     }
   };
-
+ 
   const getCategories= async () => { 
-    try {
+    try{
       const response = await axios.get(
         "https://themealdb.com/api/json/v1/1/categories.php"
       ); 
@@ -87,7 +87,7 @@ export default function HomeScreen() {
       console.log(error-message); 
     }
   }; 
-
+ 
   const getRecipes = async(category = "Beef") => { 
     try { 
       const response = await axios.get(
@@ -100,45 +100,6 @@ export default function HomeScreen() {
       console.log(error.message)
     }
   }
-
-  const getAllRecipes = async (category = "All") => { //have a sorting mechanism for this
-    try {
-      const urls = [
-        `https://www.themealdb.com/api/json/v1/1/filter.php?c=beef`,
-        `https://www.themealdb.com/api/json/v1/1/filter.php?c=chicken`,
-        `https://www.themealdb.com/api/json/v1/1/filter.php?c=dessert`,
-        `https://www.themealdb.com/api/json/v1/1/filter.php?c=lamb`,
-        `https://www.themealdb.com/api/json/v1/1/filter.php?c=miscellaneous`,
-        `https://www.themealdb.com/api/json/v1/1/filter.php?c=pasta`,
-        `https://www.themealdb.com/api/json/v1/1/filter.php?c=pork`,
-        `https://www.themealdb.com/api/json/v1/1/filter.php?c=seafood`,
-        `https://www.themealdb.com/api/json/v1/1/filter.php?c=side`,
-        `https://www.themealdb.com/api/json/v1/1/filter.php?c=starter`,
-        `https://www.themealdb.com/api/json/v1/1/filter.php?c=vegan`,
-        `https://www.themealdb.com/api/json/v1/1/filter.php?c=vegetarian`,
-        `https://www.themealdb.com/api/json/v1/1/filter.php?c=breakfast`,
-        `https://www.themealdb.com/api/json/v1/1/filter.php?c=goat`
-      ];
-  
-      const responses = await Promise.all(urls.map(url => axios.get(url)));
-  
-      // Extract meals data from all responses
-      const allMeals = responses.flatMap(response =>
-        response && response.data ? response.data.meals : []
-      );
-
-      // Sort meals alphabetically by name
-    const mealsSortedAlphabetically = allMeals.sort((a, b) =>
-      a.strMeal.localeCompare(b.strMeal)
-    );
-
-    // Set the meals state with sorted meals data
-    setMeals(mealsSortedAlphabetically);
-
-    } catch (error) {
-      console.log(error.message);
-    }
-  };
 
   const handleSearch= async() => {
     try { 

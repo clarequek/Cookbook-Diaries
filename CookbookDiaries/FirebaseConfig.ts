@@ -5,13 +5,13 @@ import { getStorage } from "firebase/storage";
 import ReactNativeAsyncStorage from '@react-native-async-storage/async-storage';
 
 const firebaseConfig = {
-  apiKey: "AIzaSyDo1J9g-u96BguGMyzqi4jKgGYtn-DAx8U",
-  authDomain: "cookbook-diaries.firebaseapp.com",
-  projectId: "cookbook-diaries",
-  storageBucket: "cookbook-diaries.appspot.com",
-  messagingSenderId: "912618893529",
-  appId: "1:912618893529:web:628ad236e8d9a3a5430ec8",
-  measurementId: "G-LNQRKZ8PBT"
+  apiKey: "AIzaSyC3aSUGg74vXLopIFnoxFkfCKXeTHk6TSM",
+  authDomain: "cookbookdiaries-51960.firebaseapp.com",
+  projectId: "cookbookdiaries-51960",
+  storageBucket: "cookbookdiaries-51960.appspot.com",
+  messagingSenderId: "1023234325517",
+  appId: "1:1023234325517:web:e7efb83872299cec7ba944",
+  measurementId: "G-WJ71W06S9M"
 };
 
 // Initialize Firebase

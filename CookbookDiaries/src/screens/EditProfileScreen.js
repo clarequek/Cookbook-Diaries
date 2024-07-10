@@ -25,7 +25,7 @@ export default function EditProfileScreen() {
     const [email, setEmail] = useState('');
     const [bio, setBio] = useState('');
     const [experience, setExperience] = useState('');
-    const [grocerylist, setGrocerylist] = useState([]);
+    const [groceryList, setGroceryList] = useState([]);
     const db = FIREBASE_DB;
     const auth = FIREBASE_AUTH;
     const navigation = useNavigation();
@@ -51,7 +51,7 @@ export default function EditProfileScreen() {
                 setBio(userData.bio || '');
                 setProfileImage(userData.profileImage);
                 setExperience(userData.experience || 'No experience stated.');
-                setGrocerylist(userData.grocerylist || []); //to ensure that grocerylist is still captured after editing
+                setGroceryList(userData.groceryList || []); //to ensure that grocerylist is still captured after editing
               }
           } catch (error) {
             console.error("Error fetching user data:", error);
@@ -76,7 +76,7 @@ export default function EditProfileScreen() {
         email,
         bio,
         experience,
-        grocerylist,
+        groceryList,
       });
 
       navigation.goBack();
