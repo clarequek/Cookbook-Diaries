@@ -12,7 +12,7 @@ import Animated, { FadeInDown } from 'react-native-reanimated'
 import { fonts } from "../utilities/fonts";
 import { colors } from "../utilities/colors";
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import { collection, addDoc, query, where, getDocs, doc, updateDoc, arrayUnion } from 'firebase/firestore';
+import { collection, getDoc, doc, updateDoc, arrayUnion, setDoc } from 'firebase/firestore';
 import { FIREBASE_AUTH, FIREBASE_DB } from '../../FirebaseConfig';
 import { Alert } from 'react-native';
 
@@ -74,7 +74,7 @@ export default function RecipeDetailsScreen(props) {
         try {
             const userDocRef = doc(db, "users", auth.currentUser.uid);
             await updateDoc(userDocRef, {
-                grocerylist: arrayUnion(...newTaskItems)
+                groceryList: arrayUnion(...newTaskItems)
             });
         } catch (error) {
             console.error("Error saving grocery list:", error);
@@ -104,36 +104,36 @@ export default function RecipeDetailsScreen(props) {
 
     const handleRateRecipe = async () => {
         try {
-            const docRef = await addDoc(collection(db, 'ratings'), { //change back to ratings
-                mealId: item.idMeal,
-                //rating: rating,
-                strMeal: item.strMeal,
-                //timestamp: new Date()
-            });
-            console.log("Document written with ID: ", docRef.id);
+            const mealDocRef = doc(db, 'meals', item.idMeal);
+            const mealDoc = await getDoc(mealDocRef);
+
+            if (mealDoc.exists()) {
+                await updateDoc(mealDocRef, {
+                    ratings: arrayUnion(rating)
+                });
+            } else {
+                await setDoc(mealDocRef, {
+                    ratings: [rating]
+                });
+            }
+
             Alert.alert("Rating Submitted", "Thank you for rating this recipe!", [{ text: "OK" }]);
+            fetchAverageRating(item.idMeal);
         } catch (e) {
-            console.error("Error adding document: ", e);
+            console.error("Error adding rating: ", e);
             Alert.alert("Error", "There was an error submitting your rating. Please try again later.", [{ text: "OK" }]);
         }
     };
 
     const fetchAverageRating = async (mealId) => {
         try {
-            const q = query(collection(db, 'ratings'), where("mealId", "==", mealId));
-            const querySnapshot = await getDocs(q);
+            const mealDocRef = doc(db, 'meals', mealId);
+            const mealDoc = await getDoc(mealDocRef);
 
-            let totalRating = 0;
-            let numRatings = 0;
-
-            querySnapshot.forEach((doc) => {
-                const ratingData = doc.data();
-                totalRating += ratingData.rating;
-                numRatings++;
-            });
-
-            if (numRatings > 0) {
-                const avgRating = totalRating / numRatings;
+            if (mealDoc.exists()) {
+                const ratings = mealDoc.data().ratings;
+                const totalRating = ratings.reduce((sum, rating) => sum + rating, 0);
+                const avgRating = totalRating / ratings.length;
                 setAverageRating(avgRating);
             } else {
                 setAverageRating(0);

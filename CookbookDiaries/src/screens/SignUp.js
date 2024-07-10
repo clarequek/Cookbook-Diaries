@@ -27,7 +27,7 @@ export default function SignUp() {
   const [username, setUsername] = useState('');
   const [name, setName] = useState('');
   const [loading, setLoading] = useState(false);
-  const [grocerylist, setGrocerylist] = useState([]); //initialised as empty array to add items later on 
+  const [groceryList, setGroceryList] = useState([]); //initialised as empty array to add items later on 
   const auth = FIREBASE_AUTH;
   const db = FIREBASE_DB;
 
@@ -79,7 +79,7 @@ export default function SignUp() {
         email: email,
         name: name,
         profileImage: profileImage,
-        groceryList: grocerylist,
+        groceryList: groceryList,
       });
 
       alert('User registered successfully! Please check your email inbox for a verification link to complete your account setup.');

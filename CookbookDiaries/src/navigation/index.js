@@ -18,7 +18,11 @@ export default function AppNavigation() {
   return (
     <NavigationContainer>
       <Stack.Navigator
+<<<<<<< HEAD
         initialRouteName="Main"
+=======
+        initialRouteName="Welcome"
+>>>>>>> clare-new
         screenOptions={{
           headerShown: false,
         }}
