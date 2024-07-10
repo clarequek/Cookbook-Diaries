@@ -116,7 +116,7 @@ const SocialScreen = () => {
                 <Text style={styles.likes}>{item.likesCount} likes</Text>
               </View>
               {item.image && item.text && (
-                <Text style={styles.caption}>{item.text}</Text>
+                <Text style={styles.caption}><Text style={styles.username}>{item.userData?.username || 'Unknown'}: </Text>{item.text}</Text>
               )}
               <CommentSection postId={item.id} />
             </View>
