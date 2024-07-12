@@ -84,7 +84,7 @@ export default function HomeScreen() {
         // console.log(response.data.categories);
       }
     } catch(error) { 
-      console.log(error-message); 
+      console.log(error.message); 
     }
   }; 
  

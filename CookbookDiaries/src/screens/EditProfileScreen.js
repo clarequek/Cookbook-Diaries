@@ -26,16 +26,17 @@ export default function EditProfileScreen() {
     const [bio, setBio] = useState('');
     const [experience, setExperience] = useState('');
     const [groceryList, setGroceryList] = useState([]);
+    const [favourites, setFavourites] = useState([]);
     const db = FIREBASE_DB;
     const auth = FIREBASE_AUTH;
     const navigation = useNavigation();
     
-    const checkUsernameExists = async (username) => {
+    {/*const checkUsernameExists = async (username) => {
       const usersRef = collection(db, 'users');
       const q = query(usersRef, where('username', '==', username));
       const querySnapshot = await getDocs(q);
       return !querySnapshot.empty;
-    };
+    }; */}
 
     useEffect(() => {
 
@@ -52,6 +53,7 @@ export default function EditProfileScreen() {
                 setProfileImage(userData.profileImage);
                 setExperience(userData.experience || 'No experience stated.');
                 setGroceryList(userData.groceryList || []); //to ensure that grocerylist is still captured after editing
+                setFavourites(userData.favourites || []);
               }
           } catch (error) {
             console.error("Error fetching user data:", error);
@@ -64,10 +66,10 @@ export default function EditProfileScreen() {
   const handleSave = async () => {
     try {
       const userDocRef = doc(db, "users", auth.currentUser.uid);
-      if (await checkUsernameExists(username)) {
+      {/*if (await checkUsernameExists(username)) {
         Alert.alert("Username already exists", "Please choose a different username.");
         return;
-      }
+      }*/}
 
       await setDoc(userDocRef, {
         profileImage,
@@ -77,6 +79,7 @@ export default function EditProfileScreen() {
         bio,
         experience,
         groceryList,
+        favourites
       });
 
       navigation.goBack();
@@ -94,9 +97,9 @@ export default function EditProfileScreen() {
   ];
 
   const experienceOptions = [
-    "Beginner",
-    "Intermediate",
-    "Advanced",
+    "Novice Chef",
+    "Appentice Chef",
+    "Expert Chef"
   ];
 
   return (

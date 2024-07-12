@@ -27,14 +27,29 @@ export default function RecipeDetailsScreen(props) {
     const [isFavourite, setIsFavourite] = useState(false)
     const [rating, setRating] = useState(0);
     const [averageRating, setAverageRating] = useState(0);
-    const [task, setTask] = useState(); //create a State in a functional component 
-    const [quantity, setQuantity] = useState('');
     const [taskItems, setTaskItems] = useState([]);
+    const [favourites, setFavourites] = useState([]);
 
     useEffect(() => { 
         getMealData(item.idMeal)
         fetchAverageRating(item.idMeal)
-    }); 
+        fetchUserData();
+    }, []); 
+
+    const fetchUserData = async () => {
+        try {
+            const userDocRef = doc(db, "users", auth.currentUser.uid);
+            const userDocSnap = await getDoc(userDocRef);
+            if (userDocSnap.exists()) {
+                const userData = userDocSnap.data();
+                const favs = userData.favourites || [];
+                setFavourites(favs);
+                setIsFavourite(favs.includes(item.idMeal));
+            }
+        } catch (error) {
+            console.error("Error fetching user data:", error);
+        }
+    };
 
     const getMealData = async (id) => { 
         try { 
@@ -102,6 +117,21 @@ export default function RecipeDetailsScreen(props) {
         Alert.alert("Added to Grocery List", "All ingredients added to your grocery list.");
     };
 
+    const handleFavourites = async (mealId) => {
+        try {
+          const userDocRef = doc(FIREBASE_DB, "users", FIREBASE_AUTH.currentUser.uid);
+      
+          await updateDoc(userDocRef, {
+            favourites: arrayUnion(mealId)
+          });
+      
+          Alert.alert("Added to Favourites", "Recipe has been added to your favourites.");
+        } catch (error) {
+          console.error("Error adding to favourites:", error);
+          Alert.alert("Error", "There was an error adding the recipe to your favourites. Please try again later.");
+        }
+    };
+
     const handleRateRecipe = async () => {
         try {
             const mealDocRef = doc(db, 'meals', item.idMeal);
@@ -143,38 +173,6 @@ export default function RecipeDetailsScreen(props) {
         }
     };
 
-    const handleIngredientSubstitution = async (ingredient, quantity) => {
-        try {
-            const apiKey = 'sk-proj-3aoC1KuTLAvRzkuiDXqAT3BlbkFJXDvqK7ZBARIjBvFuDp2O'; 
-            const apiUrl = 'https://api.openai.com/v1/engines/text-davinci-003/completions'; // ChatGPT API endpoint
-    
-            const response = await axios.post(apiUrl, {
-                prompt: `I have ${quantity} of ${ingredient}. What can I substitute it with?`,
-                max_tokens: 150,
-                temperature: 0.7,
-                n: 1,
-                stop: ['\n']
-            }, {
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${apiKey}`
-                }
-            });
-    
-            if (response.data && response.data.choices && response.data.choices.length > 0) {
-                const substitution = response.data.choices[0].text.trim();
-                // You can navigate to another screen or show a modal to display the substitution
-                // For now, let's just log the substitution
-                console.log(`Substitute ${substitution} for ${ingredient}`);
-            } else {
-                console.log(`No substitution found for ${ingredient}`);
-            }
-        } catch (error) {
-            console.error('Error fetching substitution:', error);
-            // Handle error (e.g., show an alert or log an error message)
-        }
-    };
-
     return (
         <ScrollView className = "flex-1 bg-white"
         showsVerticalScrollIndicator = {false}
@@ -211,7 +209,7 @@ export default function RecipeDetailsScreen(props) {
         
             <View className="p-2 rounded-full bg-white mr-5">
                 <TouchableOpacity 
-                onPress={() => setIsFavourite(!isFavourite)}>
+                onPress={() => {setIsFavourite(true); handleFavourites(item.idMeal)}}>
                     <Ionicons
                         name={"bookmark"} 
                         color={isFavourite ? "#ff8271" : "gray"}
@@ -320,19 +318,6 @@ export default function RecipeDetailsScreen(props) {
                                 }}>
                                 <Ionicons name={"add-outline"} size={15} color={colors.white} />
                             </TouchableOpacity>
-
-                            {/* Ingredient substitution; Functionality isn't working yet! */}
-                            <TouchableOpacity
-                                onPress={() => handleIngredientSubstitution(meal["strIngredient" + i], meal["strMeasure" + i])}
-                                style={{
-                                    justifyContent: 'flex-end',
-                                    marginLeft: 5,  // Push the button to the far right
-                                    padding: 5,
-                                    backgroundColor: '#ff8271',
-                                    borderRadius: 50,
-                                }}>
-                                <Ionicons name={"color-wand-outline"} size={15} color={colors.white} />
-                            </TouchableOpacity> 
                         </View>
                     
                     </View>

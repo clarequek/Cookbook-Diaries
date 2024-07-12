@@ -11,6 +11,7 @@ import MainTabNavigator from '../components/bottomtab';
 import RecipeDetailsScreen from '../screens/RecipeDetailsScreen';
 import EditProfileScreen from '../screens/EditProfileScreen';
 import CreatePostScreen from '../screens/CreatePostScreen';
+import ViewPostScreen from '../screens/ViewPostScreen'
 
 const Stack = createNativeStackNavigator();
 
@@ -32,6 +33,7 @@ export default function AppNavigation() {
         <Stack.Screen name ="RecipeDetails" component= {RecipeDetailsScreen}/>
         <Stack.Screen name ="EditProfile" component= {EditProfileScreen}/>
         <Stack.Screen name = "CreatePost" component = {CreatePostScreen} />
+        <Stack.Screen name = "ViewPost" component = {ViewPostScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );
