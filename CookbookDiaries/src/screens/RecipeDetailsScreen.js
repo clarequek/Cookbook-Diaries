@@ -117,12 +117,12 @@ export default function RecipeDetailsScreen(props) {
         Alert.alert("Added to Grocery List", "All ingredients added to your grocery list.");
     };
 
-    const handleFavourites = async (mealId) => {
+    const handleFavourites = async (mealId, strMeal, strMealThumb) => {
         try {
           const userDocRef = doc(FIREBASE_DB, "users", FIREBASE_AUTH.currentUser.uid);
       
           await updateDoc(userDocRef, {
-            favourites: arrayUnion(mealId)
+            favourites: arrayUnion({mealId, strMeal, strMealThumb})
           });
       
           Alert.alert("Added to Favourites", "Recipe has been added to your favourites.");
@@ -209,7 +209,7 @@ export default function RecipeDetailsScreen(props) {
         
             <View className="p-2 rounded-full bg-white mr-5">
                 <TouchableOpacity 
-                onPress={() => {setIsFavourite(true); handleFavourites(item.idMeal)}}>
+                onPress={() => {setIsFavourite(true); handleFavourites(item.idMeal, item.strMeal, item.strMealThumb)}}>
                     <Ionicons
                         name={"bookmark"} 
                         color={isFavourite ? "#ff8271" : "gray"}

@@ -7,10 +7,6 @@ import { useNavigation } from "@react-navigation/native";
 import { fonts } from "../utilities/fonts";
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import axios from 'axios';
-import { heightPercentageToDP as hp } from 'react-native-responsive-screen'
-import { widthPercentageToDP as wp } from 'react-native-responsive-screen'
-import { CachedImage } from '../utilities/index'
-import { LinearGradient } from 'expo-linear-gradient';
 
 import DefaultAvatar1 from '../../assets/images/DefaultAvatar1.png';
 import DefaultAvatar2 from '../../assets/images/DefaultAvatar2.png';
@@ -19,7 +15,7 @@ import DefaultAvatar4 from '../../assets/images/DefaultAvatar4.png';
 import DefaultAvatar5 from '../../assets/images/DefaultAvatar5.png';
 
 
-export default function ProfileScreen() {
+export default function EditCollectionScreen() {
   const [userData, setUserData] = useState(null);
   const [selectedProfileImage, setSelectedProfileImage] = useState(null);
   const db = FIREBASE_DB;
@@ -159,10 +155,10 @@ export default function ProfileScreen() {
     
           // Loop through each favourite recipe ID and fetch details from the API
           for (const recipe of favouritesArray) {
-            console.log("Fetching recipe ID:", recipe); // Log the recipe ID
+            console.log("Fetching recipe ID:", recipe.strMeal); // Log the recipe ID
             const recipeData = await getMealData(recipe.mealId);
             if (recipeData) {
-              favouriteRecipesData.push({ id: recipe.mealId, ...recipeData });
+              favouriteRecipesData.push({ id: recipe.strMeal, ...recipeData });
             }
           }
     
@@ -276,7 +272,7 @@ export default function ProfileScreen() {
           key={collection.id}
           style={styles.collectionItem}
           onPress={() => {
-            navigation.navigate("Collection")
+          // Navigate to the collection details screen or perform other actions
           }}
         >
           <Text style={styles.collectionName}>{collection.name}</Text>
@@ -288,49 +284,14 @@ export default function ProfileScreen() {
 
   // Render function for displaying favorite recipes
   const renderFavouriteRecipes = () => {
-    return (
-      <ScrollView horizontal = {true} showsHorizontalScrollIndicator={false}>
-        {favouriteRecipes.map((recipe) => (
-        <TouchableOpacity 
-          key={recipe.id} 
-          onPress={() => navigation.navigate("RecipeDetails", { ...recipe })}
-          style = {{marginLeft: 12,}}>
-          {/* Recipe Image */}
-        <View className = "flex-row, justify-center"> 
-            <CachedImage 
-                uri = {recipe.strMealThumb}
-                sharedTransitionTag = {recipe.strMeal}
-                style = {{ 
-                    width: 150,
-                    height: 200,
-                    borderRadius: 30,
-                }}
-            />
-            <LinearGradient
-              colors={["transparent", "rgba(0,0,0,0.9)"]}
-              style={{
-                position: "absolute",
-                bottom: 0,
-                left: 0,
-                right: 0,
-                width: 150,
-                height: 200, // Match the gradient height to the card height
-                borderTopLeftRadius: 35,
-                borderTopRightRadius: 35,
-                borderBottomLeftRadius: 35, // Match the border radius of the image
-                borderBottomRightRadius: 35, // Match the border radius of the image
-              }}
-              start={{ x: 0.5, y: 0.0 }}
-              end={{ x: 0.5, y: 1.0 }}
-            />
-            <Text style={styles.recipeItem}> 
-              {recipe.strMeal.length > 20 ? recipe.strMeal.slice(0, 20) + '...' : recipe.strMeal} 
-            </Text> 
-        </View>
+    return favouriteRecipes.map((recipe) => (
+      <View key={recipe.id}>
+        <TouchableOpacity onPress={() => navigation.navigate("RecipeDetails", { ...item })}>
+          <Text style={styles.recipeItem}> {recipe.strMeal} </Text> 
+          {/* will be replaced with recipe image */}
         </TouchableOpacity>
-        ))}
-      </ScrollView>
-    );
+      </View>
+    ));
   };
 
   const handleOpenModal = () => {
@@ -428,7 +389,7 @@ export default function ProfileScreen() {
             </ScrollView>
 
           ) : ( 
-            <ScrollView>
+
             <View style={styles.collectionsContainer}>
               <TouchableOpacity style={[styles.buttonContainer, {marginBottom: 20,}]} onPress={handleOpenModal}>
                 <Ionicons name = {"add"} size = {20} color = {colors.white} />
@@ -440,9 +401,12 @@ export default function ProfileScreen() {
 
               {/* Collections */}
               <Text style = {[styles.title, {marginTop: 10, marginLeft: 12}]}>Your collections</Text>
-              {renderCollections()}
+              <ScrollView 
+                //style={styles.collectionsScrollView}
+              >
+                {renderCollections()}
+              </ScrollView>
             </View>
-            </ScrollView>
           )}
 
           {/* Modal for Creating New Collection */}
@@ -478,14 +442,8 @@ export default function ProfileScreen() {
                />
               </View>
 
-              <TouchableOpacity 
-              style={styles.buttonContainer} 
-              onPress={async () => {
-                const newCollectionId = await handleCreateCollection();
-                if (newCollectionId) {
-                  navigation.navigate('EditCollection', { collectionId: newCollectionId });
-                }
-              }}
+              <TouchableOpacity style={styles.buttonContainer} 
+                onPress={handleCreateCollection}
               >
                 <Text style={styles.editText}> Create </Text>
               </TouchableOpacity>
@@ -620,13 +578,9 @@ const styles = StyleSheet.create({
     fontSize: 18,
   },
   recipeItem: {
-    fontSize: hp(1.8),
-    color: colors.white,
+    fontWeight: "normal",
     marginLeft: 10,
-    fontFamily: fonts.SemiBold,
-    marginBottom: 10,
-    position: 'absolute', // Position text on top of the gradient
-    bottom: 10, // Position text at the bottom of the gradient
+    fontSize: 15,
   }
 
 
