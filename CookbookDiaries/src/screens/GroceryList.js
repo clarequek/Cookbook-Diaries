@@ -1,6 +1,6 @@
 import { View, Text, StyleSheet, KeyboardAvoidingView, TextInput, Platform, TouchableOpacity, Keyboard, Alert, ScrollView } from 'react-native';
-import React, { useState, useEffect } from 'react';
-import { useNavigation } from '@react-navigation/native';
+import React, { useState, useCallback } from 'react';
+import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import Task from '../components/task';
 import { heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import { widthPercentageToDP as wp } from 'react-native-responsive-screen';
@@ -8,21 +8,22 @@ import { fonts } from "../utilities/fonts";
 import { colors } from "../utilities/colors";
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { FIREBASE_AUTH, FIREBASE_DB } from '../../FirebaseConfig';
-import { doc, getDoc, setDoc, updateDoc } from 'firebase/firestore';
+import { doc, getDoc, updateDoc } from 'firebase/firestore';
 
 const GroceryListScreen = (props) => {
   const navigation = useNavigation();
   const [task, setTask] = useState('');
   const [quantity, setQuantity] = useState('');
   const [taskItems, setTaskItems] = useState([]);
-  const [category, setCategory] = useState('Vegetables');
 
   const auth = FIREBASE_AUTH;
   const db = FIREBASE_DB;
 
-  useEffect(() => {
-    fetchGroceryList();
-  }, []);
+  useFocusEffect(
+    useCallback(() => {
+      fetchGroceryList();
+    }, [])
+  );
 
   const handleAddTask = async () => {
     if (!task || !quantity) {
@@ -36,7 +37,6 @@ const GroceryListScreen = (props) => {
     setTask('');
     setQuantity('');
     await saveGroceryList(newTaskItems);
-    fetchGroceryList();  // Fetch the updated list
   };
 
   const completeTask = async (index) => {
@@ -44,7 +44,6 @@ const GroceryListScreen = (props) => {
     itemsCopy.splice(index, 1);
     setTaskItems(itemsCopy);
     await saveGroceryList(itemsCopy);
-    fetchGroceryList();  // Fetch the updated list
   };
 
   const saveGroceryList = async (newTaskItems) => {
@@ -54,7 +53,6 @@ const GroceryListScreen = (props) => {
         await updateDoc(userDocRef, {
             groceryList: newTaskItems
         });
-        console.log("Grocery list saved successfully.");
     } catch (error) {
         console.error("Error saving grocery list:", error);
     }
@@ -68,8 +66,6 @@ const GroceryListScreen = (props) => {
             const userData = userDocSnap.data();
             console.log("Fetched grocery list from Firestore:", userData.groceryList);
             setTaskItems(userData.groceryList || []);
-        } else {
-            console.log("No grocery list found in Firestore.");
         }
     } catch (error) {
         console.error("Error fetching grocery list:", error);
@@ -162,7 +158,7 @@ const styles = StyleSheet.create({
   tasksWrapper: {
     paddingTop: 20,
     paddingHorizontal: 20,
-    paddingBottom: 200, // Increase padding bottom to make sure the last item is visible
+    paddingBottom: 200,
   },
   sectionTitle: {
     flex: 1,

@@ -12,8 +12,9 @@ import Animated, { FadeInDown } from 'react-native-reanimated';
 import { fonts } from "../utilities/fonts";
 import { colors } from "../utilities/colors";
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import { collection, getDoc, doc, updateDoc, arrayUnion, setDoc } from 'firebase/firestore';
+import { doc, getDoc, updateDoc, arrayUnion, setDoc } from 'firebase/firestore';
 import { FIREBASE_AUTH, FIREBASE_DB } from '../../FirebaseConfig';
+import { useFocusEffect } from '@react-navigation/native';
 
 export default function RecipeDetailsScreen(props) {
     let item = props.route.params;
@@ -27,6 +28,12 @@ export default function RecipeDetailsScreen(props) {
     const [averageRating, setAverageRating] = useState(0);
     const [taskItems, setTaskItems] = useState([]);
     const [favourites, setFavourites] = useState([]);
+
+    useFocusEffect(
+        React.useCallback(() => {
+            fetchUserData();
+        }, [])
+    );
 
     useEffect(() => { 
         getMealData(item.idMeal);
@@ -43,6 +50,7 @@ export default function RecipeDetailsScreen(props) {
                 const favs = userData.favourites || [];
                 setFavourites(favs);
                 setIsFavourite(favs.includes(item.idMeal));
+                setTaskItems(userData.groceryList || []);
             }
         } catch (error) {
             console.error("Error fetching user data:", error);
@@ -86,28 +94,12 @@ export default function RecipeDetailsScreen(props) {
             await updateDoc(userDocRef, {
                 groceryList: newTaskItems
             });
-            // Fetch updated grocery list to update state
-            fetchGroceryList();
+            setTaskItems(newTaskItems); // update local state immediately
         } catch (error) {
             console.error("Error saving grocery list:", error);
         }
     };
     
-    const fetchGroceryList = async () => {
-        try {
-            const userDocRef = doc(db, "users", auth.currentUser.uid);
-            const userDocSnap = await getDoc(userDocRef);
-            if (userDocSnap.exists()) {
-                const userData = userDocSnap.data();
-                console.log("Fetched grocery list from Firestore:", userData.groceryList);
-                setTaskItems(userData.groceryList || []);
-            } else {
-                console.log("No grocery list found in Firestore.");
-            }
-        } catch (error) {
-            console.error("Error fetching grocery list:", error);
-        }
-    };
 
     const handleAddToGroceryList = async (ingredient, measure) => {
         const newTaskItems = [...taskItems, { name: ingredient, quantity: measure }];
@@ -117,7 +109,7 @@ export default function RecipeDetailsScreen(props) {
     };
 
     const handleAddAllToGroceryList = async () => {
-        const newTaskItems = [];
+        const newTaskItems = [...taskItems];
         ingredientsIndexes(meal).forEach((i) => {
             const ingredient = meal["strIngredient" + i];
             const measure = meal["strMeasure" + i];
@@ -136,6 +128,8 @@ export default function RecipeDetailsScreen(props) {
           await updateDoc(userDocRef, {
             favourites: arrayUnion(mealId)
           });
+          setIsFavourite(true);
+          setFavourites([...favourites, mealId]);
           Alert.alert("Added to Favourites", "Recipe has been added to your favourites.");
         } catch (error) {
           console.error("Error adding to favourites:", error);
