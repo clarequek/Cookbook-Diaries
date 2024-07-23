@@ -8,12 +8,11 @@ import { fonts } from "../utilities/fonts";
 import { colors } from "../utilities/colors";
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { FIREBASE_AUTH, FIREBASE_DB } from '../../FirebaseConfig';
-import { doc, getDoc, setDoc } from 'firebase/firestore';
-import { ingredientsCategory } from '../components/categories';
+import { doc, getDoc, setDoc, updateDoc } from 'firebase/firestore';
 
 const GroceryListScreen = (props) => {
   const navigation = useNavigation();
-  const [task, setTask] = useState(); // create a State in a functional component
+  const [task, setTask] = useState('');
   const [quantity, setQuantity] = useState('');
   const [taskItems, setTaskItems] = useState([]);
   const [category, setCategory] = useState('Vegetables');
@@ -25,49 +24,55 @@ const GroceryListScreen = (props) => {
     fetchGroceryList();
   }, []);
 
-  const handleAddTask = async () => { // PLAN: add task to an array called 'grocerylist' for users
+  const handleAddTask = async () => {
     if (!task || !quantity) {
       Alert.alert("Error", "Please fill in both the ingredient and quantity.");
       return;
     }
 
-    Keyboard.dismiss(); // adding this line makes keyboard disappear
-    const category = determineCategory(task);
+    Keyboard.dismiss();
     const newTaskItems = [...taskItems, { name: task, quantity: quantity }];
     setTaskItems(newTaskItems);
     setTask('');
     setQuantity('');
     await saveGroceryList(newTaskItems);
+    fetchGroceryList();  // Fetch the updated list
   };
 
-  const completeTask = async (index) => { // PLAN: once task is completed, delete from array
-    let itemsCopy = [...taskItems]; // creates a new array of Items and store in itemsCopy
+  const completeTask = async (index) => {
+    let itemsCopy = [...taskItems];
     itemsCopy.splice(index, 1);
     setTaskItems(itemsCopy);
     await saveGroceryList(itemsCopy);
+    fetchGroceryList();  // Fetch the updated list
   };
 
   const saveGroceryList = async (newTaskItems) => {
     try {
-      const userDocRef = doc(db, "users", auth.currentUser.uid);
-      await setDoc(userDocRef, {
-        grocerylist: newTaskItems // new task items is an array
-      }, { merge: true });
+        const userDocRef = doc(db, "users", auth.currentUser.uid);
+        console.log("Saving new task items to Firestore:", newTaskItems);
+        await updateDoc(userDocRef, {
+            groceryList: newTaskItems
+        });
+        console.log("Grocery list saved successfully.");
     } catch (error) {
-      console.error("Error saving grocery list:", error);
+        console.error("Error saving grocery list:", error);
     }
   };
 
   const fetchGroceryList = async () => {
     try {
-      const userDocRef = doc(db, "users", auth.currentUser.uid);
-      const userDocSnap = await getDoc(userDocRef);
-      if (userDocSnap.exists()) {
-        const userData = userDocSnap.data();
-        setTaskItems(userData.grocerylist || []);
-      }
+        const userDocRef = doc(db, "users", auth.currentUser.uid);
+        const userDocSnap = await getDoc(userDocRef);
+        if (userDocSnap.exists()) {
+            const userData = userDocSnap.data();
+            console.log("Fetched grocery list from Firestore:", userData.groceryList);
+            setTaskItems(userData.groceryList || []);
+        } else {
+            console.log("No grocery list found in Firestore.");
+        }
     } catch (error) {
-      console.error("Error fetching grocery list:", error);
+        console.error("Error fetching grocery list:", error);
     }
   };
 
@@ -77,20 +82,6 @@ const GroceryListScreen = (props) => {
 
   const decrementQuantity = () => {
     setQuantity(prevQuantity => Math.max(0, (parseInt(prevQuantity, 10) || 0) - 1) + '');
-  };
-
-  const determineCategory = (ingredient) => {
-    const lowercaseIngredient = ingredient.toLowerCase();
-    
-    for (const [category, items] of Object.entries(ingredientsCategory)) {
-      for (const item of items) {
-        if (lowercaseIngredient.includes(item.toLowerCase())) {
-          return category;
-        }
-      }
-    }
-    
-    return 'Other';
   };
 
   return (
@@ -171,7 +162,7 @@ const styles = StyleSheet.create({
   tasksWrapper: {
     paddingTop: 20,
     paddingHorizontal: 20,
-    paddingBottom: 100, // Add padding to prevent the input from being blocked
+    paddingBottom: 200, // Increase padding bottom to make sure the last item is visible
   },
   sectionTitle: {
     flex: 1,
@@ -190,7 +181,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-around',
     alignItems: 'center',
     backgroundColor: colors.cream,
-    padding: 20, // Add padding for better spacing
+    padding: 20,
   },
   listInput: {
     fontSize: 15,
@@ -205,13 +196,13 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     textAlign: 'center',
-    marginBottom: 10, // Add margin bottom to separate from quantity section
+    marginBottom: 10,
   },
   qty: {
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 10, // Add margin to separate the quantity section from the add button
+    marginBottom: 10,
   },
   qtyInput: {
     width: wp(20),
@@ -221,7 +212,7 @@ const styles = StyleSheet.create({
     fontFamily: fonts.Bold,
     justifyContent: 'center',
     alignItems: 'center',
-    textAlign: 'center', // Center the text within the TextInput
+    textAlign: 'center',
   },
   addWrapper: {
     width: 60,

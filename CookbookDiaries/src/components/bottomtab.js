@@ -44,11 +44,11 @@ const MainTabNavigator = () => {
     >
       {/* Order of Tab.Screen here determines order it shows up on bottom tab */}
       <Tab.Screen name="Home" component={HomeScreen} />
-      <Tab.Screen name="Profile" component={ProfileScreen} />
       <Tab.Screen name="Substitution" component={IngredientSubstitutionScreen} />
       <Tab.Screen name="List" component={GroceryListScreen} />
       <Tab.Screen name="Locator" component={GroceryLocatorScreen} />
       <Tab.Screen name="Social" component={SocialScreen} />
+      <Tab.Screen name="Profile" component={ProfileScreen} />
     </Tab.Navigator>
   );
 };

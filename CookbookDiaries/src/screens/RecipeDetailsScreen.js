@@ -1,38 +1,36 @@
-import { View, Text, ScrollView, Image, TouchableOpacity, Button, StyleSheet } from 'react-native'
-import React, { useEffect, useState } from 'react'
-import { StatusBar } from 'expo-status-bar'
-import { heightPercentageToDP as hp } from 'react-native-responsive-screen'
-import { widthPercentageToDP as wp } from 'react-native-responsive-screen'
-import { useNavigation } from '@react-navigation/native'
-import { CachedImage } from '../utilities/index'
-import { ChevronLeftIcon } from 'react-native-heroicons/outline'
-import Loading from '../components/loading'
-import axios from 'axios'
-import Animated, { FadeInDown } from 'react-native-reanimated'
+import { View, Text, ScrollView, Image, TouchableOpacity, StyleSheet, Alert } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { StatusBar } from 'expo-status-bar';
+import { heightPercentageToDP as hp } from 'react-native-responsive-screen';
+import { widthPercentageToDP as wp } from 'react-native-responsive-screen';
+import { useNavigation } from '@react-navigation/native';
+import { CachedImage } from '../utilities/index';
+import { ChevronLeftIcon } from 'react-native-heroicons/outline';
+import Loading from '../components/loading';
+import axios from 'axios';
+import Animated, { FadeInDown } from 'react-native-reanimated';
 import { fonts } from "../utilities/fonts";
 import { colors } from "../utilities/colors";
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { collection, getDoc, doc, updateDoc, arrayUnion, setDoc } from 'firebase/firestore';
 import { FIREBASE_AUTH, FIREBASE_DB } from '../../FirebaseConfig';
-import { Alert } from 'react-native';
-
 
 export default function RecipeDetailsScreen(props) {
-    let item = props.route.params
-    const db = FIREBASE_DB
-    const auth = FIREBASE_AUTH
-    const navigation = useNavigation()
-    const [meal, setMeal] = useState(null)
-    const [isLoading, setIsLoading] = useState(true)
-    const [isFavourite, setIsFavourite] = useState(false)
+    let item = props.route.params;
+    const db = FIREBASE_DB;
+    const auth = FIREBASE_AUTH;
+    const navigation = useNavigation();
+    const [meal, setMeal] = useState(null);
+    const [isLoading, setIsLoading] = useState(true);
+    const [isFavourite, setIsFavourite] = useState(false);
     const [rating, setRating] = useState(0);
     const [averageRating, setAverageRating] = useState(0);
     const [taskItems, setTaskItems] = useState([]);
     const [favourites, setFavourites] = useState([]);
 
     useEffect(() => { 
-        getMealData(item.idMeal)
-        fetchAverageRating(item.idMeal)
+        getMealData(item.idMeal);
+        fetchAverageRating(item.idMeal);
         fetchUserData();
     }, []); 
 
@@ -53,13 +51,11 @@ export default function RecipeDetailsScreen(props) {
 
     const getMealData = async (id) => { 
         try { 
-            const response = await axios.get(`https://www.themealdb.com/api/json/v1/1/lookup.php?i=${id}`)
-        
+            const response = await axios.get(`https://www.themealdb.com/api/json/v1/1/lookup.php?i=${id}`);
             if (response && response.data) {
-                setMeal(response.data.meals[0])
-                setIsLoading(false)
+                setMeal(response.data.meals[0]);
+                setIsLoading(false);
             }
-
         } catch(error) { 
             console.log(error.message);
         }
@@ -67,15 +63,13 @@ export default function RecipeDetailsScreen(props) {
 
     const ingredientsIndexes = (meal) => { 
         if (!meal) return []; 
-        let indexes = []
-
+        let indexes = [];
         for (let i = 1; i <= 20; i++) { 
             if (meal["strIngredient" + i]) { 
-                indexes.push(i)
+                indexes.push(i);
             }
         }
-
-        return indexes //every function must return something 
+        return indexes; //every function must return something 
     }
 
     const formatInstructions = (instructions) => {
@@ -88,11 +82,30 @@ export default function RecipeDetailsScreen(props) {
     const saveGroceryList = async (newTaskItems) => {
         try {
             const userDocRef = doc(db, "users", auth.currentUser.uid);
+            console.log("Saving new task items to Firestore:", newTaskItems);
             await updateDoc(userDocRef, {
-                groceryList: arrayUnion(...newTaskItems)
+                groceryList: newTaskItems
             });
+            // Fetch updated grocery list to update state
+            fetchGroceryList();
         } catch (error) {
             console.error("Error saving grocery list:", error);
+        }
+    };
+    
+    const fetchGroceryList = async () => {
+        try {
+            const userDocRef = doc(db, "users", auth.currentUser.uid);
+            const userDocSnap = await getDoc(userDocRef);
+            if (userDocSnap.exists()) {
+                const userData = userDocSnap.data();
+                console.log("Fetched grocery list from Firestore:", userData.groceryList);
+                setTaskItems(userData.groceryList || []);
+            } else {
+                console.log("No grocery list found in Firestore.");
+            }
+        } catch (error) {
+            console.error("Error fetching grocery list:", error);
         }
     };
 
@@ -104,7 +117,7 @@ export default function RecipeDetailsScreen(props) {
     };
 
     const handleAddAllToGroceryList = async () => {
-        const newTaskItems = [...taskItems];
+        const newTaskItems = [];
         ingredientsIndexes(meal).forEach((i) => {
             const ingredient = meal["strIngredient" + i];
             const measure = meal["strMeasure" + i];
@@ -120,11 +133,9 @@ export default function RecipeDetailsScreen(props) {
     const handleFavourites = async (mealId) => {
         try {
           const userDocRef = doc(FIREBASE_DB, "users", FIREBASE_AUTH.currentUser.uid);
-      
           await updateDoc(userDocRef, {
             favourites: arrayUnion(mealId)
           });
-      
           Alert.alert("Added to Favourites", "Recipe has been added to your favourites.");
         } catch (error) {
           console.error("Error adding to favourites:", error);
@@ -136,7 +147,6 @@ export default function RecipeDetailsScreen(props) {
         try {
             const mealDocRef = doc(db, 'meals', item.idMeal);
             const mealDoc = await getDoc(mealDocRef);
-
             if (mealDoc.exists()) {
                 await updateDoc(mealDocRef, {
                     ratings: arrayUnion(rating)
@@ -146,7 +156,6 @@ export default function RecipeDetailsScreen(props) {
                     ratings: [rating]
                 });
             }
-
             Alert.alert("Rating Submitted", "Thank you for rating this recipe!", [{ text: "OK" }]);
             fetchAverageRating(item.idMeal);
         } catch (e) {
@@ -159,7 +168,6 @@ export default function RecipeDetailsScreen(props) {
         try {
             const mealDocRef = doc(db, 'meals', mealId);
             const mealDoc = await getDoc(mealDocRef);
-
             if (mealDoc.exists()) {
                 const ratings = mealDoc.data().ratings;
                 const totalRating = ratings.reduce((sum, rating) => sum + rating, 0);
@@ -174,228 +182,114 @@ export default function RecipeDetailsScreen(props) {
     };
 
     return (
-        <ScrollView className = "flex-1 bg-white"
-        showsVerticalScrollIndicator = {false}
-        contentContainerStyle = {{ 
-            paddingBottom : 30, 
-        }}>
-        
-        <StatusBar style = "white" />
-
-        {/* Recipe Image */}
-        <View className = "flex-row, justify-center"> 
-            <CachedImage 
-                uri = {item.strMealThumb}
-                sharedTransitionTag = {item.strMeal}
-                style = {{ 
-                    width: wp(100),
-                    height: hp(45)
-                }}
-            />
-        </View>
-
-        {/* Back Button and Favorite Icon */}
-        <View className="w-full absolute flex-row justify-between items-center pt-10">
-            <TouchableOpacity 
-            className="p-2 rounded-full bg-white ml-5"
-            onPress = {() => navigation.goBack()}
-            >
-                <ChevronLeftIcon
-                size={hp(2.5)}
-                color={colors.pink}
-                strokeWidth={4.5}
+        <ScrollView className="flex-1 bg-white" showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 30 }}>
+            <StatusBar style="white" />
+            {/* Recipe Image */}
+            <View className="flex-row justify-center"> 
+                <CachedImage 
+                    uri={item.strMealThumb}
+                    sharedTransitionTag={item.strMeal}
+                    style={{ width: wp(100), height: hp(45) }}
                 />
-            </TouchableOpacity>
-        
-            <View className="p-2 rounded-full bg-white mr-5">
-                <TouchableOpacity 
-                onPress={() => {setIsFavourite(true); handleFavourites(item.idMeal)}}>
-                    <Ionicons
-                        name={"bookmark"} 
-                        color={isFavourite ? "#ff8271" : "gray"}
-                        size={hp(2.5)}
-                        strokeWidth={4.5}/>
-                </TouchableOpacity>
             </View>
 
-        </View>
-        
-        {/* Meal Description */}
-        { 
-        isLoading ? (
-            <Loading size = "large" className = "mt-16" />
-        ) : ( 
-            <View className = "px-4 flex justify-between space-y-4 bg-white mt-[-46]"
-                style = {{
-                    borderTopLeftRadius: 50, 
-                    borderTopRightRadius : 50, 
-                    paddingTop : hp(3), 
-                }}>
-            {/* Meal Name */}
-            <Animated.View
-            className="space-y-2 px-4"
-            entering={FadeInDown.delay(200)
-            .duration(700)
-            .springify()
-            .damping(12)}>
-                <View className = "space-y-2 px-4">
-                    <Text className = "font-bold flex-1 text-neutral-700"
-                        style = {{ 
-                            fontSize: hp(3),
-                            fontFamily: fonts.Bold,
-                        }}> 
-                        {meal?.strMeal}
-                    </Text> 
-
-                    {/* Displaying Average Rating */}
-                    <View style={styles.averageRatingContainer}>
-                        <Text style={styles.averageRatingText}>
-                            {averageRating}
-                        </Text>
-                        <Ionicons name={"star"} color={colors.yellow} size={20} />
-                    </View>
-                </View>
-            </Animated.View>
-
-            {/* Ingredients */}
-            <Animated.View className="space-y-4 p-4"
-            entering={FadeInDown.delay(300)
-            .duration(700)
-            .springify()
-            .damping(12)}>
-                <Text
-                style={{
-                    fontSize: hp(2.5),
-                    fontFamily: fonts.Bold,
-                }}
-                className="font-bold flex-1 text-neutral-700"
-                >
-                Ingredients
-                </Text>
-
-                <View className="space-y-2 ml-3">
-                {ingredientsIndexes(meal).map((i) => {
-                    return (
-                    <View className="flex-row space-x-4 items-center" key={i}>
-                        {/*Bullet Point */}
-                        <View
-                        className="bg-[#ff8271] rounded-full"
-                        style={{
-                            height: hp(2.0),
-                            width: hp(2.0),
-                        }}
-                        />
-                        <View className="flex-row space-x-2" style={styles.container}>
-                        <Text
-                            style={{
-                            fontSize: hp(2.0),
-                            fontFamily: fonts.Regular,
-                            }}
-                            className="font-medium text-neutral-800"
-                        >
-                            {meal["strIngredient" + i]}
-                        </Text>
-                        <Text
-                            className="font-extrabold text-neutral-700"
-                            style={{
-                            fontSize: hp(2.0),
-                            }}
-                        >
-                            {meal["strMeasure" + i]}
-                        </Text>
-                        </View>
-
-                        <View style={styles.buttons}> 
-                            {/* Plus Button */}
-                            <TouchableOpacity
-                                onPress={() => handleAddToGroceryList(meal["strIngredient" + i], meal["strMeasure" + i])}
-                                style={{
-                                    justifyContent: 'flex-end',
-                                    //marginLeft: 'auto',  // Push the button to the far right
-                                    padding: 5,
-                                    backgroundColor: '#ff8271',
-                                    borderRadius: 50,
-                                }}>
-                                <Ionicons name={"add-outline"} size={15} color={colors.white} />
-                            </TouchableOpacity>
-                        </View>
-                    
-                    </View>
-                    );
-                })}
-                </View>
-
-                <TouchableOpacity style={styles.buttonContainer} 
-                    onPress={handleAddAllToGroceryList}
-                >
-                    <Ionicons name={"cart-outline"} size={20} color={colors.white} />
-                    <Text style={styles.buttonText}>   Add all to grocery list!</Text>
+            {/* Back Button and Favorite Icon */}
+            <View className="w-full absolute flex-row justify-between items-center pt-10">
+                <TouchableOpacity className="p-2 rounded-full bg-white ml-5" onPress={() => navigation.goBack()}>
+                    <ChevronLeftIcon size={hp(2.5)} color={colors.pink} strokeWidth={4.5} />
                 </TouchableOpacity>
-                
-            </Animated.View>
-            {/* Instructions */}
-            <Animated.View
-                className="space-y-4 p-4"
-                entering={FadeInDown.delay(400)
-                    .duration(700)
-                    .springify()
-                    .damping(12)}>
-                <Text
-                    className="font-bold flex-1 text-neutral-700"
-                    style={{
-                        fontSize: hp(2.5),
-                        fontFamily: fonts.Bold,
-                    }}
-                >
-                    Instructions
-                </Text>
-                {formatInstructions(meal?.strInstructions).map((step, index) => (
-                    <View key={index} style={{ flexDirection: 'row', alignItems: 'flex-start' }}>
-                        <Text style={{ //bullet point
-                            fontSize: hp(1.7),
-                            color: 'black',
-                            fontWeight: 'bold',
-                            marginRight: 5,
-                            fontFamily: fonts.Bold,
-                        }}>{`${step.step}.`}</Text>
-                        <Text style={{ //actual instructions
-                            fontSize: hp(1.7),
-                            color: 'black',
-                            flexShrink: 1,
-                            fontFamily: fonts.Regular,
-                        }}>{step.instruction}</Text>
-                    </View>
-                ))}
-            </Animated.View>
+                <View className="p-2 rounded-full bg-white mr-5">
+                    <TouchableOpacity onPress={() => { setIsFavourite(true); handleFavourites(item.idMeal) }}>
+                        <Ionicons name={"bookmark"} color={isFavourite ? "#ff8271" : "gray"} size={hp(2.5)} strokeWidth={4.5} />
+                    </TouchableOpacity>
+                </View>
+            </View>
+            
+            {/* Meal Description */}
+            {isLoading ? (
+                <Loading size="large" className="mt-16" />
+            ) : (
+                <View className="px-4 flex justify-between space-y-4 bg-white mt-[-46]" style={{ borderTopLeftRadius: 50, borderTopRightRadius: 50, paddingTop: hp(3) }}>
+                    {/* Meal Name */}
+                    <Animated.View className="space-y-2 px-4" entering={FadeInDown.delay(200).duration(700).springify().damping(12)}>
+                        <View className="space-y-2 px-4">
+                            <Text className="font-bold flex-1 text-neutral-700" style={{ fontSize: hp(3), fontFamily: fonts.Bold }}> 
+                                {meal?.strMeal}
+                            </Text> 
 
-            {/* Rating system */}
-            <View style={styles.ratingContainer}>
-                <Text style={styles.ratingTitle}>Rate this Recipe</Text>
-                <View style={styles.starsContainer}>
-                    {[1, 2, 3, 4, 5].map((star) => (
-                        <TouchableOpacity
-                            key={star}
-                            onPress={() => setRating(star)}
-                        >
-                            <Ionicons
-                                name={rating >= star ? "star" : "star-outline"}
-                                size={hp(4)}
-                                color={colors.pink}
-                            />
+                            {/* Displaying Average Rating */}
+                            <View style={styles.averageRatingContainer}>
+                                <Text style={styles.averageRatingText}>{averageRating}</Text>
+                                <Ionicons name={"star"} color={colors.yellow} size={20} />
+                            </View>
+                        </View>
+                    </Animated.View>
+
+                    {/* Ingredients */}
+                    <Animated.View className="space-y-4 p-4" entering={FadeInDown.delay(300).duration(700).springify().damping(12)}>
+                        <Text style={{ fontSize: hp(2.5), fontFamily: fonts.Bold }} className="font-bold flex-1 text-neutral-700">
+                            Ingredients
+                        </Text>
+                        <View className="space-y-2 ml-3">
+                            {ingredientsIndexes(meal).map((i) => (
+                                <View className="flex-row space-x-4 items-center" key={i}>
+                                    {/* Bullet Point */}
+                                    <View className="bg-[#ff8271] rounded-full" style={{ height: hp(2.0), width: hp(2.0) }} />
+                                    <View className="flex-row space-x-2" style={styles.container}>
+                                        <Text style={{ fontSize: hp(2.0), fontFamily: fonts.Regular }} className="font-medium text-neutral-800">
+                                            {meal["strIngredient" + i]}
+                                        </Text>
+                                        <Text className="font-extrabold text-neutral-700" style={{ fontSize: hp(2.0) }}>
+                                            {meal["strMeasure" + i]}
+                                        </Text>
+                                    </View>
+                                    <View style={styles.buttons}> 
+                                        {/* Plus Button */}
+                                        <TouchableOpacity onPress={() => handleAddToGroceryList(meal["strIngredient" + i], meal["strMeasure" + i])} style={{ justifyContent: 'flex-end', padding: 5, backgroundColor: '#ff8271', borderRadius: 50 }}>
+                                            <Ionicons name={"add-outline"} size={15} color={colors.white} />
+                                        </TouchableOpacity>
+                                    </View>
+                                </View>
+                            ))}
+                        </View>
+
+                        <TouchableOpacity style={styles.buttonContainer} onPress={handleAddAllToGroceryList}>
+                            <Ionicons name={"cart-outline"} size={20} color={colors.white} />
+                            <Text style={styles.buttonText}>   Add all to grocery list!</Text>
                         </TouchableOpacity>
-                    ))}
+                    </Animated.View>
+
+                    {/* Instructions */}
+                    <Animated.View className="space-y-4 p-4" entering={FadeInDown.delay(400).duration(700).springify().damping(12)}>
+                        <Text className="font-bold flex-1 text-neutral-700" style={{ fontSize: hp(2.5), fontFamily: fonts.Bold }}>
+                            Instructions
+                        </Text>
+                        {formatInstructions(meal?.strInstructions).map((step, index) => (
+                            <View key={index} style={{ flexDirection: 'row', alignItems: 'flex-start' }}>
+                                <Text style={{ fontSize: hp(1.7), color: 'black', fontWeight: 'bold', marginRight: 5, fontFamily: fonts.Bold }}>{`${step.step}.`}</Text>
+                                <Text style={{ fontSize: hp(1.7), color: 'black', flexShrink: 1, fontFamily: fonts.Regular }}>{step.instruction}</Text>
+                            </View>
+                        ))}
+                    </Animated.View>
+
+                    {/* Rating system */}
+                    <View style={styles.ratingContainer}>
+                        <Text style={styles.ratingTitle}>Rate this Recipe</Text>
+                        <View style={styles.starsContainer}>
+                            {[1, 2, 3, 4, 5].map((star) => (
+                                <TouchableOpacity key={star} onPress={() => setRating(star)}>
+                                    <Ionicons name={rating >= star ? "star" : "star-outline"} size={hp(4)} color={colors.pink} />
+                                </TouchableOpacity>
+                            ))}
+                        </View>
+                        <TouchableOpacity style={styles.ratingButton} onPress={handleRateRecipe}>
+                            <Text style={styles.buttonText}>Submit Rating</Text>
+                        </TouchableOpacity>
+                    </View>
                 </View>
-                <TouchableOpacity
-                    style={styles.ratingButton}
-                    onPress={handleRateRecipe}
-                >
-                    <Text style={styles.buttonText}>Submit Rating</Text>
-                </TouchableOpacity>
-            </View>
-        </View>
-      )}
-    </ScrollView>
-  );
+            )}
+        </ScrollView>
+    );
 }
 
 const styles = StyleSheet.create({
@@ -450,7 +344,6 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
     },
     averageRatingContainer: {
-        //justifyContent: 'center',
         alignItems: 'center',
         marginVertical: 20,
         flexDirection: "row",
@@ -470,4 +363,4 @@ const styles = StyleSheet.create({
     container: {
         justifyContent: 'space-around',
     },
-})
+});
