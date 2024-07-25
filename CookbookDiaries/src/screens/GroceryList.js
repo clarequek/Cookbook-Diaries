@@ -86,19 +86,21 @@ const GroceryListScreen = (props) => {
       style={styles.container}
       keyboardVerticalOffset={100}
     >
-      <View style={styles.header}>
-        <Text className='font-extrabold text-[#ebb01a]' style={styles.sectionTitle}>
-          My grocery list:
-        </Text>
-      </View>
+      <ScrollView contentContainerStyle={{ flexGrow: 1 }} keyboardShouldPersistTaps='handled'>
+        <View style={styles.header}>
+          <Text className='font-extrabold text-[#ebb01a]' style={styles.sectionTitle}>
+            My grocery list:
+          </Text>
+        </View>
 
-      <ScrollView contentContainerStyle={styles.tasksWrapper}>
-        <View style={styles.items}>
-          {taskItems.map((item, index) => (
-            <TouchableOpacity key={index} onPress={() => completeTask(index)}>
-              <Task text={`${item.name} - ${item.quantity}`} />
-            </TouchableOpacity>
-          ))}
+        <View style={styles.tasksWrapper}>
+          <View style={styles.items}>
+            {taskItems.map((item, index) => (
+              <TouchableOpacity key={index} onPress={() => completeTask(index)}>
+                <Task text={`${item.name} - ${item.quantity}`} />
+              </TouchableOpacity>
+            ))}
+          </View>
         </View>
       </ScrollView>
 
@@ -108,6 +110,7 @@ const GroceryListScreen = (props) => {
           placeholder='Add to your grocery list!'
           value={task}
           onChangeText={text => setTask(text)}
+          placeholderTextColor={colors.darkgrey}
         />
 
         <View style={styles.qty}>
@@ -130,7 +133,7 @@ const GroceryListScreen = (props) => {
           </TouchableOpacity>
         </View>
 
-        <TouchableOpacity onPress={() => handleAddTask()}>
+        <TouchableOpacity onPress={() => handleAddTask()} style={styles.addButton}>
           <View style={styles.addWrapper}>
             <Ionicons name={"add-outline"} color={colors.white} size={30} />
           </View>
@@ -158,7 +161,7 @@ const styles = StyleSheet.create({
   tasksWrapper: {
     paddingTop: 20,
     paddingHorizontal: 20,
-    paddingBottom: 200,
+    flex: 1,
   },
   sectionTitle: {
     flex: 1,
@@ -171,13 +174,13 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
   writeTaskWrapper: {
-    position: 'absolute',
-    bottom: 0,
-    width: '100%',
-    justifyContent: 'space-around',
-    alignItems: 'center',
+    paddingHorizontal: 20,
+    paddingTop: 10,
+    paddingBottom: 30,
     backgroundColor: colors.cream,
-    padding: 20,
+    borderTopWidth: 1,
+    borderColor: colors.darkgrey,
+    alignItems: 'center', // Centering items horizontally
   },
   listInput: {
     fontSize: 15,
@@ -187,11 +190,12 @@ const styles = StyleSheet.create({
     borderRadius: 60,
     borderColor: colors.darkgrey,
     borderWidth: 1,
-    width: wp(67),
+    width: '100%',
     fontFamily: fonts.Regular,
     justifyContent: 'center',
     alignItems: 'center',
     textAlign: 'center',
+    color: colors.black, // Ensure the text color is visible
     marginBottom: 10,
   },
   qty: {
@@ -209,6 +213,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     textAlign: 'center',
+    color: colors.black, // Ensure the text color is visible
   },
   addWrapper: {
     width: 60,
@@ -217,6 +222,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: colors.pink,
+  },
+  addButton: {
+    alignItems: 'center', // Centering the add button horizontally
   },
   addText: {
     fontSize: 28,

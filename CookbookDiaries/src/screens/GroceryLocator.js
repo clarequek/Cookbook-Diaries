@@ -98,7 +98,7 @@ const GroceryStoreLocator = () => {
               key={index}
               coordinate={{ latitude: store.lat, longitude: store.lon }}
               title={store.tags?.name || 'Grocery Store'}
-              description={store.tags?.['addr:street'] || 'No address available'}
+              description={store.tags?.['addr:street'] ? store.tags['addr:street'] : 'No address available'}
               pinColor="#ff8271"
             />
           ))}
@@ -116,7 +116,7 @@ const GroceryStoreLocator = () => {
             {topStores.map((item, index) => (
               <View key={index} style={styles.storeItem}>
                 <Text style={styles.storeName}>{item.tags?.name || 'Grocery Store'}</Text>
-                <Text style={styles.storeAddress}>{"Address: " + item.tags?.['addr:street'] || 'No address available'}</Text>
+                <Text style={styles.storeAddress}>{"Address: " + (item.tags?.['addr:street'] ? item.tags['addr:street'] : 'No address available')}</Text>
                 <Text style={styles.storeDuration}>Estimated walking time: {item.duration} min</Text>
               </View>
             ))}
