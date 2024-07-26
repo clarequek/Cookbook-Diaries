@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { View, Text, Image, StyleSheet, TouchableOpacity, ScrollView, Modal, TextInput, Button } from "react-native";
+import { View, Text, Image, StyleSheet, TouchableOpacity, ScrollView, Modal, TextInput, Button, FlatList } from "react-native";
 import { FIREBASE_AUTH, FIREBASE_DB } from '../../FirebaseConfig';
 import { getDoc, doc, collection, query, getDocs, onSnapshot, where, addDoc } from 'firebase/firestore';
 import { colors } from "../utilities/colors";
@@ -26,9 +26,8 @@ export default function ProfileScreen() {
   const auth = FIREBASE_AUTH;
   const navigation = useNavigation();
   const [numPosts, setNumPosts] = useState(0);
+  const [numFavourites, setNumFavourites] = useState(0);
   const [totalLikes, setTotalLikes] = useState(0);
-  const [collections, setCollections] = useState([]);
-  const [numCollections, setNumCollections] = useState(0);
   const [posts, setPosts] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [newCollectionName, setNewCollectionName] = useState('');
@@ -79,15 +78,13 @@ export default function ProfileScreen() {
       fetchUserData();
       fetchNumPosts();
       fetchTotalLikes();
-      fetchNumCollections();
-      fetchCollections();
       fetchFavouriteRecipes();
+      fetchPosts()
     });
   
     return unsubscribeFocus;
   }, [navigation]); // Make sure to include navigation as a dependency if using it inside the effect
 
-  useEffect(() => {
     const fetchPosts = async () => {
       try {
         const q = query(collection(db, 'posts'), where("user", "==", auth.currentUser.uid));
@@ -99,6 +96,7 @@ export default function ProfileScreen() {
             postsData.push({ id: doc.id, ...postData });
           });
           setPosts(postsData);
+          console.log("Posts fetched")
         });
         return unsubscribe;
       } catch (error) {
@@ -106,8 +104,6 @@ export default function ProfileScreen() {
       }
     };
 
-    fetchPosts();
-  }, []);
 
     const fetchNumPosts = async () => {
       try {
@@ -118,16 +114,6 @@ export default function ProfileScreen() {
         console.error("Error fetching number of posts:", error);
       }
     };
-
-    const fetchNumCollections = async () => {
-      try {
-        const q = query(collection(db, 'collections'), where("user", "==", auth.currentUser.uid));
-        const querySnapshot = await getDocs(q);
-        setNumCollections(querySnapshot.size);
-      } catch (error) {
-        console.error("Error fetching number of collections:". error);
-      }
-    }
 
     const getMealData = async (id) => { 
       try { 
@@ -153,13 +139,14 @@ export default function ProfileScreen() {
         if (userDoc.exists()) {
           const userData = userDoc.data();
           const favouritesArray = userData.favourites || [];
+          setNumFavourites(favouritesArray.length);
     
           // Prepare an array to store favourite recipes
           const favouriteRecipesData = [];
     
           // Loop through each favourite recipe ID and fetch details from the API
           for (const recipe of favouritesArray) {
-            console.log("Fetching recipe ID:", recipe); // Log the recipe ID
+            console.log("Fetching recipe ID:", recipe.strMeal); // Log the recipe ID
             const recipeData = await getMealData(recipe.mealId);
             if (recipeData) {
               favouriteRecipesData.push({ id: recipe.mealId, ...recipeData });
@@ -203,43 +190,6 @@ export default function ProfileScreen() {
       </TouchableOpacity>
     );
 
-    const fetchCollections = async () => {
-      try {
-        const q = query(collection(db, 'collections'), where("user", "==", auth.currentUser.uid));
-        const querySnapshot = await getDocs(q);
-        const collectionsData = []; //empty array to store the collections
-        querySnapshot.forEach((doc) => {
-          collectionsData.push({ id: doc.id, ...doc.data() });
-        });
-        setCollections(collectionsData);
-      } catch (error) {
-        console.error("Error fetching collections:", error);
-      }
-    };
-    useEffect(() => {
-      fetchCollections();
-    } , []);
-  
-    const handleCreateCollection = async () => {
-      try {
-        if (!newCollectionName) {
-          alert('Please enter a name for your new collection.');
-          return; // Exit function if name is empty
-        }
-        await addDoc(collection(db, 'collections'), {
-          user: auth.currentUser.uid,
-          name: newCollectionName,
-          recipes:  [],
-          createdAt: new Date()
-        });
-        setNewCollectionName('');
-        setIsModalVisible(false);
-        fetchCollections(); // Refresh collections
-      } catch (error) {
-        console.error("Error creating collection:", error);
-      }
-    };
-
   const renderBio = () => {
     return userData?.bio || "What's cooking!";
   };
@@ -268,28 +218,12 @@ export default function ProfileScreen() {
     return gridItems;
   };
 
-  // Render function for displaying collections
-  const renderCollections = () => {
-    return collections.map((collection) => (
-      <View>
-        <TouchableOpacity
-          key={collection.id}
-          style={styles.collectionItem}
-          onPress={() => {
-            navigation.navigate("Collection")
-          }}
-        >
-          <Text style={styles.collectionName}>{collection.name}</Text>
-        {/* Add more details or actions related to each collection */}
-        </TouchableOpacity>
-      </View>
-    ));
-  };
-
   // Render function for displaying favorite recipes
   const renderFavouriteRecipes = () => {
     return (
-      <ScrollView horizontal = {true} showsHorizontalScrollIndicator={false}>
+      <ScrollView 
+      //horizontal = {true} showsHorizontalScrollIndicator={false}
+      >
         {favouriteRecipes.map((recipe) => (
         <TouchableOpacity 
           key={recipe.id} 
@@ -301,9 +235,10 @@ export default function ProfileScreen() {
                 uri = {recipe.strMealThumb}
                 sharedTransitionTag = {recipe.strMeal}
                 style = {{ 
-                    width: 150,
+                    width: 400,
                     height: 200,
                     borderRadius: 30,
+                    marginBottom: 10,
                 }}
             />
             <LinearGradient
@@ -313,12 +248,13 @@ export default function ProfileScreen() {
                 bottom: 0,
                 left: 0,
                 right: 0,
-                width: 150,
+                width: 400,
                 height: 200, // Match the gradient height to the card height
                 borderTopLeftRadius: 35,
                 borderTopRightRadius: 35,
                 borderBottomLeftRadius: 35, // Match the border radius of the image
                 borderBottomRightRadius: 35, // Match the border radius of the image
+                marginBottom: 10,
               }}
               start={{ x: 0.5, y: 0.0 }}
               end={{ x: 0.5, y: 1.0 }}
@@ -332,15 +268,6 @@ export default function ProfileScreen() {
       </ScrollView>
     );
   };
-
-  const handleOpenModal = () => {
-    setIsModalVisible(true);
-    // Focus the TextInput when modal opens
-    if (inputRef.current) {
-      inputRef.current.focus();
-    }
-  };
-
 
   return (
     <View style={styles.container}>
@@ -368,8 +295,8 @@ export default function ProfileScreen() {
               </View>
 
               <View style={{ alignItems: "center" }}>
-                <Text style={styles.stats}> {numCollections} </Text>
-                <Text style={styles.subtitles}> Collections </Text>
+                <Text style={styles.stats}> {numFavourites} </Text>
+                <Text style={styles.subtitles}> Favourites </Text>
               </View>
 
               <View style={{ alignItems: "center" }}>
@@ -419,7 +346,7 @@ export default function ProfileScreen() {
             </View>
           </View>
 
-          {/* Posts or Collections*/}
+          {/* Posts or Favourites */}
           {gridClick ? (
             <ScrollView>
               <View style={styles.postsContainer}>
@@ -430,73 +357,14 @@ export default function ProfileScreen() {
           ) : ( 
             <ScrollView>
             <View style={styles.collectionsContainer}>
-              <TouchableOpacity style={[styles.buttonContainer, {marginBottom: 20,}]} onPress={handleOpenModal}>
-                <Ionicons name = {"add"} size = {20} color = {colors.white} />
-                <Text style={styles.editText}>    Create new collection</Text>
-              </TouchableOpacity>
+
               {/* Favourites */}
               <Text style = {[styles.title, {marginLeft: 12}]}>Your favourites</Text>
               {renderFavouriteRecipes()}
 
-              {/* Collections */}
-              <Text style = {[styles.title, {marginTop: 10, marginLeft: 12}]}>Your collections</Text>
-              {renderCollections()}
             </View>
             </ScrollView>
           )}
-
-          {/* Modal for Creating New Collection */}
-          <Modal
-            visible={isModalVisible}
-            transparent={true}
-            animationType="slide"
-            onRequestClose={() => setIsModalVisible(false)}
-          >
-            <View style={styles.modalContainer}>
-              <View 
-                style = {{
-                  flexDirection: "row",
-                  alignItems: "center",
-                  marginTop: 10,
-                  justifyContent: "space-between", }}>
-                <Text style = {[styles.title, {textAlign: "center", flex:1}]}> New collection </Text>
-                <TouchableOpacity 
-                  onPress = {() => setIsModalVisible(false)}
-                >
-                  <Ionicons name = {"close"} size = {25}/>
-                </TouchableOpacity>
-              </View>
-
-              <View style = {styles.inputContainer}>
-                <TextInput
-                  style={styles.input}
-                  placeholder="Enter collection name"
-                  value={newCollectionName}
-                  onChangeText={setNewCollectionName}
-                  placeholderTextColor={colors.darkgrey}
-                  autoFocus={true}
-               />
-              </View>
-
-              <TouchableOpacity 
-              style={styles.buttonContainer} 
-              onPress={async () => {
-                const newCollectionId = await handleCreateCollection();
-                if (newCollectionId) {
-                  navigation.navigate('EditCollection', { collectionId: newCollectionId });
-                }
-              }}
-              >
-                <Text style={styles.editText}> Create </Text>
-              </TouchableOpacity>
-
-              
-            </View>
-            
-          </Modal>
-
-        
-
         </>
       )}
     </View>
@@ -595,8 +463,10 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   title: {
-    fontSize: 18,
+    fontSize: 24,
     fontFamily: fonts.SemiBold,
+    marginTop: 10,
+    marginBottom: 10,
   },
   inputContainer: {
     alignSelf: "center",
@@ -620,7 +490,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
   },
   recipeItem: {
-    fontSize: hp(1.8),
+    fontSize: hp(2.0),
     color: colors.white,
     marginLeft: 10,
     fontFamily: fonts.SemiBold,

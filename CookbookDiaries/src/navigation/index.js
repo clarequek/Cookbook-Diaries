@@ -13,10 +13,7 @@ import MainTabNavigator from '../components/bottomtab';
 import RecipeDetailsScreen from '../screens/RecipeDetailsScreen';
 import EditProfileScreen from '../screens/EditProfileScreen';
 import CreatePostScreen from '../screens/CreatePostScreen';
-import ViewPostScreen from '../screens/ViewPostScreen';
 import SettingsScreen from '../screens/SettingsScreen';
-import EditCollectionScreen from '../screens/EditCollectionScreen';
-import CollectionScreen from '../screens/CollectionScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -38,10 +35,7 @@ export default function AppNavigation() {
         <Stack.Screen name="RecipeDetails" component={RecipeDetailsScreen} />
         <Stack.Screen name="EditProfile" component={EditProfileScreen} />
         <Stack.Screen name="CreatePost" component={CreatePostScreen} />
-        <Stack.Screen name="ViewPost" component={ViewPostScreen} />
         <Stack.Screen name="Settings" component={SettingsScreen} />
-        <Stack.Screen name="EditCollection" component={EditCollectionScreen} />
-        <Stack.Screen name="Collection" component={CollectionScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );
