@@ -1,6 +1,6 @@
 import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import HomeScreen from '../screens/HomeScreen';
+import HomeScreen from '../screens/HomeScreen.js';
 import ProfileScreen from '../screens/ProfileScreen';
 import GroceryListScreen from '../screens/GroceryList';
 import IngredientSubstitutionScreen from '../screens/IngredientSubstitutionScreen';
@@ -14,10 +14,11 @@ const Tab = createBottomTabNavigator();
 const MainTabNavigator = () => {
   return (
     <Tab.Navigator
+    initialRouteName='Profile'
       screenOptions={({ route }) => ({
         tabBarIcon: ({ color, size }) => {
           let iconName;
-
+ 
           if (route.name === 'Home') {
             iconName = 'home';
           } else if (route.name === 'Profile') {

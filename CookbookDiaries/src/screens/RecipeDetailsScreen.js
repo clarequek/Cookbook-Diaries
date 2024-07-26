@@ -122,11 +122,11 @@ export default function RecipeDetailsScreen(props) {
         Alert.alert("Added to Grocery List", "All ingredients added to your grocery list.");
     };
 
-    const handleFavourites = async (mealId) => {
+    const handleFavourites = async (mealId, strMeal, strMealThumb) => {
         try {
           const userDocRef = doc(FIREBASE_DB, "users", FIREBASE_AUTH.currentUser.uid);
           await updateDoc(userDocRef, {
-            favourites: arrayUnion(mealId)
+            favourites: arrayUnion({mealId, strMeal, strMealThumb})
           });
           setIsFavourite(true);
           setFavourites([...favourites, mealId]);
@@ -179,26 +179,42 @@ export default function RecipeDetailsScreen(props) {
         <ScrollView className="flex-1 bg-white" showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 30 }}>
             <StatusBar style="white" />
             {/* Recipe Image */}
-            <View className="flex-row justify-center"> 
-                <CachedImage 
-                    uri={item.strMealThumb}
-                    sharedTransitionTag={item.strMeal}
-                    style={{ width: wp(100), height: hp(45) }}
+            <View className = "flex-row, justify-center"> 
+            <CachedImage 
+                uri = {item.strMealThumb}
+                sharedTransitionTag = {item.strMeal}
+                style = {{ 
+                    width: wp(100),
+                    height: hp(45)
+                }}
+            />
+        </View>
+
+        {/* Back Button and Favorite Icon */}
+        <View className="w-full absolute flex-row justify-between items-center pt-10">
+            <TouchableOpacity 
+            className="p-2 rounded-full bg-white ml-5"
+            onPress = {() => navigation.goBack()}
+            >
+                <ChevronLeftIcon
+                size={hp(2.5)}
+                color={colors.pink}
+                strokeWidth={4.5}
                 />
+            </TouchableOpacity>
+        
+            <View className="p-2 rounded-full bg-white mr-5">
+                <TouchableOpacity 
+                onPress={() => {setIsFavourite(true); handleFavourites(item.idMeal, item.strMeal, item.strMealThumb)}}>
+                    <Ionicons
+                        name={"bookmark"} 
+                        color={isFavourite ? "#ff8271" : "gray"}
+                        size={hp(2.5)}
+                        strokeWidth={4.5}/>
+                </TouchableOpacity>
             </View>
 
-            {/* Back Button and Favorite Icon */}
-            <View className="w-full absolute flex-row justify-between items-center pt-10">
-                <TouchableOpacity className="p-2 rounded-full bg-white ml-5" onPress={() => navigation.goBack()}>
-                    <ChevronLeftIcon size={hp(2.5)} color={colors.pink} strokeWidth={4.5} />
-                </TouchableOpacity>
-                <View className="p-2 rounded-full bg-white mr-5">
-                    <TouchableOpacity onPress={() => { setIsFavourite(true); handleFavourites(item.idMeal) }}>
-                        <Ionicons name={"bookmark"} color={isFavourite ? "#ff8271" : "gray"} size={hp(2.5)} strokeWidth={4.5} />
-                    </TouchableOpacity>
-                </View>
-            </View>
-            
+        </View>
             {/* Meal Description */}
             {isLoading ? (
                 <Loading size="large" className="mt-16" />
