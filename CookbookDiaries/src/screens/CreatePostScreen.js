@@ -86,7 +86,7 @@ const CreatePostScreen = () => {
         image: imageUrl,
         createdAt: serverTimestamp(),
         user: userId,
-        likes: 0
+        likes: 0,
       });
 
       console.log('Post added successfully');

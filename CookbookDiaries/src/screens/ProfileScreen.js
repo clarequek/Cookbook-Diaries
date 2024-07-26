@@ -29,12 +29,9 @@ export default function ProfileScreen() {
   const [numFavourites, setNumFavourites] = useState(0);
   const [totalLikes, setTotalLikes] = useState(0);
   const [posts, setPosts] = useState([]);
-  const [isModalVisible, setIsModalVisible] = useState(false);
-  const [newCollectionName, setNewCollectionName] = useState('');
   const [savedClick, setSavedClick] = useState(true);
   const [gridClick, setGridClick] = useState(false);
   const [favouriteRecipes, setFavouriteRecipes] = useState([])
-  const inputRef = useRef(null); // Ref for TextInput
 
 
     const fetchUserData = async () => {
@@ -76,27 +73,26 @@ export default function ProfileScreen() {
   useEffect(() => {
     const unsubscribeFocus = navigation.addListener('focus', () => {
       fetchUserData();
-      fetchNumPosts();
       fetchTotalLikes();
       fetchFavouriteRecipes();
-      fetchPosts()
     });
   
     return unsubscribeFocus;
   }, [navigation]); // Make sure to include navigation as a dependency if using it inside the effect
 
+  useEffect(() => {
     const fetchPosts = async () => {
       try {
         const q = query(collection(db, 'posts'), where("user", "==", auth.currentUser.uid));
         const querySnapshot = await getDocs(q);
         const unsubscribe = onSnapshot(q, (querySnapshot) => {
           const postsData = [];
+          setNumPosts(querySnapshot.size);
           querySnapshot.forEach((doc) => {
             const postData = doc.data();
             postsData.push({ id: doc.id, ...postData });
           });
           setPosts(postsData);
-          console.log("Posts fetched")
         });
         return unsubscribe;
       } catch (error) {
@@ -104,16 +100,8 @@ export default function ProfileScreen() {
       }
     };
 
-
-    const fetchNumPosts = async () => {
-      try {
-        const q = query(collection(db, 'posts'), where("user", "==", auth.currentUser.uid));
-        const querySnapshot = await getDocs(q);
-        setNumPosts(querySnapshot.size);
-      } catch (error) {
-        console.error("Error fetching number of posts:", error);
-      }
-    };
+    fetchPosts();
+  }, []);
 
     const getMealData = async (id) => { 
       try { 
@@ -164,24 +152,25 @@ export default function ProfileScreen() {
 
     const fetchTotalLikes = async () => {
       try {
-        const q = query(collection(db, 'posts'), where("userId", "==", auth.currentUser.uid));
+        const q = query(collection(db, 'posts'), where("user", "==", auth.currentUser.uid));
         const querySnapshot = await getDocs(q);
         let likesCount = 0;
-        querySnapshot.forEach((doc) => {
-          const postData = doc.data();
-          const postLikes = postData.likes || 0;
-          likesCount += postLikes;
+    
+        const promises = querySnapshot.docs.map(async (doc) => {
+          const likesCollectionRef = collection(db, `posts/${doc.id}/likes`);
+          const likesSnapshot = await getDocs(likesCollectionRef);
+          likesCount += likesSnapshot.size;
         });
+    
+        await Promise.all(promises);
         setTotalLikes(likesCount);
       } catch (error) {
         console.error("Error fetching total likes:", error);
       }
-    };
-
+    };    
 
     const renderGridItem = ({ item }) => (
       <TouchableOpacity> 
-      {/*navigation.navigate('ViewPostScreen', { post: { id: item.id, image: item.image, text: item.text } })} style={styles.touchableOpacity}> */}
         <View style={styles.postContainer}>
           {item.image && (
             <Image source={{ uri: item.image }} style={styles.postImage} />

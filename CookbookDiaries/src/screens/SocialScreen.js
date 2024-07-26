@@ -9,9 +9,24 @@ import { heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import CommentSection from "../components/commentsection";
 import { useNavigation } from '@react-navigation/native';
 
+import DefaultAvatar1 from '../../assets/images/DefaultAvatar1.png';
+import DefaultAvatar2 from '../../assets/images/DefaultAvatar2.png';
+import DefaultAvatar3 from '../../assets/images/DefaultAvatar3.png';
+import DefaultAvatar4 from '../../assets/images/DefaultAvatar4.png';
+import DefaultAvatar5 from '../../assets/images/DefaultAvatar5.png';
+
 const SocialScreen = () => {
   const navigation = useNavigation();
   const [posts, setPosts] = useState([]);
+  const [selectedProfileImage, setSelectedProfileImage] = useState(1);
+
+  const  images = [
+    DefaultAvatar1,
+    DefaultAvatar2,
+    DefaultAvatar3,
+    DefaultAvatar4,
+    DefaultAvatar5
+  ]
 
   useEffect(() => {
     const fetchPosts = async () => {
@@ -24,7 +39,9 @@ const SocialScreen = () => {
           const userData = userDoc.exists() ? userDoc.data() : {};
           const likesCount = await getLikesCount(docSnap.id);
           const userLiked = await hasUserLikedPost(docSnap.id);
-          postsData.push({ ...postData, id: docSnap.id, userData, likesCount, userLiked });
+          const profileImage = fetchProfileImage(userData.profileImage);
+          setSelectedProfileImage(profileImage);
+          postsData.push({ ...postData, id: docSnap.id, userData, likesCount, userLiked, profileImage });
         }
         setPosts(postsData);
       });
@@ -33,6 +50,25 @@ const SocialScreen = () => {
 
     fetchPosts();
   }, []);
+
+  const fetchProfileImage = async(profileImage) => {
+    // Set the profile image based on the stored value
+    switch (profileImage) {
+      case 1:
+        return DefaultAvatar1;
+      case 2:
+        return DefaultAvatar2;
+      case 3:
+        return DefaultAvatar3;
+      case 4:
+        return DefaultAvatar4;
+      case 5:
+        return DefaultAvatar5;
+      default:
+        return DefaultAvatar1;
+    }
+  }
+
 
   const handleLike = async (postId) => {
     const userId = FIREBASE_AUTH.currentUser.uid;
@@ -90,12 +126,8 @@ const SocialScreen = () => {
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
           <View style={styles.postContainer}>
-            <View style={styles.postHeader}>
-              {item.userData && item.userData.profileImage ? (
-                <Image source={{ uri: item.userData.profileImage }} style={styles.profileImage} />
-              ) : (
-                <View style={styles.placeholderProfileImage} />
-              )}
+            <View style={styles.postHeader}>   
+              <Image source={images[item.userData.profileImage - 1]} style={styles.profileImage} />
               <Text style={styles.username}>{item.userData?.username || 'Unknown'}</Text>
             </View>
 
@@ -171,13 +203,6 @@ const styles = StyleSheet.create({
     borderRadius: hp(2.5),
     marginRight: hp(1),
   },
-  placeholderProfileImage: {
-    width: hp(5),
-    height: hp(5),
-    borderRadius: hp(2.5),
-    marginRight: hp(1),
-    backgroundColor: '#ccc',
-  },
   username: {
     fontSize: hp(1.6),
     fontFamily: fonts.SemiBold,
@@ -211,6 +236,12 @@ const styles = StyleSheet.create({
     marginBottom: hp(0.5),
     fontSize: hp(1.6),
     fontFamily: fonts.Regular
+  },
+  profileImage: {
+    width: 40,
+    height: 40,
+    borderRadius: 75,
+    marginRight: 10,
   },
 });
 

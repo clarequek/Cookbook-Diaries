@@ -355,6 +355,7 @@ const styles = StyleSheet.create({
     },
     averageRatingContainer: {
         alignItems: 'center',
+        justifyContent: "center",
         marginVertical: 20,
         flexDirection: "row",
         marginTop: 0,
