@@ -18,6 +18,13 @@ import DefaultAvatar3 from '../../assets/images/DefaultAvatar3.png';
 import DefaultAvatar4 from '../../assets/images/DefaultAvatar4.png';
 import DefaultAvatar5 from '../../assets/images/DefaultAvatar5.png';
 
+/**
+ * ProfileScreen component displays the user's profile information, including their avatar, bio, experience, and favourite recipes.
+ * The number of total likes that the user receives for the posts he/she makes as well as number of favourite recipes will be displayed as well.
+ * 
+ * @component
+ */
+
 export default function ProfileScreen() {
   const [userData, setUserData] = useState(null);
   const [selectedProfileImage, setSelectedProfileImage] = useState(null);
@@ -33,6 +40,14 @@ export default function ProfileScreen() {
   useEffect(() => {
     let isMounted = true; // Track if the component is mounted
 
+    /**
+     * Fetches the user data from Firestore 'users' collection and sets it to the state.
+     * 
+     * @async
+     * @function fetchUserData
+     * @returns {Promise<void>}
+     */
+    
     const fetchUserData = async () => {
       try {
         const userDocRef = doc(db, "users", auth.currentUser.uid);
@@ -69,6 +84,14 @@ export default function ProfileScreen() {
       }
     };
 
+    /**
+     * Fetches the total likes for the user's posts from Firestore 'posts' collection and sets it to the state.
+     * 
+     * @async
+     * @function fetchTotalLikes
+     * @returns {Promise<void>}
+     */
+
     const fetchTotalLikes = async () => {
       try {
         const q = query(collection(db, 'posts'), where("user", "==", auth.currentUser.uid));
@@ -89,6 +112,14 @@ export default function ProfileScreen() {
         console.error("Error fetching total likes:", error);
       }
     };
+
+    /**
+     * Fetches the user's favourite recipes from Firestore 'users' collection and sets it to the state.
+     * 
+     * @async
+     * @function fetchFavouriteRecipes
+     * @returns {Promise<void>}
+     */
 
     const fetchFavouriteRecipes = async () => {
       try {
@@ -123,6 +154,15 @@ export default function ProfileScreen() {
       }
     };
 
+    /**
+     * Fetches the meal data from the MealDB API.
+     * 
+     * @async
+     * @function getMealData
+     * @param {string} id - The ID of the meal.
+     * @returns {Promise<object|null>} - The meal data or null if not found.
+     */
+
     const getMealData = async (id) => {
       try {
         const response = await axios.get(`https://www.themealdb.com/api/json/v1/1/lookup.php?i=${id}`);
@@ -148,11 +188,18 @@ export default function ProfileScreen() {
     };
   }, []);
 
+  /**
+   * Handles user logout.
+   * User will be directed back to the 'WelcomeScreen'
+   * @async
+   * @function handleLogout
+   * @returns {Promise<void>}
+   */
+
   const handleLogout = async () => {
     try {
       setModalVisible(false);
       await signOut(FIREBASE_AUTH);
-      // Navigate to the welcome screen after successful sign out
       navigation.reset({
         index: 0,
         routes: [{ name: 'Welcome' }],
@@ -162,13 +209,33 @@ export default function ProfileScreen() {
     }
   };
 
+  /**
+   * Renders the user's bio.
+   * 
+   * @function renderBio
+   * @returns {string} - The user's bio or a default message of "What's cooking!".
+   */
   const renderBio = () => {
     return userData?.bio || "What's cooking!";
   };
 
+  /**
+   * Renders the user's experience level.
+   * 
+   * @function renderExperience
+   * @returns {string} - The user's experience level of either "Novice Chef", "Apprentice Chef" or "Expert Chef" as stated; otherwise, a default value of "Cook".
+   */
+
   const renderExperience = () => {
     return userData?.experience || "Cook";
   };
+
+  /**
+   * Renders the user's favourite recipes.
+   * 
+   * @function renderFavouriteRecipes
+   * @returns {JSX.Element} - The list of favourite recipes formatted in scroll view such that users are able to view recipes they have liked.
+   */
 
   const renderFavouriteRecipes = () => {
     return (

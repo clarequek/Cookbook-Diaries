@@ -19,8 +19,11 @@ import DefaultAvatar2 from '../../assets/images/DefaultAvatar2.png';
 import DefaultAvatar3 from '../../assets/images/DefaultAvatar3.png';
 import DefaultAvatar4 from '../../assets/images/DefaultAvatar4.png';
 import DefaultAvatar5 from '../../assets/images/DefaultAvatar5.png';
-
-{/* import heroicons if you wanna make icons on a home screen */}
+/**
+ * HomeScreen component
+ * Displays the main home screen with user information, search bar, categories, and recipes.
+ * @returns {JSX.Element} The rendered HomeScreen component.
+ */
 
 export default function HomeScreen() {
   const [activeCategory, setActiveCategory] = useState("Beef")
@@ -38,13 +41,20 @@ export default function HomeScreen() {
     getCategories();
     getRecipes();
   }, []); 
- 
+
+  /**
+   * Handles changing the active category and fetching recipes for the selected category.
+   * @param {string} category - The selected category.
+   */
   const handleChangeCategory = (category) => { 
     getRecipes(category); 
     setActiveCategory(category);
     setMeals([]);
   }; 
- 
+
+  /**
+   * Fetches user data from Firestore and sets the user's name and profile image.
+   */
   const fetchUserData = async () => {
     try {
         const userDocRef = doc(db, "users", auth.currentUser.uid);
@@ -73,7 +83,11 @@ export default function HomeScreen() {
         console.error("Error fetching user data:", error);
     }
   };
- 
+
+  /**
+   * Fetches categories from the API and sets the categories state.
+   */
+
   const getCategories= async () => { 
     try{
       const response = await axios.get(
@@ -87,7 +101,11 @@ export default function HomeScreen() {
       console.log(error.message); 
     }
   }; 
- 
+
+  /**
+   * Fetches recipes for the specified category from the API and sets the meals state.
+   * @param {string} category - The category to fetch recipes for.
+   */
   const getRecipes = async(category = "Beef") => { 
     try { 
       const response = await axios.get(
@@ -100,6 +118,10 @@ export default function HomeScreen() {
       console.log(error.message)
     }
   }
+
+  /**
+   * Handles searching for recipes based on the search input.
+   */
 
   const handleSearch= async() => {
     try { 

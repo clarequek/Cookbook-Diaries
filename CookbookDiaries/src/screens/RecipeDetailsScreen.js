@@ -21,14 +21,15 @@ export default function RecipeDetailsScreen(props) {
     const db = FIREBASE_DB;
     const auth = FIREBASE_AUTH;
     const navigation = useNavigation();
-    const [meal, setMeal] = useState(null);
-    const [isLoading, setIsLoading] = useState(true);
-    const [isFavourite, setIsFavourite] = useState(false);
-    const [rating, setRating] = useState(0);
-    const [averageRating, setAverageRating] = useState(0);
-    const [taskItems, setTaskItems] = useState([]);
-    const [favourites, setFavourites] = useState([]);
+    const [meal, setMeal] = useState(null); //Stores the details of the selected meal.
+    const [isLoading, setIsLoading] = useState(true); // Indicates whether the meal data is being loaded.
+    const [isFavourite, setIsFavourite] = useState(false); //Indicates whether the meal is marked as a favorite.
+    const [rating, setRating] = useState(0); //The user's rating for the recipe.
+    const [averageRating, setAverageRating] = useState(0); //The average rating for the recipe.
+    const [taskItems, setTaskItems] = useState([]); //Ingredients added to the grocery list.
+    const [favourites, setFavourites] = useState([]); //User's favorite recipes.
 
+    {/* Fetches user data and checks if the recipe is a favorite when the screen is focused. */}
     useFocusEffect(
         React.useCallback(() => {
             fetchUserData();
@@ -36,6 +37,7 @@ export default function RecipeDetailsScreen(props) {
         }, [])
     );
 
+    {/* Fetches meal data, average rating, user data, and checks if the recipe is a favorite when the component mounts. */}
     useEffect(() => { 
         getMealData(item.idMeal);
         fetchAverageRating(item.idMeal);
@@ -43,6 +45,13 @@ export default function RecipeDetailsScreen(props) {
         checkIfFavourite();
     }, []); 
 
+    /**
+     * Fetches the current user's data from Firestore.
+     * 
+     * @async
+     * @function fetchUserData
+     * @returns {Promise<void>}
+     */
     const fetchUserData = async () => {
         try {
             const userDocRef = doc(db, "users", auth.currentUser.uid);
@@ -59,6 +68,15 @@ export default function RecipeDetailsScreen(props) {
         }
     };
 
+    /**
+     * Fetches the meal data from the API.
+     * 
+     * @async
+     * @function getMealData
+     * @param {string} id - The ID of the meal to fetch.
+     * @returns {Promise<void>}
+     */
+
     const getMealData = async (id) => { 
         try { 
             const response = await axios.get(`https://www.themealdb.com/api/json/v1/1/lookup.php?i=${id}`);
@@ -71,6 +89,14 @@ export default function RecipeDetailsScreen(props) {
         }
     }; 
 
+    /**
+     * Gets the indexes of the ingredients present in the meal.
+     * 
+     * @function ingredientsIndexes
+     * @param {Object} meal - The meal object containing ingredients.
+     * @returns {number[]} - Array of ingredient indexes.
+     */
+
     const ingredientsIndexes = (meal) => { 
         if (!meal) return []; 
         let indexes = [];
@@ -82,6 +108,13 @@ export default function RecipeDetailsScreen(props) {
         return indexes; //every function must return something 
     }
 
+    /**
+     * Formats the instructions into an array of steps.
+     * 
+     * @function formatInstructions
+     * @param {string} instructions - The instructions string from the meal object.
+     * @returns {Object[]} - Array of step objects.
+     */
     const formatInstructions = (instructions) => {
         return instructions.split('. ').map((instruction, index) => ({
             step: index + 1,
@@ -89,6 +122,14 @@ export default function RecipeDetailsScreen(props) {
         })).filter(instruction => instruction.instruction);
     };
 
+    /**
+     * Saves the grocery list to Firestore and updates the state.
+     * 
+     * @async
+     * @function saveGroceryList
+     * @param {Array} newTaskItems - The new grocery list items.
+     * @returns {Promise<void>}
+     */
     const saveGroceryList = async (newTaskItems) => {
         try {
             const userDocRef = doc(db, "users", auth.currentUser.uid);
@@ -102,6 +143,13 @@ export default function RecipeDetailsScreen(props) {
         }
     };
 
+    /**
+     * Checks if the current meal is marked as a favorite.
+     * 
+     * @async
+     * @function checkIfFavourite
+     * @returns {Promise<void>}
+     */
     const checkIfFavourite = async () => {
         try {
             const userDocRef = doc(db, "users", auth.currentUser.uid);
@@ -115,7 +163,16 @@ export default function RecipeDetailsScreen(props) {
             console.error("Error checking if favorite:", error);
         }
     };
-    
+
+    /**
+     * Adds an ingredient to the grocery list.
+     * 
+     * @async
+     * @function handleAddToGroceryList
+     * @param {string} ingredient - The ingredient to add.
+     * @param {string} measure - The measurement of the ingredient.
+     * @returns {Promise<void>}
+     */
 
     const handleAddToGroceryList = async (ingredient, measure) => {
         const newTaskItems = [...taskItems, { name: ingredient, quantity: measure }];
@@ -124,6 +181,13 @@ export default function RecipeDetailsScreen(props) {
         Alert.alert("Added to Grocery List", `${ingredient} (${measure}) added to your grocery list.`);
     };
 
+    /**
+     * Adds all ingredients to the grocery list.
+     * 
+     * @async
+     * @function handleAddAllToGroceryList
+     * @returns {Promise<void>}
+     */
     const handleAddAllToGroceryList = async () => {
         const newTaskItems = [...taskItems];
         ingredientsIndexes(meal).forEach((i) => {
@@ -138,6 +202,16 @@ export default function RecipeDetailsScreen(props) {
         Alert.alert("Added to Grocery List", "All ingredients added to your grocery list.");
     };
 
+    /**
+     * Marks the current meal as a favorite.
+     * 
+     * @async
+     * @function handleFavourites
+     * @param {string} mealId - The ID of the meal.
+     * @param {string} strMeal - The name of the meal.
+     * @param {string} strMealThumb - The thumbnail image of the meal.
+     * @returns {Promise<void>}
+     */
     const handleFavourites = async (mealId, strMeal, strMealThumb) => {
         try {
           const userDocRef = doc(FIREBASE_DB, "users", FIREBASE_AUTH.currentUser.uid);
@@ -152,6 +226,14 @@ export default function RecipeDetailsScreen(props) {
           Alert.alert("Error", "There was an error adding the recipe to your favourites. Please try again later.");
         }
     };
+
+    /**
+     * Submits the user's rating for the recipe.
+     * 
+     * @async
+     * @function handleRateRecipe
+     * @returns {Promise<void>}
+     */
 
     const handleRateRecipe = async () => {
         try {

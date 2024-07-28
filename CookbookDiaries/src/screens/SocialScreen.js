@@ -15,6 +15,17 @@ import DefaultAvatar3 from '../../assets/images/DefaultAvatar3.png';
 import DefaultAvatar4 from '../../assets/images/DefaultAvatar4.png';
 import DefaultAvatar5 from '../../assets/images/DefaultAvatar5.png';
 
+/**
+ * SocialScreen component displays a list of social posts, allowing users to view,
+ * like, and comment on posts. It also provides a button to create a new post by uploading an image and/or adding a caption.
+ * 
+ * @component
+ * @example
+ * return (
+ *   <SocialScreen />
+ * )
+ */
+
 const SocialScreen = () => {
   const navigation = useNavigation();
   const [posts, setPosts] = useState([]);
@@ -29,6 +40,11 @@ const SocialScreen = () => {
   ]
 
   useEffect(() => {
+
+    /**
+     * Fetches the list of posts from Firestore and sets the state with the retrieved data.
+     * Runs once when the component is mounted.
+     */
     const fetchPosts = async () => {
       const q = query(collection(FIREBASE_DB, 'posts'), orderBy('createdAt', 'desc'));
       const unsubscribe = onSnapshot(q, async (querySnapshot) => {
@@ -51,6 +67,12 @@ const SocialScreen = () => {
     fetchPosts();
   }, []);
 
+  /**
+   * Returns the profile image based on the provided image index.
+   * 
+   * @param {number} profileImage - The index of the profile image.
+   * @returns {object} The image source.
+   */
   const fetchProfileImage = async(profileImage) => {
     // Set the profile image based on the stored value
     switch (profileImage) {
@@ -69,7 +91,11 @@ const SocialScreen = () => {
     }
   }
 
-
+  /**
+   * Handles liking and unliking a post.
+   * 
+   * @param {string} postId - The ID of the post to like/unlike.
+   */
   const handleLike = async (postId) => {
     const userId = FIREBASE_AUTH.currentUser.uid;
     const likeDocRef = doc(FIREBASE_DB, `posts/${postId}/likes`, userId);
@@ -101,12 +127,24 @@ const SocialScreen = () => {
     }
   };
 
+  /**
+   * Returns the count of likes for a given post.
+   * 
+   * @param {string} postId - The ID of the post.
+   * @returns {Promise<number>} The number of likes.
+   */
   const getLikesCount = async (postId) => {
     const likesCollectionRef = collection(FIREBASE_DB, `posts/${postId}/likes`);
     const likesSnapshot = await getDocs(likesCollectionRef);
     return likesSnapshot.size;
   };
 
+  /**
+   * Checks if the current user has liked a given post.
+   * 
+   * @param {string} postId - The ID of the post.
+   * @returns {Promise<boolean>} Whether the user has liked the post.
+   */
   const hasUserLikedPost = async (postId) => {
     const userId = FIREBASE_AUTH.currentUser.uid;
     const likeDocRef = doc(FIREBASE_DB, `posts/${postId}/likes`, userId);

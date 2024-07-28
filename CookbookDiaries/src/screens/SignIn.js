@@ -1,20 +1,18 @@
 import React, { useState, useRef } from "react";
 import { useNavigation, CommonActions } from '@react-navigation/native';
-import { Text, View, Image, StyleSheet, TouchableOpacity, TextInput, ActivityIndicator, KeyboardAvoidingView, Platform} from "react-native";
+import { Text, View, StyleSheet, TouchableOpacity, TextInput, ActivityIndicator, KeyboardAvoidingView, Platform} from "react-native";
 import { FIREBASE_AUTH } from '../../FirebaseConfig';
 import { signInWithEmailAndPassword } from "firebase/auth";
-import Logo from '../../assets/images/SimplifiedLogo.png'; // Adjust the path as needed
 import { fonts } from "../utilities/fonts";
 import { colors } from "../utilities/colors";
 import Ionicons from 'react-native-vector-icons/Ionicons';
-
-import { 
-  widthPercentageToDP as wp, 
-  heightPercentageToDP as hp, 
-} from "react-native-responsive-screen"; 
 import LottieView from "lottie-react-native"; 
-import Animated from 'react-native-reanimated';
 
+/**
+ * SignIn component ensures that each user is authenticated with email and password before being able to proceed to Main.
+ * 
+ * @component
+ */
 
 export default function SignIn() {
 
@@ -45,7 +43,7 @@ export default function SignIn() {
       console.log(error);
       alert('Invalid email address or password.');
     } finally {
-      setLoading(false); // Stops the loading indicator
+      setLoading(false);
     }
   };
 

@@ -11,10 +11,24 @@ import { heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import { ChevronLeftIcon } from 'react-native-heroicons/outline';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
+/**
+ * CreatePostScreen component allows users to create and upload new posts with optional images.
+ * 
+ * @component
+ */
+
 const CreatePostScreen = () => {
   const navigation = useNavigation();
   const [newPostText, setNewPostText] = useState('');
   const [newPostImage, setNewPostImage] = useState(null);
+
+  /**
+   * Requests permission to access the media library.
+   * 
+   * @async
+   * @function requestPermission
+   * @returns {Promise<boolean>} - A promise that resolves to a boolean indicating if permission is granted.
+   */
 
   const requestPermission = async () => {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -24,6 +38,15 @@ const CreatePostScreen = () => {
     }
     return true;
   };
+
+  /**
+   * Opens the image picker to allow the user to select an image.
+   * 
+   * @async
+   * @function pickImage
+   * @returns {Promise<void>}
+   */
+
 
   const pickImage = async () => {
     const hasPermission = await requestPermission();
@@ -50,6 +73,14 @@ const CreatePostScreen = () => {
     }
   };
 
+  /**
+   * Uploads an image to Firebase Storage and returns the download URL.
+   * 
+   * @async
+   * @function uploadImage
+   * @param {string} uri - The URI of the image to upload.
+   * @returns {Promise<string>} - A promise that resolves to the download URL of the uploaded image.
+   */
   const uploadImage = async (uri) => {
     try {
       const response = await fetch(uri);
@@ -66,6 +97,13 @@ const CreatePostScreen = () => {
     }
   };
 
+  /**
+   * Adds a new post to Firestore, including optional image upload.
+   * 
+   * @async
+   * @function addNewPost
+   * @returns {Promise<void>}
+   */
   const addNewPost = async () => {
     const userId = FIREBASE_AUTH.currentUser.uid;
     let imageUrl = '';

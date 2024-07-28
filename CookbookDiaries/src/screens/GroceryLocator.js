@@ -11,12 +11,23 @@ import Loading from '../components/loading';
 
 const OPENROUTESERVICE_API_KEY = '5b3ce3597851110001cf62486ab0fa18e3874fc18d55f8fac2631085';
 
+/**
+ * GroceryStoreLocator component displays a map showing the user's location and nearby grocery stores.
+ * It also lists the top 3 closest grocery stores with estimated walking times.
+ * 
+ * @component
+ */
 const GroceryStoreLocator = () => {
   const navigation = useNavigation();
   const [location, setLocation] = useState(null);
   const [stores, setStores] = useState([]);
   const [errorMsg, setErrorMsg] = useState(null);
   const [topStores, setTopStores] = useState([]);
+
+  /**
+   * useEffect to request location permissions and fetch the user's current location.
+   * Fetches nearby grocery stores and displays a tip alert.
+   */
 
   useEffect(() => {
     (async () => {
@@ -33,6 +44,16 @@ const GroceryStoreLocator = () => {
     Alert.alert('Tip', 'The red pin is your current location! The pink pins are grocery stores near you.');
   }, []);
 
+  /**
+   * Fetches grocery stores near the given latitude and longitude.
+   * 
+   * @async
+   * @function fetchGroceryStores
+   * @param {number} latitude - The latitude of the user's location.
+   * @param {number} longitude - The longitude of the user's location.
+   * @returns {Promise<void>}
+   */
+
   const fetchGroceryStores = async (latitude, longitude) => {
     try {
       const overpassApiUrl = `https://overpass-api.de/api/interpreter?data=[out:json];node(around:1500,${latitude},${longitude})[shop=supermarket];out body;`;
@@ -45,6 +66,18 @@ const GroceryStoreLocator = () => {
     }
   };
 
+  /**
+   * Calculates the walking times from the user's location to each store.
+   * Sorts the stores by walking time and sets the top 3 closest stores.
+   * 
+   * @async
+   * @function calculateWalkingTimes
+   * @param {Array} stores - The array of stores to calculate walking times for.
+   * @param {number} originLat - The latitude of the user's location.
+   * @param {number} originLon - The longitude of the user's location.
+   * @returns {Promise<void>}
+   */
+  
   const calculateWalkingTimes = async (stores, originLat, originLon) => {
     try {
       const storeDistances = await Promise.all(stores.map(async (store) => {
