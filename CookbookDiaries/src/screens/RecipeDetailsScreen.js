@@ -32,6 +32,7 @@ export default function RecipeDetailsScreen(props) {
     useFocusEffect(
         React.useCallback(() => {
             fetchUserData();
+            checkIfFavourite();
         }, [])
     );
 
@@ -39,6 +40,7 @@ export default function RecipeDetailsScreen(props) {
         getMealData(item.idMeal);
         fetchAverageRating(item.idMeal);
         fetchUserData();
+        checkIfFavourite();
     }, []); 
 
     const fetchUserData = async () => {
@@ -97,6 +99,20 @@ export default function RecipeDetailsScreen(props) {
             setTaskItems(newTaskItems); // update local state immediately
         } catch (error) {
             console.error("Error saving grocery list:", error);
+        }
+    };
+
+    const checkIfFavourite = async () => {
+        try {
+            const userDocRef = doc(db, "users", auth.currentUser.uid);
+            const userDocSnap = await getDoc(userDocRef);
+            if (userDocSnap.exists()) {
+                const userData = userDocSnap.data();
+                const favs = userData.favourites || [];
+                setIsFavourite(favs.some(fav => fav.mealId === item.idMeal));
+            }
+        } catch (error) {
+            console.error("Error checking if favorite:", error);
         }
     };
     

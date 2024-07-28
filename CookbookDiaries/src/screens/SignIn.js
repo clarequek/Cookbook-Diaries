@@ -1,5 +1,5 @@
 import React, { useState, useRef } from "react";
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, CommonActions } from '@react-navigation/native';
 import { Text, View, Image, StyleSheet, TouchableOpacity, TextInput, ActivityIndicator } from "react-native";
 import { FIREBASE_AUTH } from '../../FirebaseConfig';
 import { signInWithEmailAndPassword } from "firebase/auth";
@@ -30,7 +30,12 @@ export default function SignIn() {
     try {
       const response = await signInWithEmailAndPassword(auth, email, password);
       console.log(response);
-      navigation.navigate('Main');
+      navigation.dispatch(
+        CommonActions.reset({
+          index: 0,
+          routes: [{ name: 'Main' }],
+        })
+      );
     } catch (error) {
       console.log(error);
       alert('Invalid email address or password.');
