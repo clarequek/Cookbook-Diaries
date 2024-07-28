@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, Image, StyleSheet, TouchableOpacity, ScrollView } from "react-native";
+import { View, Text, Image, StyleSheet, TouchableOpacity, ScrollView, Modal, Button } from "react-native";
 import { FIREBASE_AUTH, FIREBASE_DB } from '../../FirebaseConfig';
 import { getDoc, doc, query, collection, where, getDocs } from 'firebase/firestore';
 import { colors } from "../utilities/colors";
@@ -10,7 +10,7 @@ import axios from 'axios';
 import { heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import { CachedImage } from '../utilities/index';
 import { LinearGradient } from 'expo-linear-gradient';
-//fix lag
+import { signOut } from 'firebase/auth';
 
 import DefaultAvatar1 from '../../assets/images/DefaultAvatar1.png';
 import DefaultAvatar2 from '../../assets/images/DefaultAvatar2.png';
@@ -28,6 +28,7 @@ export default function ProfileScreen() {
   const [totalLikes, setTotalLikes] = useState(0);
   const [favouriteRecipes, setFavouriteRecipes] = useState([]);
   const [savedClick, setSavedClick] = useState(true);
+  const [modalVisible, setModalVisible] = useState(false);
 
   useEffect(() => {
     let isMounted = true; // Track if the component is mounted
@@ -147,6 +148,20 @@ export default function ProfileScreen() {
     };
   }, []);
 
+  const handleLogout = async () => {
+    try {
+      setModalVisible(false);
+      await signOut(FIREBASE_AUTH);
+      // Navigate to the welcome screen after successful sign out
+      navigation.reset({
+        index: 0,
+        routes: [{ name: 'Welcome' }],
+      });
+    } catch (error) {
+      console.error('Error signing out: ', error);
+    }
+  };
+
   const renderBio = () => {
     return userData?.bio || "What's cooking!";
   };
@@ -215,9 +230,30 @@ export default function ProfileScreen() {
             justifyContent: "space-between",
           }}>
             <Text style={styles.username}> {userData.username}</Text>
-            <TouchableOpacity style={{ marginRight: 10 }} onPress={() => navigation.navigate("LogOut")}>
+
+            {/* Logout Functionality */}
+            <TouchableOpacity style={{ marginRight: 10 }} onPress={() => setModalVisible(true)}>
               <Ionicons name={"log-out"} size={30} />
             </TouchableOpacity>
+
+            <Modal
+              animationType="slide"
+              transparent={true}
+              visible={modalVisible}
+              onRequestClose={() => setModalVisible(false)}
+            >
+              <View style={styles.modalContainer}>
+                <View style={styles.modalView}>
+                  <Text style={styles.modalText}>Are you sure you want to log out?</Text>
+                  <TouchableOpacity onPress={handleLogout} style = {{marginBottom: 10}}>
+                    <Text style = {{fontFamily: fonts.SemiBold, color: colors.pink, fontSize: 15}}> Log Out </Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity onPress={() => setModalVisible(false)}>
+                    <Text style = {{fontFamily: fonts.Regular, color: colors.pink}}> Cancel </Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            </Modal>
           </View>
           <View style={styles.profileContainer}>
             <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginRight: 40 }}>
@@ -353,5 +389,25 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     position: 'absolute',
     bottom: 10,
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0,0,0,0.5)",
+  },
+  modalView: {
+    width: 300,
+    backgroundColor: "white",
+    borderRadius: 10,
+    padding: 20,
+    alignItems: "center",
+    elevation: 5,
+  },
+  modalText: {
+    marginBottom: 20,
+    textAlign: "center",
+    fontSize: 18,
+    fontFamily: fonts.SemiBold,
   },
 });

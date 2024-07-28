@@ -1,6 +1,6 @@
 import React, { useState, useRef } from "react";
 import { useNavigation, CommonActions } from '@react-navigation/native';
-import { Text, View, Image, StyleSheet, TouchableOpacity, TextInput, ActivityIndicator } from "react-native";
+import { Text, View, Image, StyleSheet, TouchableOpacity, TextInput, ActivityIndicator, KeyboardAvoidingView, Platform} from "react-native";
 import { FIREBASE_AUTH } from '../../FirebaseConfig';
 import { signInWithEmailAndPassword } from "firebase/auth";
 import Logo from '../../assets/images/SimplifiedLogo.png'; // Adjust the path as needed
@@ -15,6 +15,7 @@ import {
 import LottieView from "lottie-react-native"; 
 import Animated from 'react-native-reanimated';
 
+
 export default function SignIn() {
 
   const navigation = useNavigation();
@@ -24,6 +25,10 @@ export default function SignIn() {
   const [loading, setLoading] = useState(false);
   const [secureEntry, setSecureEntry] = useState(true);
   const auth = FIREBASE_AUTH;
+
+  /**
+   * Handles user sign-in with email and password.
+   */
 
   const signIn = async () => {
     setLoading(true);
@@ -45,6 +50,10 @@ export default function SignIn() {
   };
 
   return (
+    <KeyboardAvoidingView
+      style={{ flex: 1 }}
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+    >
     <View style={styles.container}>
       {/* Back arrow button */}
       <TouchableOpacity style={styles.backButtonWrapper} onPress={() => navigation.goBack()}>
@@ -129,6 +138,7 @@ export default function SignIn() {
         </TouchableOpacity>
       </View>
     </View>
+    </KeyboardAvoidingView>
   );
 }
 
@@ -144,7 +154,6 @@ const styles = StyleSheet.create({
   iconContainer: {
     height: 40,
     width: 40,
-    backgroundColor: colors.lightgrey,
     borderRadius: 20,
     justifyContent: "center",
     alignItems: "center",
