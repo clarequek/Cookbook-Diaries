@@ -9,6 +9,7 @@ import LottieView from "lottie-react-native";
 import { fonts } from "../utilities/fonts";
 import { colors } from "../utilities/colors";
 
+// Import default avatars for profile picture
 import DefaultAvatar1 from '../../assets/images/DefaultAvatar1.png';
 import DefaultAvatar2 from '../../assets/images/DefaultAvatar2.png';
 import DefaultAvatar3 from '../../assets/images/DefaultAvatar3.png';
