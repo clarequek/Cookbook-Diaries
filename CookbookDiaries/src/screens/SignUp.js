@@ -16,7 +16,11 @@ import DefaultAvatar3 from '../../assets/images/DefaultAvatar3.png';
 import DefaultAvatar4 from '../../assets/images/DefaultAvatar4.png';
 import DefaultAvatar5 from '../../assets/images/DefaultAvatar5.png';
 
-
+/**
+ * SignUp component allows users to create a new account, while ensuring that no email addresses and usernames are repeated (unique). 
+ * 
+ * @component
+ */
 export default function SignUp() {
   const navigation = useNavigation();
   const animation = useRef(null);
@@ -33,6 +37,14 @@ export default function SignUp() {
   const auth = FIREBASE_AUTH;
   const db = FIREBASE_DB;
 
+  /**
+   * Checks if a username already exists in Firestore.
+   * 
+   * @async
+   * @function checkUsernameExists
+   * @param {string} username - The username to check.
+   * @returns {Promise<boolean>} - A promise that resolves to a boolean indicating if the username exists.
+   */
   const checkUsernameExists = async (username) => {
     const usersRef = collection(db, 'users');
     const q = query(usersRef, where('username', '==', username));
@@ -40,22 +52,33 @@ export default function SignUp() {
     return !querySnapshot.empty;
   };
 
+  /**
+  * Validates the password against a regex for complexity.
+  * 
+  * @function validatePassword
+  * @param {string} password - The password to validate.
+  * @returns {boolean} - A boolean indicating if the password is valid.
+  */
   const validatePassword = (password) => {
+    //Password must be at least 8 characters long and include an uppercase letter, a lowercase letter, a number, and a special character.
     const re = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
     return re.test(password);
   };
 
   const signUp = async () => {
+    //Checks whether all fields are filled
     if (!email || !password || !confirmPassword || !username || !name) {
       alert("Please fill in all fields.");
       return;
     }
 
+    //Checks whether the respective values for the password and confirm password field are the same
     if (password !== confirmPassword) {
       alert("Passwords do not match.");
       return;
     }
 
+    //Checks whether the password has met the complexity standard
     if (!validatePassword(password)) {
       alert("Password must be at least 8 characters long and include an uppercase letter, a lowercase letter, a number, and a special character.");
       return;
@@ -63,6 +86,7 @@ export default function SignUp() {
 
     setLoading(true);
     try {
+      //Checks whether the username is unique
       const usernameExists = await checkUsernameExists(username);
       if (usernameExists) {
         alert('Username already exists.');

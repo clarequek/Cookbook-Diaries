@@ -10,6 +10,11 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import { FIREBASE_AUTH, FIREBASE_DB } from '../../FirebaseConfig';
 import { doc, getDoc, updateDoc } from 'firebase/firestore';
 
+/**
+ * GroceryListScreen component allows users to manage their grocery list by adding and removing items.
+ * 
+ * @component
+ */
 const GroceryListScreen = (props) => {
   const navigation = useNavigation();
   const [task, setTask] = useState('');
@@ -19,12 +24,24 @@ const GroceryListScreen = (props) => {
   const auth = FIREBASE_AUTH;
   const db = FIREBASE_DB;
 
+  /**
+   * Fetches the grocery list from Firestore when the screen is focused.
+   * 
+   * @function useFocusEffect
+   */
   useFocusEffect(
     useCallback(() => {
       fetchGroceryList();
     }, [])
   );
 
+  /**
+   * Adds a new task to the grocery list and saves it to Firestore.
+   * 
+   * @async
+   * @function handleAddTask
+   * @returns {Promise<void>}
+   */
   const handleAddTask = async () => {
     if (!task || !quantity) {
       Alert.alert("Error", "Please fill in both the ingredient and quantity.");
@@ -39,6 +56,15 @@ const GroceryListScreen = (props) => {
     await saveGroceryList(newTaskItems);
   };
 
+  /**
+   * Removes a task from the grocery list and updates Firestore.
+   * 
+   * @async
+   * @function completeTask
+   * @param {number} index - The index of the task to remove.
+   * @returns {Promise<void>}
+   */
+
   const completeTask = async (index) => {
     let itemsCopy = [...taskItems];
     itemsCopy.splice(index, 1);
@@ -46,6 +72,14 @@ const GroceryListScreen = (props) => {
     await saveGroceryList(itemsCopy);
   };
 
+  /**
+   * Saves the updated grocery list to Firestore.
+   * 
+   * @async
+   * @function saveGroceryList
+   * @param {Array} newTaskItems - The updated list of task items.
+   * @returns {Promise<void>}
+   */
   const saveGroceryList = async (newTaskItems) => {
     try {
         const userDocRef = doc(db, "users", auth.currentUser.uid);
@@ -58,6 +92,13 @@ const GroceryListScreen = (props) => {
     }
   };
 
+  /**
+   * Fetches the current grocery list from Firestore.
+   * 
+   * @async
+   * @function fetchGroceryList
+   * @returns {Promise<void>}
+   */
   const fetchGroceryList = async () => {
     try {
         const userDocRef = doc(db, "users", auth.currentUser.uid);
@@ -72,9 +113,20 @@ const GroceryListScreen = (props) => {
     }
   };
 
+  /**
+   * Increments the quantity of the current task.
+   * 
+   * @function incrementQuantity
+   */
   const incrementQuantity = () => {
     setQuantity(prevQuantity => (parseInt(prevQuantity, 10) || 0) + 1 + '');
   };
+
+  /**
+   * Decrements the quantity of the current task.
+   * 
+   * @function decrementQuantity
+   */
 
   const decrementQuantity = () => {
     setQuantity(prevQuantity => Math.max(0, (parseInt(prevQuantity, 10) || 0) - 1) + '');

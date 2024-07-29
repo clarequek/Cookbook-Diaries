@@ -18,6 +18,14 @@ import DefaultAvatar3 from '../../assets/images/DefaultAvatar3.png';
 import DefaultAvatar4 from '../../assets/images/DefaultAvatar4.png';
 import DefaultAvatar5 from '../../assets/images/DefaultAvatar5.png';
 
+/**
+ * EditProfileScreen component allows the user to modify their profile image, username, name, bio and experience.
+ * For new users, this page will allow them to set a new bio and select their experience level.
+ * Those who did not set their bio or experience level will automatically have a default version.
+ * 
+ * @component
+ */
+
 export default function EditProfileScreen() {
     const [profileImage, setProfileImage] = useState(null);
     const [username, setUsername] = useState('');
@@ -31,15 +39,12 @@ export default function EditProfileScreen() {
     const auth = FIREBASE_AUTH;
     const navigation = useNavigation();
     
-    {/*const checkUsernameExists = async (username) => {
-      const usersRef = collection(db, 'users');
-      const q = query(usersRef, where('username', '==', username));
-      const querySnapshot = await getDocs(q);
-      return !querySnapshot.empty;
-    }; */}
-
     useEffect(() => {
 
+      /**
+        * Fetches user data from Firestore and sets the state with the retrieved data.
+        * Runs once when the component is mounted.
+      */
       const fetchUserData = async () => {
           try {
               const userDocRef = doc(db, "users", auth.currentUser.uid);
@@ -63,6 +68,9 @@ export default function EditProfileScreen() {
         fetchUserData();
     }, []);
 
+  /**
+   * Handles saving the updated user data to Firestore.
+   */ 
   const handleSave = async () => {
     try {
       const userDocRef = doc(db, "users", auth.currentUser.uid);
