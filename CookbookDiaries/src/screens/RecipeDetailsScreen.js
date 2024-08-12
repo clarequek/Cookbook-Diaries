@@ -214,18 +214,35 @@ export default function RecipeDetailsScreen(props) {
      */
     const handleFavourites = async (mealId, strMeal, strMealThumb) => {
         try {
-          const userDocRef = doc(FIREBASE_DB, "users", FIREBASE_AUTH.currentUser.uid);
-          await updateDoc(userDocRef, {
-            favourites: arrayUnion({mealId, strMeal, strMealThumb})
-          });
-          setIsFavourite(true);
-          setFavourites([...favourites, mealId]);
-          Alert.alert("Added to Favourites", "Recipe has been added to your favourites.");
+            const userDocRef = doc(FIREBASE_DB, "users", FIREBASE_AUTH.currentUser.uid);
+            const userDocSnap = await getDoc(userDocRef);
+    
+            if (userDocSnap.exists()) {
+                const userData = userDocSnap.data();
+                const favs = userData.favourites || [];
+    
+                if (isFavourite) {
+                    // If already a favourite, remove it
+                    const updatedFavs = favs.filter(fav => fav.mealId !== mealId);
+                    await updateDoc(userDocRef, { favourites: updatedFavs });
+                    setIsFavourite(false);
+                    setFavourites(updatedFavs);
+                    Alert.alert("Removed from Favourites", "Recipe has been removed from your favourites.");
+                } else {
+                    // If not a favourite, add it
+                    const newFav = { mealId, strMeal, strMealThumb };
+                    await updateDoc(userDocRef, { favourites: arrayUnion(newFav) });
+                    setIsFavourite(true);
+                    setFavourites([...favs, newFav]);
+                    Alert.alert("Added to Favourites", "Recipe has been added to your favourites.");
+                }
+            }
         } catch (error) {
-          console.error("Error adding to favourites:", error);
-          Alert.alert("Error", "There was an error adding the recipe to your favourites. Please try again later.");
+            console.error("Error updating favourites:", error);
+            Alert.alert("Error", "There was an error updating your favourites. Please try again later.");
         }
     };
+    
 
     /**
      * Submits the user's rating for the recipe.

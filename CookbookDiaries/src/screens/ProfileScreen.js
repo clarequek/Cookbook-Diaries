@@ -186,7 +186,7 @@ export default function ProfileScreen() {
     return () => {
       isMounted = false; // Cleanup the effect
     };
-  }, []);
+  }, [favouriteRecipes]);
 
   /**
    * Handles user logout.
