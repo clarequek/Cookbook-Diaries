@@ -231,10 +231,6 @@ export default function HomeScreen() {
                 />
               </View>
             </View>
-            {/* Filter button */}
-            <TouchableOpacity style = {styles.filterContainer}>
-              <Ionicons name={"filter"} size={30} color={colors.pink} />
-            </TouchableOpacity>
           </View>
 
           {/* Categories */}
