@@ -17,10 +17,6 @@ const Task = (props) => {
                     {props.text}
                 </Text>
             </View>
-
-            <TouchableOpacity>
-                <Ionicons name={"pencil-outline"} color={colors.pink} size={25} />
-            </TouchableOpacity>
         </View>
     )
 }
